@@ -20,8 +20,7 @@ class BaseDriver(object):
         self.config["METADETECT_CONFIG"]["nodet_flags"] = eval(
             self.config["METADETECT_CONFIG"]["nodet_flags"]
         )
-        print(self.config)
-        # print(self.config["METADETECT_CONFIG"]["sx"]["filter_kernel"])
+        # print(self.config)
 
     def run_metadetect(self, mbobs, seed=42):
         res = metadetect.do_metadetect(
@@ -34,10 +33,6 @@ class BaseDriver(object):
 
 
 if __name__ == "__main__":
-    # driver = BaseDriver()
-    # driver.parse_config(
-    #     "/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
-    # )
     driver = BaseDriver(
         config_file="/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
     )
