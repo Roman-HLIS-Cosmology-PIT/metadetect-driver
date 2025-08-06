@@ -68,14 +68,11 @@ class IMCOMDriver(BaseDriver):
         )
 
         bkg = sep.Background(f.astype(f.dtype.newbyteorder("=")))
-        print(bkg.globalback)
-        print(bkg.globalrms)
-        # plt.figure()
-        # plt.imshow(bkg_image, interpolation="nearest", cmap="gray", origin="lower")
-        # plt.colorbar()
+        # print(bkg.globalback)
+        # print(bkg.globalrms)
 
         obs = ngmix.Observation(
-            # image= f - bkg + noise,
+            # image= f + noise,
             image=f - bkg,
             jacobian=img_jac,
             # weight=np.ones((IMG_SIZE, IMG_SIZE), dtype=float) / noise_sigma**2,
@@ -95,10 +92,6 @@ class IMCOMDriver(BaseDriver):
 
 
 if __name__ == "__main__":
-    # driver = BaseDriver()
-    # driver.parse_config(
-    #     "/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
-    # )
     driver = IMCOMDriver(
         config_file="/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
     )
