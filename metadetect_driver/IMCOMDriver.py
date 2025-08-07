@@ -106,12 +106,11 @@ if __name__ == "__main__":
         "nasa-irsa-simulations/openuniverse2024/roman/preview/RomanWAS/images/coadds"
     )
     band_dir = os.path.join(coadd_dir, band)
-
     subdirs = fs.ls(band_dir)
     img_dir = subdirs[row_ind]
     imgs = fs.ls(img_dir)
-
     image = "s3://" + imgs[0]
+
     obs, img = driver.get_obs_imcom(filepath=image, layer=0)
 
     obslist = ngmix.ObsList()
