@@ -13,10 +13,29 @@ from astropy.visualization import ZScaleInterval, ImageNormalize
 
 
 class IMCOMDriver(BaseDriver):
+    """Driver class to run metadetect on IMCOM product
+
+    Args:
+        BaseDriver (class): Derived from BaseDriver class
+    """
+
     def __init__(self, config_file):
+        """The initializer for metadetect driver on IMCOM layers
+
+        Args:
+            config_file (str): path to the configuration file
+        """
         super().__init__(config_file)
 
     def _read_imcom(self, filepath, layer=0):
+        """Read IMCOM block file
+
+        Args:
+            filepath (str): path to the IMCOM block file
+            layer (int, optional): only read in this layer. Defaults to 0.
+        Returns:
+            _type_: _description_
+        """
         with fits.open(filepath, fsspec_kwargs={"anon": True}) as hdul:
             f = hdul[0].section[0, layer]
             h = hdul[0].header
@@ -29,6 +48,17 @@ class IMCOMDriver(BaseDriver):
         return f, h, band
 
     def get_obs_imcom(self, filepath, layer=0, psf_img=None, rng=None):
+        """Convert a block of IMCOM input to a ngmix.Observation
+
+        Args:
+            filepath (str): path to the IMCOM block file
+            layer (int, optional): only read in this layer. Defaults to 0.
+            psf_img (_type_, optional): psf image. Defaults to None.
+            rng (_type_, optional): random number generator. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
         f, h, band = self._read_imcom(filepath=filepath, layer=layer)
 
         w = galsim.AstropyWCS(header=h)
@@ -68,8 +98,6 @@ class IMCOMDriver(BaseDriver):
         )
 
         bkg = sep.Background(f.astype(f.dtype.newbyteorder("=")))
-        # print(bkg.globalback)
-        # print(bkg.globalrms)
 
         obs = ngmix.Observation(
             # image= f + noise,

@@ -5,10 +5,22 @@ from copy import deepcopy
 
 
 class BaseDriver(object):
+    """Driver class to run metadetec"""
+
     def __init__(self, config_file):
+        """The initializer for metadetect driver
+
+        Args:
+            config_file (str): path to the configuration file
+        """
         self._parse_config(config_file)
 
     def _parse_config(self, config_file):
+        """Parser for the YAML configuration file
+
+        Args:
+            config_file (str): path to the configuration file
+        """
         with open(config_file, "r") as stream:
             try:
                 self.config = yaml.safe_load(stream)
@@ -23,6 +35,18 @@ class BaseDriver(object):
         # print(self.config)
 
     def run_metadetect(self, mbobs, seed=42):
+        """Engine function for running Metadetection.
+
+        This function serves as the main entry point to execute the Metadetection
+        pipeline.
+
+        Args:
+            mbobs (Object): ngmix.MultiBandObsList
+            seed (int, optional): random seed. Defaults to 42.
+
+        Returns:
+            dict: the result dict
+        """
         res = metadetect.do_metadetect(
             # deepcopy(METADETECT_CONFIG),
             deepcopy(self.config["METADETECT_CONFIG"]),
