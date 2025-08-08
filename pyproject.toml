@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metadetect_driver"
+version = "0.1"
+description = "Driver package to run metadetecion"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name", email = "you@example.com"  }
+]
+requires-python = ">=3.10"
+dependencies = [
+  "galsim",
+  "astropy",
+  "numpy",
+  "scipy",
+  "numba",
+  "pyyaml",
+  "sep",
+  "ngmix",
+  "metadetect",
+  "meds",
+  "sxdes",
+  "jupyter",
+  "jupyterlab",
+  "tqdm",
+  "joblib",
+  "s3fs",
+  "matplotlib",
+]
+
+[project.urls]
+Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "docs*"]
+
+[tool.isort]
+profile = "black"
+line_length = 110
+
+[tool.black]
+line-length = 110
+target-version = ["py311"]
