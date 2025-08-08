@@ -6,6 +6,8 @@ from astropy.io import fits
 
 from .base_driver import BaseDriver
 
+__all__ = ["IMCOMDriver"]
+
 
 class IMCOMDriver(BaseDriver):
     """Driver class to run metadetect on IMCOM product
