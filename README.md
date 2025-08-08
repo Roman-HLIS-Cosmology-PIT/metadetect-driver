@@ -1,14 +1,10 @@
 # metadetect-driver
 
-# Installation
+Executable scripts to run metadetection on Roman Space Telescope images
 
-## Environment
-Make conda environment from the `environment.yml` file:
+## Installation
+
 ```bash
-conda env create -f environment.yml
+pip install git+https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
 ```
 
-## Install package
-```bash
-pip install -e .
-```

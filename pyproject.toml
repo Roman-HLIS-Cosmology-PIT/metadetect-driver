@@ -12,25 +12,7 @@ authors = [
   { name = "Your Name", email = "you@example.com"  }
 ]
 requires-python = ">=3.10"
-dependencies = [
-  "galsim",
-  "astropy",
-  "numpy",
-  "scipy",
-  "numba",
-  "pyyaml",
-  "sep",
-  "ngmix",
-  "metadetect",
-  "meds",
-  "sxdes",
-  "jupyter",
-  "jupyterlab",
-  "tqdm",
-  "joblib",
-  "s3fs",
-  "matplotlib",
-]
+
 
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
@@ -38,6 +20,9 @@ Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
 [tool.setuptools.packages.find]
 where = ["."]
 exclude = ["tests*", "docs*"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.isort]
 profile = "black"
