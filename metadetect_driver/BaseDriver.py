@@ -5,7 +5,7 @@ from copy import deepcopy
 
 
 class BaseDriver(object):
-    """Driver class to run metadetec"""
+    """Driver class to run metadetecion"""
 
     def __init__(self, config_file):
         """The initializer for metadetect driver
@@ -32,7 +32,6 @@ class BaseDriver(object):
         self.config["METADETECT_CONFIG"]["nodet_flags"] = eval(
             self.config["METADETECT_CONFIG"]["nodet_flags"]
         )
-        # print(self.config)
 
     def run_metadetect(self, mbobs, seed=42):
         """Engine function for running Metadetection.
@@ -48,15 +47,8 @@ class BaseDriver(object):
             dict: the result dict
         """
         res = metadetect.do_metadetect(
-            # deepcopy(METADETECT_CONFIG),
             deepcopy(self.config["METADETECT_CONFIG"]),
             mbobs=mbobs,
             rng=np.random.RandomState(seed),
         )
         return res
-
-
-if __name__ == "__main__":
-    driver = BaseDriver(
-        config_file="/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
-    )
