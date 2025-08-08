@@ -11,7 +11,7 @@ band = "H158"
 row_ind = 0
 
 driver = IMCOMDriver(
-        config_file="/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
+    "/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
 )
 
 # Setup the filesystem
@@ -59,7 +59,6 @@ m_good = (
 plt.figure(figsize=(10, 10))
 m_img = np.mean(img)
 s_img = np.std(img)
-# plt.imshow(img, origin='lower', cmap='gray', vmin=max(np.min(img), m_img - 5 * s_img), vmax=m_img + 5 * s_img)
 
 interval = ZScaleInterval()
 vmin, vmax = interval.get_limits(img)

@@ -1,0 +1,7 @@
+numpy
+pyyaml
+astropy
+galsim
+ngmix
+metadetect
+sep

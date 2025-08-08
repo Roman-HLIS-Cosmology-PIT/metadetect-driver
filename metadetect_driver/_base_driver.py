@@ -1,7 +1,10 @@
-import yaml
-import numpy as np
-import metadetect
 from copy import deepcopy
+
+import metadetect
+import numpy as np
+import yaml
+
+__all__ = ["BaseDriver"]
 
 
 class BaseDriver(object):
@@ -36,8 +39,8 @@ class BaseDriver(object):
     def run_metadetect(self, mbobs, seed=42):
         """Engine function for running Metadetection.
 
-        This function serves as the main entry point to execute the Metadetection
-        pipeline.
+        This function serves as the main entry point to execute the
+        Metadetection pipeline.
 
         Args:
             mbobs (Object): ngmix.MultiBandObsList

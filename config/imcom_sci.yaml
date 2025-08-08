@@ -1,5 +1,5 @@
 # Size of the taget Gaussian PSF in IMCOM
-PSF_FWHM: 
+PSF_FWHM:
     Y106: 0.22
     J129: 0.231
     H158: 0.242
