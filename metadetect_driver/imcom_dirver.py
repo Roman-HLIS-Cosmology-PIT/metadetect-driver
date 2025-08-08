@@ -100,7 +100,6 @@ class IMCOMDriver(BaseDriver):
             # image= f + noise,
             image=f - bkg,
             jacobian=img_jac,
-            # weight=np.ones((IMG_SIZE, IMG_SIZE), dtype=float) / noise_sigma**2,
             weight=np.ones((self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=float),
             psf=psf_obs,
             ormask=np.zeros((self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=np.int32),
