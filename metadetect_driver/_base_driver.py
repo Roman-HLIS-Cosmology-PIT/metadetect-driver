@@ -3,6 +3,8 @@ import numpy as np
 import metadetect
 from copy import deepcopy
 
+__all__ = ["BaseDriver"]
+
 
 class BaseDriver(object):
     """Driver class to run metadetecion"""
