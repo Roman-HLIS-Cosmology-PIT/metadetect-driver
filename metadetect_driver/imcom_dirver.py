@@ -1,7 +1,7 @@
-import ngmix
 import galsim
-import sep
+import ngmix
 import numpy as np
+import sep
 from astropy.io import fits
 
 from .base_driver import BaseDriver
@@ -101,16 +101,10 @@ class IMCOMDriver(BaseDriver):
             image=f - bkg,
             jacobian=img_jac,
             # weight=np.ones((IMG_SIZE, IMG_SIZE), dtype=float) / noise_sigma**2,
-            weight=np.ones(
-                (self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=float
-            ),
+            weight=np.ones((self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=float),
             psf=psf_obs,
-            ormask=np.zeros(
-                (self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=np.int32
-            ),
-            bmask=np.zeros(
-                (self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=np.int32
-            ),
+            ormask=np.zeros((self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=np.int32),
+            bmask=np.zeros((self.config["IMG_SIZE"], self.config["IMG_SIZE"]), dtype=np.int32),
         )
 
         # [TODO] Returning image f for sanity check; might remove later.

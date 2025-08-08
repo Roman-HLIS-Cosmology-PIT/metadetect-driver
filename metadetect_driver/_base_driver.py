@@ -1,7 +1,8 @@
-import yaml
-import numpy as np
-import metadetect
 from copy import deepcopy
+
+import metadetect
+import numpy as np
+import yaml
 
 __all__ = ["BaseDriver"]
 
