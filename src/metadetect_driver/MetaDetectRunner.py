@@ -16,7 +16,10 @@ from pyimcom.config import Settings as Stn
 
 from .config import parse_driver_cfg
 import warnings
+import yaml
 
+with open('../config/metadetect_default.yaml', 'r') as file:
+        METADETECT_CONFIG= yaml.safe_load(file)
 
 
 
@@ -27,6 +30,7 @@ class MetaDetectRunner:
     methods to build catalogs from the multi-band imaging.
     """
     NATIVE_PIX = 0.11  # arcsec/pixel (Roman native pixel scale)
+    # load default metadetect config file
 
     def __init__(self, coadds, meta_cfg=None, driver_cfg=None):
         """
