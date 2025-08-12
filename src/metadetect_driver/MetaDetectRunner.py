@@ -11,11 +11,10 @@ import sep
 from astropy import wcs
 import os, sys
 
-sys.path.append("/hildafs/projects/phy200017p/berlfein/IMCOM_Notes")
 from pyimcom.analysis import OutImage, Mosaic
 from pyimcom.config import Settings as Stn
 
-from metadriver.config import parse_driver_cfg
+from .config import parse_driver_cfg
 import warnings
 
 
