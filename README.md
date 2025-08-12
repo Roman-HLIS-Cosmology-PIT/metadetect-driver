@@ -9,6 +9,12 @@ The basic functionality of the driver is to take PyIMCOM images, and more specif
 ```bash
 pip install git+https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
 
-For developing you might want to first git clone the repository and then run pip install -e . from inside the directory.
+```
+For development, you might want to run this instead:
+```bash
+git clone https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
+cd metadetect-driver
+pip install -e .
+
 ```
 
