@@ -14,7 +14,7 @@
 	0.0390625
     ],
     "BLOCK": 2,
-    "FILTER": 2,
+    "FILTER": 3,
     "LAKERNEL": "Cholesky",
     "KAPPAC": [
          4e-4
