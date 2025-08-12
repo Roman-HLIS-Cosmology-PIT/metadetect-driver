@@ -1,0 +1,2272 @@
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2028-05-19 13:41:34.224000' to '2028-05-19T13:41:34.224000''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2028-05-19 13:44:24' to '2028-05-19T13:44:24''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2028-05-19 13:47:13.776000' to '2028-05-19T13:47:13.776000''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2028-05-19 13:56:21.811200' to '2028-05-19T13:56:21.811200''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2028-05-19 13:59:11.500800' to '2028-05-19T13:59:11.500800''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2029-12-01 16:29:54.816000' to '2029-12-01T16:29:54.816000''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2029-12-01 16:32:44.592000' to '2029-12-01T16:32:44.592000''. [astropy.wcs.wcs]
+WARNING: FITSFixedWarning: 'datfix' made the change 'Changed DATE-OBS from '2029-12-01 16:35:34.281600' to '2029-12-01T16:35:34.281600''. [astropy.wcs.wcs]
+General input information:
+number of input frames =  4 type = [None, 'whitenoise1', 'gsstar14', 'cstar14']
+acceptance radius --> 1.240000 arcsec or 31.744000 output pixels
+
+Getting observations from ../scripts/Roman_WAS_obseq_11_1_23.fits
+converting filter from names to integers: ['H158' 'H158' 'H158' ... 'H158' 'H158' 'H158']
+Retrieved columns: ['date', 'exptime', 'ra', 'dec', 'pa', 'filter']  16956 rows
+Output information: ctr at RA=  9.550000,DEC=-44.000000 LONPOLE=180.000000
+pixel scale=0.039062 arcsec or 1.08507E-05 degree
+output array size = 640 (20 postage stamps of 32)
+
+sub-block    3 < 1, 1> of  2x 2= 4
+outputs directed to --> ../output/J129/output_01_01
+temporary storage directed to --> ../output/tmp/_0003_20250811210519653860_cache
+0 [[  9.5509654  -44.00069444]]
+1 [[  9.54131138 -44.00069412]]
+2 [[  9.55096529 -43.99375   ]]
+3 [[  9.54131239 -43.99374967]]
+4 [[  9.54613862 -43.99722216]]
+kappa/C array [0.0004]
+computed overlap, C= [0.00156346]
+
+52 observations within range (0.09324 deg) filter = 2 (H158)
+The observations -->
+  OBSID SCA  RAWFI    DECWFI   PA     RASCA   DECSCA       FILE (x=missing)
+    773  4   9.9188 -44.0622 170.47   9.6249 -44.0337   ../../RomanWAS_preview/images_wide/simple/H158/773/Roman_WAS_simple_model_H158_773_4.fits.gz
+    773  7   9.9188 -44.0622 170.47   9.4246 -43.9907   ../../RomanWAS_preview/images_wide/simple/H158/773/Roman_WAS_simple_model_H158_773_7.fits.gz
+    774  7   9.9475 -44.0866 170.44   9.4530 -44.0153   ../../RomanWAS_preview/images_wide/simple/H158/774/Roman_WAS_simple_model_H158_774_7.fits.gz
+    775  7   9.9761 -44.1110 170.41   9.4814 -44.0399   ../../RomanWAS_preview/images_wide/simple/H158/775/Roman_WAS_simple_model_H158_775_7.fits.gz
+    776  7  10.0048 -44.1353 170.38                   x ../../RomanWAS_preview/images_wide/simple/H158/776/Roman_WAS_simple_model_H158_776_7.fits.gz
+    778  6   9.8552 -43.6878 170.62   9.6249 -43.9325   ../../RomanWAS_preview/images_wide/simple/H158/778/Roman_WAS_simple_model_H158_778_6.fits.gz
+    779  6   9.8835 -43.7123 170.59   9.6532 -43.9571   ../../RomanWAS_preview/images_wide/simple/H158/779/Roman_WAS_simple_model_H158_779_6.fits.gz
+    780  9   9.9119 -43.7367 170.56                   x ../../RomanWAS_preview/images_wide/simple/H158/780/Roman_WAS_simple_model_H158_780_9.fits.gz
+   4906 10   9.3899 -43.9870 185.87                   x ../../RomanWAS_preview/images_wide/simple/H158/4906/Roman_WAS_simple_model_H158_4906_10.fits.gz
+   4907 10   9.4092 -44.0111 185.82                   x ../../RomanWAS_preview/images_wide/simple/H158/4907/Roman_WAS_simple_model_H158_4907_10.fits.gz
+   4908 10   9.4285 -44.0351 185.77                   x ../../RomanWAS_preview/images_wide/simple/H158/4908/Roman_WAS_simple_model_H158_4908_10.fits.gz
+   4909 10   9.4478 -44.0592 185.72                   x ../../RomanWAS_preview/images_wide/simple/H158/4909/Roman_WAS_simple_model_H158_4909_10.fits.gz
+   5660  3   9.7052 -44.2136 332.82                   x ../../RomanWAS_preview/images_wide/simple/H158/5660/Roman_WAS_simple_model_H158_5660_3.fits.gz
+   5660 12   9.7052 -44.2136 332.82                   x ../../RomanWAS_preview/images_wide/simple/H158/5660/Roman_WAS_simple_model_H158_5660_12.fits.gz
+   5661  3   9.6675 -44.1966 332.84                   x ../../RomanWAS_preview/images_wide/simple/H158/5661/Roman_WAS_simple_model_H158_5661_3.fits.gz
+   5661 12   9.6675 -44.1966 332.84                   x ../../RomanWAS_preview/images_wide/simple/H158/5661/Roman_WAS_simple_model_H158_5661_12.fits.gz
+   5662  2   9.6299 -44.1796 332.86                   x ../../RomanWAS_preview/images_wide/simple/H158/5662/Roman_WAS_simple_model_H158_5662_2.fits.gz
+   5662  3   9.6299 -44.1796 332.86                   x ../../RomanWAS_preview/images_wide/simple/H158/5662/Roman_WAS_simple_model_H158_5662_3.fits.gz
+   9760 17   9.0913 -44.2111 153.19                   x ../../RomanWAS_preview/images_wide/simple/H158/9760/Roman_WAS_simple_model_H158_9760_17.fits.gz
+   9761 16   9.1288 -44.2283 153.16                   x ../../RomanWAS_preview/images_wide/simple/H158/9761/Roman_WAS_simple_model_H158_9761_16.fits.gz
+   9761 17   9.1288 -44.2283 153.16                   x ../../RomanWAS_preview/images_wide/simple/H158/9761/Roman_WAS_simple_model_H158_9761_17.fits.gz
+   9762 16   9.1663 -44.2455 153.13                   x ../../RomanWAS_preview/images_wide/simple/H158/9762/Roman_WAS_simple_model_H158_9762_16.fits.gz
+   9763 16   9.2039 -44.2627 153.09                   x ../../RomanWAS_preview/images_wide/simple/H158/9763/Roman_WAS_simple_model_H158_9763_16.fits.gz
+   9790  9   9.9528 -43.6665 152.65                   x ../../RomanWAS_preview/images_wide/simple/H158/9790/Roman_WAS_simple_model_H158_9790_9.fits.gz
+   9791  9   9.9902 -43.6835 152.62                   x ../../RomanWAS_preview/images_wide/simple/H158/9791/Roman_WAS_simple_model_H158_9791_9.fits.gz
+  11827 16   9.0275 -44.1861 165.12                   x ../../RomanWAS_preview/images_wide/simple/H158/11827/Roman_WAS_simple_model_H158_11827_16.fits.gz
+  11828 16   9.0589 -44.2074 165.07                   x ../../RomanWAS_preview/images_wide/simple/H158/11828/Roman_WAS_simple_model_H158_11828_16.fits.gz
+  11829 16   9.0903 -44.2287 165.02                   x ../../RomanWAS_preview/images_wide/simple/H158/11829/Roman_WAS_simple_model_H158_11829_16.fits.gz
+  11830 16   9.1218 -44.2500 164.97                   x ../../RomanWAS_preview/images_wide/simple/H158/11830/Roman_WAS_simple_model_H158_11830_16.fits.gz
+  11834 18   8.9783 -43.8592 165.47                   x ../../RomanWAS_preview/images_wide/simple/H158/11834/Roman_WAS_simple_model_H158_11834_18.fits.gz
+  11856  9  10.0077 -43.7289 164.69                   x ../../RomanWAS_preview/images_wide/simple/H158/11856/Roman_WAS_simple_model_H158_11856_9.fits.gz
+  11857  9  10.0390 -43.7500 164.65                   x ../../RomanWAS_preview/images_wide/simple/H158/11857/Roman_WAS_simple_model_H158_11857_9.fits.gz
+  11858  9  10.0703 -43.7711 164.60                   x ../../RomanWAS_preview/images_wide/simple/H158/11858/Roman_WAS_simple_model_H158_11858_9.fits.gz
+  13907  3   9.4249 -44.2509   2.70   9.5349 -44.0126   ../../RomanWAS_preview/images_wide/simple/H158/13907/Roman_WAS_simple_model_H158_13907_3.fits.gz
+  13908  3   9.4041 -44.2227   2.71   9.5141 -43.9844   ../../RomanWAS_preview/images_wide/simple/H158/13908/Roman_WAS_simple_model_H158_13908_3.fits.gz
+  13909  3   9.3833 -44.1945   2.72   9.4933 -43.9563   ../../RomanWAS_preview/images_wide/simple/H158/13909/Roman_WAS_simple_model_H158_13909_3.fits.gz
+  14424 10   9.7059 -43.9334   5.77                   x ../../RomanWAS_preview/images_wide/simple/H158/14424/Roman_WAS_simple_model_H158_14424_10.fits.gz
+  14425 10   9.6872 -43.9054   5.77                   x ../../RomanWAS_preview/images_wide/simple/H158/14425/Roman_WAS_simple_model_H158_14425_10.fits.gz
+  14426 10   9.6684 -43.8774   5.77                   x ../../RomanWAS_preview/images_wide/simple/H158/14426/Roman_WAS_simple_model_H158_14426_10.fits.gz
+  14428 12   9.6293 -44.3075   6.02                   x ../../RomanWAS_preview/images_wide/simple/H158/14428/Roman_WAS_simple_model_H158_14428_12.fits.gz
+  14429 12   9.6106 -44.2796   6.02                   x ../../RomanWAS_preview/images_wide/simple/H158/14429/Roman_WAS_simple_model_H158_14429_12.fits.gz
+  16164 15   9.2427 -43.8939 156.49                   x ../../RomanWAS_preview/images_wide/simple/H158/16164/Roman_WAS_simple_model_H158_16164_15.fits.gz
+  16165 11   9.2785 -43.9125 156.45                   x ../../RomanWAS_preview/images_wide/simple/H158/16165/Roman_WAS_simple_model_H158_16165_11.fits.gz
+  16165 15   9.2785 -43.9125 156.45                   x ../../RomanWAS_preview/images_wide/simple/H158/16165/Roman_WAS_simple_model_H158_16165_15.fits.gz
+  16166 11   9.3144 -43.9310 156.41                   x ../../RomanWAS_preview/images_wide/simple/H158/16166/Roman_WAS_simple_model_H158_16166_11.fits.gz
+  16166 14   9.3144 -43.9310 156.41                   x ../../RomanWAS_preview/images_wide/simple/H158/16166/Roman_WAS_simple_model_H158_16166_14.fits.gz
+  16167 11   9.3502 -43.9496 156.37                   x ../../RomanWAS_preview/images_wide/simple/H158/16167/Roman_WAS_simple_model_H158_16167_11.fits.gz
+  16709  8   9.1866 -43.7579  44.84                   x ../../RomanWAS_preview/images_wide/simple/H158/16709/Roman_WAS_simple_model_H158_16709_8.fits.gz
+  16710  8   9.1938 -43.7296  44.82                   x ../../RomanWAS_preview/images_wide/simple/H158/16710/Roman_WAS_simple_model_H158_16710_8.fits.gz
+  16711  8   9.2009 -43.7014  44.80                   x ../../RomanWAS_preview/images_wide/simple/H158/16711/Roman_WAS_simple_model_H158_16711_8.fits.gz
+  16948 17   9.9687 -44.3042  44.30                   x ../../RomanWAS_preview/images_wide/simple/H158/16948/Roman_WAS_simple_model_H158_16948_17.fits.gz
+  16949 17   9.9757 -44.2758  44.27                   x ../../RomanWAS_preview/images_wide/simple/H158/16949/Roman_WAS_simple_model_H158_16949_17.fits.gz
+
+Reading input data ... 
+No permanent mask
+
+input image (773, 4)
+noise rng: frame_q=1, seed=22000773
+making grid using GalSim:  14 (773, 4)
+ << ../psf/psf_polyfit_773.fits 0
+making grid using C routines:  14 (773, 4)
+Cosmic ray mask: good pix -->  16595623 / 16711744
+
+input image (775, 7)
+noise rng: frame_q=1, seed=25000775
+making grid using GalSim:  14 (775, 7)
+ << ../psf/psf_polyfit_775.fits 0
+making grid using C routines:  14 (775, 7)
+Cosmic ray mask: good pix -->  16597642 / 16711744
+
+input image (13907, 3)
+noise rng: frame_q=1, seed=21013907
+making grid using GalSim:  14 (13907, 3)
+ << ../psf/psf_polyfit_13907.fits 0
+making grid using C routines:  14 (13907, 3)
+Cosmic ray mask: good pix -->  16596089 / 16711744
+
+input image (13908, 3)
+noise rng: frame_q=1, seed=21013908
+making grid using GalSim:  14 (13908, 3)
+ << ../psf/psf_polyfit_13908.fits 0
+making grid using C routines:  14 (13908, 3)
+Cosmic ray mask: good pix -->  16596054 / 16711744
+
+input image (13909, 3)
+noise rng: frame_q=1, seed=21013909
+making grid using GalSim:  14 (13909, 3)
+ << ../psf/psf_polyfit_13909.fits 0
+making grid using C routines:  14 (13909, 3)
+Cosmic ray mask: good pix -->  16597062 / 16711744
+
+number of input pixels in output region: n_inpix_out = 174204
+number of input pixels in padding region: n_inpix_pad = 98079
+
+postage stamp  1, 1   0.000% t=    274.56 s
+INPUT/PSF computation at RA=  9.5510, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+ << ../psf/psf_polyfit_773.fits 0
+ << ../psf/psf_polyfit_775.fits 0
+ << ../psf/psf_polyfit_13907.fits 0
+ << ../psf/psf_polyfit_13908.fits 0
+ << ../psf/psf_polyfit_13909.fits 0
+INPUT/PSF computation at RA=  9.5500, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5510, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.09  1.47  2.81  2.83  2.85
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.65E-03 3.60E-01 | 90% 2.07E-03 3.79E-01 | 98% 2.34E-03 4.02E-01 | 99% 2.46E-03 4.09E-01 |
+
+postage stamp  2, 1   0.250% t=    291.08 s
+Cholesky timing ->  0.10  1.44  2.77  2.79  2.81
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 1.59E-03 3.58E-01 | 90% 2.05E-03 3.63E-01 | 98% 2.34E-03 3.88E-01 | 99% 2.47E-03 4.04E-01 |
+
+postage stamp  1, 2   0.500% t=    294.80 s
+Cholesky timing ->  0.10  1.48  2.86  2.88  2.89
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 1.61E-03 3.59E-01 | 90% 2.03E-03 3.71E-01 | 98% 2.25E-03 3.96E-01 | 99% 2.29E-03 3.98E-01 |
+
+postage stamp  2, 2   0.750% t=    298.69 s
+Cholesky timing ->  0.10  1.42  2.78  2.80  2.81
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.58E-03 3.58E-01 | 90% 1.99E-03 3.62E-01 | 98% 2.26E-03 3.64E-01 | 99% 2.36E-03 3.64E-01 |
+
+postage stamp  3, 1   1.000% t=    302.64 s
+INPUT/PSF computation at RA=  9.5490, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5490, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.57  3.01  3.03  3.05
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 1.69E-03 3.60E-01 | 90% 2.05E-03 3.69E-01 | 98% 2.33E-03 3.92E-01 | 99% 2.42E-03 3.96E-01 |
+
+postage stamp  4, 1   1.250% t=    315.06 s
+Cholesky timing ->  0.11  1.56  3.01  3.03  3.05
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 1.86E-03 3.62E-01 | 90% 2.24E-03 3.73E-01 | 98% 2.64E-03 3.79E-01 | 99% 2.78E-03 3.82E-01 |
+
+postage stamp  3, 2   1.500% t=    319.07 s
+Cholesky timing ->  0.11  1.62  3.06  3.08  3.09
+  n input pix = 5505
+  sqUC,sqSig %iles | 50% 1.64E-03 3.59E-01 | 90% 2.07E-03 3.67E-01 | 98% 2.35E-03 3.92E-01 | 99% 2.48E-03 3.95E-01 |
+
+postage stamp  4, 2   1.750% t=    323.20 s
+Cholesky timing ->  0.09  1.43  2.78  2.80  2.82
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.76E-03 3.61E-01 | 90% 2.24E-03 3.71E-01 | 98% 2.47E-03 3.77E-01 | 99% 2.59E-03 3.79E-01 |
+
+postage stamp  5, 1   2.000% t=    327.14 s
+INPUT/PSF computation at RA=  9.5481, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5481, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.65  3.15  3.18  3.19
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 1.96E-03 3.65E-01 | 90% 2.58E-03 3.84E-01 | 98% 2.91E-03 4.03E-01 | 99% 3.01E-03 4.11E-01 |
+
+postage stamp  6, 1   2.250% t=    339.70 s
+Cholesky timing ->  0.12  1.67  3.17  3.19  3.21
+  n input pix = 5507
+  sqUC,sqSig %iles | 50% 2.10E-03 3.68E-01 | 90% 2.83E-03 3.92E-01 | 98% 3.19E-03 4.08E-01 | 99% 3.31E-03 4.13E-01 |
+
+postage stamp  5, 2   2.500% t=    343.95 s
+Cholesky timing ->  0.11  1.66  3.12  3.15  3.16
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.98E-03 3.66E-01 | 90% 2.65E-03 3.91E-01 | 98% 3.13E-03 4.31E-01 | 99% 3.46E-03 4.41E-01 |
+
+postage stamp  6, 2   2.750% t=    348.24 s
+Cholesky timing ->  0.11  1.46  2.81  2.83  2.84
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 2.22E-03 3.72E-01 | 90% 2.92E-03 3.96E-01 | 98% 3.32E-03 4.31E-01 | 99% 3.49E-03 4.38E-01 |
+
+postage stamp  7, 1   3.000% t=    352.20 s
+INPUT/PSF computation at RA=  9.5471, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5471, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.68  3.28  3.31  3.32
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.29E-03 3.71E-01 | 90% 3.04E-03 3.94E-01 | 98% 3.41E-03 4.06E-01 | 99% 3.52E-03 4.09E-01 |
+
+postage stamp  8, 1   3.250% t=    365.13 s
+Cholesky timing ->  0.11  1.71  3.38  3.40  3.42
+  n input pix = 5531
+  sqUC,sqSig %iles | 50% 2.36E-03 3.75E-01 | 90% 3.06E-03 3.99E-01 | 98% 3.41E-03 4.14E-01 | 99% 3.56E-03 4.19E-01 |
+
+postage stamp  7, 2   3.500% t=    369.64 s
+Cholesky timing ->  0.12  1.61  3.14  3.16  3.17
+  n input pix = 5508
+  sqUC,sqSig %iles | 50% 2.32E-03 3.73E-01 | 90% 3.08E-03 3.96E-01 | 98% 3.47E-03 4.08E-01 | 99% 3.57E-03 4.12E-01 |
+
+postage stamp  8, 2   3.750% t=    374.09 s
+Cholesky timing ->  0.11  1.57  2.97  2.99  3.00
+  n input pix = 5509
+  sqUC,sqSig %iles | 50% 2.38E-03 3.73E-01 | 90% 3.18E-03 3.96E-01 | 98% 3.62E-03 4.10E-01 | 99% 3.75E-03 4.15E-01 |
+
+postage stamp  9, 1   4.000% t=    378.44 s
+INPUT/PSF computation at RA=  9.5461, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5461, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.58  3.22  3.25  3.26
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 2.29E-03 3.71E-01 | 90% 3.06E-03 3.90E-01 | 98% 3.43E-03 4.04E-01 | 99% 3.50E-03 4.07E-01 |
+
+postage stamp 10, 1   4.250% t=    391.62 s
+Cholesky timing ->  0.11  1.70  3.45  3.47  3.48
+  n input pix = 5525
+  sqUC,sqSig %iles | 50% 2.21E-03 3.69E-01 | 90% 3.04E-03 3.88E-01 | 98% 3.39E-03 3.98E-01 | 99% 3.44E-03 4.03E-01 |
+
+postage stamp  9, 2   4.500% t=    396.18 s
+Cholesky timing ->  0.11  1.62  3.18  3.20  3.21
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.38E-03 3.73E-01 | 90% 3.23E-03 3.95E-01 | 98% 3.74E-03 4.10E-01 | 99% 3.90E-03 4.13E-01 |
+
+postage stamp 10, 2   4.750% t=    400.63 s
+Cholesky timing ->  0.10  1.44  2.81  2.83  2.85
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.35E-03 3.74E-01 | 90% 3.16E-03 3.97E-01 | 98% 3.53E-03 4.09E-01 | 99% 3.60E-03 4.13E-01 |
+
+postage stamp 11, 1   5.000% t=    404.59 s
+INPUT/PSF computation at RA=  9.5452, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5452, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.75  3.48  3.50  3.52
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.19E-03 3.68E-01 | 90% 3.00E-03 3.87E-01 | 98% 3.27E-03 3.97E-01 | 99% 3.36E-03 3.99E-01 |
+
+postage stamp 12, 1   5.250% t=    418.04 s
+Cholesky timing ->  0.10  1.76  3.46  3.48  3.49
+  n input pix = 5507
+  sqUC,sqSig %iles | 50% 2.13E-03 3.67E-01 | 90% 2.92E-03 3.90E-01 | 98% 3.21E-03 4.17E-01 | 99% 3.34E-03 4.24E-01 |
+
+postage stamp 11, 2   5.500% t=    422.49 s
+Cholesky timing ->  0.10  1.61  3.10  3.12  3.13
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.21E-03 3.69E-01 | 90% 3.02E-03 3.88E-01 | 98% 3.32E-03 3.98E-01 | 99% 3.41E-03 4.02E-01 |
+
+postage stamp 12, 2   5.750% t=    426.81 s
+Cholesky timing ->  0.10  1.45  2.82  2.84  2.85
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 2.05E-03 3.66E-01 | 90% 2.86E-03 3.86E-01 | 98% 3.15E-03 4.05E-01 | 99% 3.24E-03 4.19E-01 |
+
+postage stamp 13, 1   6.000% t=    430.99 s
+INPUT/PSF computation at RA=  9.5442, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5442, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.76  3.39  3.41  3.43
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 2.08E-03 3.67E-01 | 90% 2.80E-03 3.89E-01 | 98% 3.08E-03 4.14E-01 | 99% 3.24E-03 4.23E-01 |
+
+postage stamp 14, 1   6.250% t=    444.33 s
+Cholesky timing ->  0.11  1.69  3.30  3.32  3.33
+  n input pix = 5464
+  sqUC,sqSig %iles | 50% 2.06E-03 3.66E-01 | 90% 2.66E-03 3.81E-01 | 98% 2.88E-03 3.88E-01 | 99% 2.94E-03 3.90E-01 |
+
+postage stamp 13, 2   6.500% t=    448.61 s
+Cholesky timing ->  0.10  1.64  3.19  3.21  3.22
+  n input pix = 5517
+  sqUC,sqSig %iles | 50% 2.03E-03 3.65E-01 | 90% 2.63E-03 3.83E-01 | 98% 2.94E-03 4.07E-01 | 99% 3.05E-03 4.15E-01 |
+
+postage stamp 14, 2   6.750% t=    452.84 s
+Cholesky timing ->  0.10  1.52  3.07  3.09  3.11
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 1.96E-03 3.64E-01 | 90% 2.49E-03 3.77E-01 | 98% 2.76E-03 3.85E-01 | 99% 2.84E-03 3.87E-01 |
+
+postage stamp 15, 1   7.000% t=    457.04 s
+INPUT/PSF computation at RA=  9.5432, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5432, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.69  3.28  3.30  3.32
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 2.04E-03 3.68E-01 | 90% 2.59E-03 3.87E-01 | 98% 2.91E-03 3.99E-01 | 99% 3.02E-03 4.04E-01 |
+
+postage stamp 16, 1   7.250% t=    470.18 s
+Cholesky timing ->  0.12  1.74  3.37  3.39  3.40
+  n input pix = 5462
+  sqUC,sqSig %iles | 50% 2.04E-03 3.67E-01 | 90% 2.68E-03 3.88E-01 | 98% 2.99E-03 4.15E-01 | 99% 3.08E-03 4.25E-01 |
+
+postage stamp 15, 2   7.500% t=    474.59 s
+Cholesky timing ->  0.10  1.61  3.06  3.09  3.10
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 1.90E-03 3.66E-01 | 90% 2.44E-03 3.89E-01 | 98% 2.75E-03 4.17E-01 | 99% 2.89E-03 4.28E-01 |
+
+postage stamp 16, 2   7.750% t=    478.89 s
+Cholesky timing ->  0.09  1.43  2.77  2.79  2.80
+  n input pix = 5440
+  sqUC,sqSig %iles | 50% 2.01E-03 3.66E-01 | 90% 2.52E-03 3.85E-01 | 98% 2.75E-03 4.11E-01 | 99% 2.82E-03 4.17E-01 |
+
+postage stamp 17, 1   8.000% t=    482.78 s
+INPUT/PSF computation at RA=  9.5423, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5423, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.74  3.31  3.32  3.34
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 2.09E-03 3.67E-01 | 90% 2.79E-03 3.90E-01 | 98% 3.03E-03 3.97E-01 | 99% 3.09E-03 3.98E-01 |
+
+postage stamp 18, 1   8.250% t=    496.08 s
+Cholesky timing ->  0.12  1.75  3.30  3.32  3.33
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.15E-03 3.71E-01 | 90% 2.81E-03 3.95E-01 | 98% 3.02E-03 4.09E-01 | 99% 3.10E-03 4.16E-01 |
+
+postage stamp 17, 2   8.500% t=    500.46 s
+Cholesky timing ->  0.11  1.62  3.10  3.12  3.13
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 2.08E-03 3.68E-01 | 90% 2.67E-03 3.91E-01 | 98% 2.94E-03 4.09E-01 | 99% 3.05E-03 4.18E-01 |
+
+postage stamp 18, 2   8.750% t=    504.60 s
+Cholesky timing ->  0.09  1.54  2.93  2.95  2.97
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.02E-03 3.66E-01 | 90% 2.76E-03 3.89E-01 | 98% 3.04E-03 3.98E-01 | 99% 3.10E-03 3.99E-01 |
+
+postage stamp 19, 1   9.000% t=    508.69 s
+INPUT/PSF computation at RA=  9.5413, Dec=-44.0007; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5413, Dec=-44.0000; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.84  3.42  3.44  3.45
+  n input pix = 5495
+  sqUC,sqSig %iles | 50% 2.02E-03 3.66E-01 | 90% 2.63E-03 3.86E-01 | 98% 2.88E-03 3.94E-01 | 99% 2.95E-03 3.96E-01 |
+
+postage stamp 20, 1   9.250% t=    521.94 s
+Cholesky timing ->  0.12  1.79  3.37  3.39  3.40
+  n input pix = 5477
+  sqUC,sqSig %iles | 50% 1.92E-03 3.64E-01 | 90% 2.47E-03 3.82E-01 | 98% 2.81E-03 4.22E-01 | 99% 2.91E-03 4.29E-01 |
+
+postage stamp 19, 2   9.500% t=    526.43 s
+Cholesky timing ->  0.11  1.58  3.01  3.03  3.04
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 2.00E-03 3.65E-01 | 90% 2.71E-03 3.88E-01 | 98% 2.98E-03 3.96E-01 | 99% 3.05E-03 3.98E-01 |
+
+postage stamp 20, 2   9.750% t=    530.51 s
+Cholesky timing ->  0.09  1.51  2.91  2.93  2.94
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.98E-03 3.65E-01 | 90% 2.54E-03 3.83E-01 | 98% 2.81E-03 3.90E-01 | 99% 2.92E-03 3.93E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1, 3  10.000% t=    534.83 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.73  3.21  3.23  3.24
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.63E-03 3.59E-01 | 90% 2.08E-03 3.66E-01 | 98% 2.36E-03 3.70E-01 | 99% 2.44E-03 3.72E-01 |
+
+postage stamp  2, 3  10.250% t=    548.03 s
+Cholesky timing ->  0.12  1.84  3.37  3.39  3.40
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 1.59E-03 3.58E-01 | 90% 2.00E-03 3.62E-01 | 98% 2.28E-03 3.65E-01 | 99% 2.37E-03 3.66E-01 |
+
+postage stamp  1, 4  10.500% t=    552.57 s
+Cholesky timing ->  0.11  1.56  2.92  2.94  2.95
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 1.75E-03 3.60E-01 | 90% 2.10E-03 3.69E-01 | 98% 2.39E-03 3.76E-01 | 99% 2.48E-03 3.81E-01 |
+
+postage stamp  2, 4  10.750% t=    556.80 s
+Cholesky timing ->  0.10  1.58  3.01  3.03  3.04
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 1.64E-03 3.59E-01 | 90% 2.01E-03 3.66E-01 | 98% 2.24E-03 3.91E-01 | 99% 2.31E-03 3.96E-01 |
+
+postage stamp  3, 3  11.000% t=    561.21 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.63  3.28  3.31  3.32
+  n input pix = 5517
+  sqUC,sqSig %iles | 50% 1.66E-03 3.59E-01 | 90% 2.03E-03 3.64E-01 | 98% 2.24E-03 3.71E-01 | 99% 2.34E-03 3.81E-01 |
+
+postage stamp  4, 3  11.250% t=    571.64 s
+Cholesky timing ->  0.12  1.59  3.15  3.18  3.19
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 1.79E-03 3.61E-01 | 90% 2.20E-03 3.69E-01 | 98% 2.50E-03 3.75E-01 | 99% 2.58E-03 3.77E-01 |
+
+postage stamp  3, 4  11.500% t=    576.01 s
+Cholesky timing ->  0.11  1.59  3.08  3.10  3.11
+  n input pix = 5495
+  sqUC,sqSig %iles | 50% 1.69E-03 3.60E-01 | 90% 2.05E-03 3.67E-01 | 98% 2.33E-03 3.90E-01 | 99% 2.44E-03 3.93E-01 |
+
+postage stamp  4, 4  11.750% t=    580.40 s
+Cholesky timing ->  0.10  1.42  2.90  2.92  2.93
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 1.75E-03 3.61E-01 | 90% 2.24E-03 3.69E-01 | 98% 2.53E-03 3.75E-01 | 99% 2.63E-03 3.77E-01 |
+
+postage stamp  5, 3  12.000% t=    584.49 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.61  3.28  3.30  3.32
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 1.94E-03 3.64E-01 | 90% 2.45E-03 3.77E-01 | 98% 2.87E-03 3.86E-01 | 99% 3.05E-03 3.89E-01 |
+
+postage stamp  6, 3  12.250% t=    594.76 s
+Cholesky timing ->  0.12  1.66  3.30  3.32  3.33
+  n input pix = 5465
+  sqUC,sqSig %iles | 50% 2.14E-03 3.71E-01 | 90% 2.82E-03 3.95E-01 | 98% 3.18E-03 4.13E-01 | 99% 3.31E-03 4.18E-01 |
+
+postage stamp  5, 4  12.500% t=    599.26 s
+Cholesky timing ->  0.11  1.49  3.00  3.02  3.03
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.93E-03 3.63E-01 | 90% 2.44E-03 3.76E-01 | 98% 2.77E-03 3.84E-01 | 99% 2.87E-03 3.86E-01 |
+
+postage stamp  6, 4  12.750% t=    603.50 s
+Cholesky timing ->  0.11  1.48  2.89  2.91  2.92
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 2.16E-03 3.70E-01 | 90% 2.83E-03 3.94E-01 | 98% 3.23E-03 4.20E-01 | 99% 3.35E-03 4.26E-01 |
+
+postage stamp  7, 3  13.000% t=    607.67 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.59  3.17  3.19  3.20
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.32E-03 3.72E-01 | 90% 3.10E-03 3.94E-01 | 98% 3.57E-03 4.08E-01 | 99% 3.73E-03 4.13E-01 |
+
+postage stamp  8, 3  13.250% t=    617.79 s
+Cholesky timing ->  0.13  1.69  3.28  3.30  3.31
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 2.51E-03 3.76E-01 | 90% 3.38E-03 4.00E-01 | 98% 3.87E-03 4.15E-01 | 99% 4.02E-03 4.21E-01 |
+
+postage stamp  7, 4  13.500% t=    622.28 s
+Cholesky timing ->  0.12  1.58  3.05  3.07  3.08
+  n input pix = 5491
+  sqUC,sqSig %iles | 50% 2.37E-03 3.74E-01 | 90% 3.17E-03 3.99E-01 | 98% 3.57E-03 4.15E-01 | 99% 3.76E-03 4.23E-01 |
+
+postage stamp  8, 4  13.750% t=    626.58 s
+Cholesky timing ->  0.12  1.58  3.03  3.05  3.06
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.55E-03 3.76E-01 | 90% 3.39E-03 4.01E-01 | 98% 3.96E-03 4.16E-01 | 99% 4.09E-03 4.22E-01 |
+
+postage stamp  9, 3  14.000% t=    631.03 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.58  3.23  3.25  3.26
+  n input pix = 5502
+  sqUC,sqSig %iles | 50% 2.53E-03 3.76E-01 | 90% 3.39E-03 3.98E-01 | 98% 3.85E-03 4.12E-01 | 99% 3.94E-03 4.19E-01 |
+
+postage stamp 10, 3  14.250% t=    641.42 s
+Cholesky timing ->  0.12  1.59  3.14  3.16  3.18
+  n input pix = 5516
+  sqUC,sqSig %iles | 50% 2.38E-03 3.74E-01 | 90% 3.22E-03 3.97E-01 | 98% 3.64E-03 4.14E-01 | 99% 3.74E-03 4.22E-01 |
+
+postage stamp  9, 4  14.500% t=    645.84 s
+Cholesky timing ->  0.12  1.55  3.05  3.07  3.08
+  n input pix = 5513
+  sqUC,sqSig %iles | 50% 2.55E-03 3.76E-01 | 90% 3.47E-03 4.00E-01 | 98% 4.03E-03 4.17E-01 | 99% 4.14E-03 4.22E-01 |
+
+postage stamp 10, 4  14.750% t=    650.20 s
+Cholesky timing ->  0.12  1.63  3.07  3.10  3.11
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 2.42E-03 3.74E-01 | 90% 3.32E-03 3.97E-01 | 98% 3.78E-03 4.12E-01 | 99% 3.98E-03 4.17E-01 |
+
+postage stamp 11, 3  15.000% t=    654.63 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.64  3.21  3.24  3.25
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 2.19E-03 3.70E-01 | 90% 3.03E-03 3.92E-01 | 98% 3.37E-03 4.06E-01 | 99% 3.53E-03 4.14E-01 |
+
+postage stamp 12, 3  15.250% t=    664.80 s
+Cholesky timing ->  0.12  1.66  3.19  3.21  3.23
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 2.10E-03 3.67E-01 | 90% 2.74E-03 3.83E-01 | 98% 2.99E-03 3.92E-01 | 99% 3.13E-03 3.96E-01 |
+
+postage stamp 11, 4  15.500% t=    669.23 s
+Cholesky timing ->  0.12  1.51  2.98  3.00  3.01
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.27E-03 3.71E-01 | 90% 2.99E-03 3.90E-01 | 98% 3.34E-03 4.02E-01 | 99% 3.47E-03 4.05E-01 |
+
+postage stamp 12, 4  15.750% t=    673.55 s
+Cholesky timing ->  0.12  1.69  3.26  3.28  3.29
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.07E-03 3.66E-01 | 90% 2.67E-03 3.81E-01 | 98% 2.99E-03 3.91E-01 | 99% 3.06E-03 3.94E-01 |
+
+postage stamp 13, 3  16.000% t=    678.07 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.66  3.28  3.30  3.32
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 1.96E-03 3.63E-01 | 90% 2.52E-03 3.78E-01 | 98% 2.75E-03 3.83E-01 | 99% 2.83E-03 3.85E-01 |
+
+postage stamp 14, 3  16.250% t=    688.28 s
+Cholesky timing ->  0.12  1.70  3.33  3.35  3.37
+  n input pix = 5534
+  sqUC,sqSig %iles | 50% 1.85E-03 3.62E-01 | 90% 2.38E-03 3.73E-01 | 98% 2.65E-03 3.79E-01 | 99% 2.72E-03 3.80E-01 |
+
+postage stamp 13, 4  16.500% t=    692.77 s
+Cholesky timing ->  0.12  1.55  3.03  3.06  3.07
+  n input pix = 5502
+  sqUC,sqSig %iles | 50% 1.88E-03 3.63E-01 | 90% 2.46E-03 3.75E-01 | 98% 2.74E-03 3.81E-01 | 99% 2.83E-03 3.83E-01 |
+
+postage stamp 14, 4  16.750% t=    697.12 s
+Cholesky timing ->  0.12  1.57  3.03  3.05  3.06
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.83E-03 3.61E-01 | 90% 2.25E-03 3.71E-01 | 98% 2.51E-03 3.75E-01 | 99% 2.61E-03 3.77E-01 |
+
+postage stamp 15, 3  17.000% t=    701.50 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.60  3.21  3.23  3.25
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 1.86E-03 3.63E-01 | 90% 2.33E-03 3.73E-01 | 98% 2.57E-03 3.79E-01 | 99% 2.59E-03 3.81E-01 |
+
+postage stamp 16, 3  17.250% t=    711.62 s
+Cholesky timing ->  0.12  1.61  3.20  3.22  3.23
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 1.87E-03 3.64E-01 | 90% 2.36E-03 3.79E-01 | 98% 2.62E-03 3.93E-01 | 99% 2.74E-03 3.97E-01 |
+
+postage stamp 15, 4  17.500% t=    715.94 s
+Cholesky timing ->  0.11  1.55  3.03  3.05  3.06
+  n input pix = 5507
+  sqUC,sqSig %iles | 50% 1.77E-03 3.61E-01 | 90% 2.17E-03 3.69E-01 | 98% 2.42E-03 3.74E-01 | 99% 2.49E-03 3.75E-01 |
+
+postage stamp 16, 4  17.750% t=    720.10 s
+Cholesky timing ->  0.12  1.64  3.17  3.19  3.20
+  n input pix = 5467
+  sqUC,sqSig %iles | 50% 1.79E-03 3.62E-01 | 90% 2.25E-03 3.77E-01 | 98% 2.53E-03 3.97E-01 | 99% 2.61E-03 4.00E-01 |
+
+postage stamp 17, 3  18.000% t=    724.56 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.72  3.36  3.38  3.39
+  n input pix = 5467
+  sqUC,sqSig %iles | 50% 1.95E-03 3.66E-01 | 90% 2.60E-03 3.91E-01 | 98% 3.00E-03 4.27E-01 | 99% 3.13E-03 4.33E-01 |
+
+postage stamp 18, 3  18.250% t=    734.80 s
+Cholesky timing ->  0.12  1.61  3.09  3.11  3.12
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 2.04E-03 3.67E-01 | 90% 2.76E-03 3.92E-01 | 98% 3.02E-03 4.17E-01 | 99% 3.06E-03 4.27E-01 |
+
+postage stamp 17, 4  18.500% t=    739.08 s
+Cholesky timing ->  0.12  1.59  3.07  3.09  3.11
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.94E-03 3.66E-01 | 90% 2.43E-03 3.88E-01 | 98% 2.77E-03 4.09E-01 | 99% 2.89E-03 4.25E-01 |
+
+postage stamp 18, 4  18.750% t=    743.40 s
+Cholesky timing ->  0.11  1.58  3.01  3.03  3.04
+  n input pix = 5446
+  sqUC,sqSig %iles | 50% 2.04E-03 3.67E-01 | 90% 2.67E-03 3.90E-01 | 98% 3.00E-03 4.20E-01 | 99% 3.12E-03 4.28E-01 |
+
+postage stamp 19, 3  19.000% t=    747.84 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9993; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.66  3.28  3.31  3.32
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.15E-03 3.70E-01 | 90% 2.80E-03 3.94E-01 | 98% 3.00E-03 4.17E-01 | 99% 3.08E-03 4.24E-01 |
+
+postage stamp 20, 3  19.250% t=    757.96 s
+Cholesky timing ->  0.12  1.59  3.04  3.06  3.07
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 2.07E-03 3.67E-01 | 90% 2.68E-03 3.87E-01 | 98% 2.98E-03 3.98E-01 | 99% 3.17E-03 4.22E-01 |
+
+postage stamp 19, 4  19.500% t=    762.13 s
+Cholesky timing ->  0.11  1.54  2.92  2.94  2.95
+  n input pix = 5504
+  sqUC,sqSig %iles | 50% 2.05E-03 3.67E-01 | 90% 2.78E-03 3.93E-01 | 98% 3.04E-03 4.14E-01 | 99% 3.11E-03 4.23E-01 |
+
+postage stamp 20, 4  19.750% t=    766.18 s
+Cholesky timing ->  0.11  1.70  3.28  3.30  3.31
+  n input pix = 5461
+  sqUC,sqSig %iles | 50% 2.07E-03 3.68E-01 | 90% 2.83E-03 3.92E-01 | 98% 3.14E-03 4.14E-01 | 99% 3.23E-03 4.27E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1, 5  20.000% t=    770.93 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.80  3.39  3.41  3.42
+  n input pix = 5491
+  sqUC,sqSig %iles | 50% 1.75E-03 3.60E-01 | 90% 2.20E-03 3.71E-01 | 98% 2.45E-03 3.76E-01 | 99% 2.51E-03 3.78E-01 |
+
+postage stamp  2, 5  20.250% t=    784.08 s
+Cholesky timing ->  0.11  1.65  3.19  3.21  3.22
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 1.71E-03 3.59E-01 | 90% 2.09E-03 3.67E-01 | 98% 2.43E-03 3.71E-01 | 99% 2.51E-03 3.73E-01 |
+
+postage stamp  1, 6  20.500% t=    788.30 s
+Cholesky timing ->  0.09  1.56  3.14  3.16  3.17
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 1.87E-03 3.62E-01 | 90% 2.36E-03 3.77E-01 | 98% 2.84E-03 4.13E-01 | 99% 3.15E-03 4.25E-01 |
+
+postage stamp  2, 6  20.750% t=    792.45 s
+Cholesky timing ->  0.10  1.54  3.04  3.07  3.08
+  n input pix = 5518
+  sqUC,sqSig %iles | 50% 1.77E-03 3.61E-01 | 90% 2.17E-03 3.70E-01 | 98% 2.47E-03 3.75E-01 | 99% 2.56E-03 3.77E-01 |
+
+postage stamp  3, 5  21.000% t=    796.81 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.68  3.26  3.28  3.29
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.71E-03 3.60E-01 | 90% 2.14E-03 3.67E-01 | 98% 2.48E-03 3.70E-01 | 99% 2.52E-03 3.71E-01 |
+
+postage stamp  4, 5  21.250% t=    807.06 s
+Cholesky timing ->  0.11  1.59  3.05  3.07  3.08
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 1.81E-03 3.62E-01 | 90% 2.26E-03 3.72E-01 | 98% 2.48E-03 3.90E-01 | 99% 2.53E-03 3.94E-01 |
+
+postage stamp  3, 6  21.500% t=    811.18 s
+Cholesky timing ->  0.11  1.60  3.10  3.13  3.14
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 1.77E-03 3.61E-01 | 90% 2.22E-03 3.69E-01 | 98% 2.42E-03 3.72E-01 | 99% 2.47E-03 3.74E-01 |
+
+postage stamp  4, 6  21.750% t=    815.52 s
+Cholesky timing ->  0.10  1.58  3.11  3.14  3.15
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 1.86E-03 3.63E-01 | 90% 2.28E-03 3.76E-01 | 98% 2.54E-03 3.96E-01 | 99% 2.61E-03 4.01E-01 |
+
+postage stamp  5, 5  22.000% t=    819.81 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.79  3.46  3.48  3.49
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 1.97E-03 3.66E-01 | 90% 2.48E-03 3.88E-01 | 98% 2.94E-03 4.11E-01 | 99% 3.21E-03 4.19E-01 |
+
+postage stamp  6, 5  22.250% t=    830.17 s
+Cholesky timing ->  0.12  1.67  3.23  3.25  3.26
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 2.15E-03 3.70E-01 | 90% 2.85E-03 3.93E-01 | 98% 3.40E-03 4.19E-01 | 99% 3.56E-03 4.28E-01 |
+
+postage stamp  5, 6  22.500% t=    834.45 s
+Cholesky timing ->  0.11  1.60  3.20  3.22  3.23
+  n input pix = 5459
+  sqUC,sqSig %iles | 50% 1.95E-03 3.65E-01 | 90% 2.55E-03 3.84E-01 | 98% 2.95E-03 4.13E-01 | 99% 3.22E-03 4.20E-01 |
+
+postage stamp  6, 6  22.750% t=    838.71 s
+Cholesky timing ->  0.11  1.54  3.13  3.15  3.16
+  n input pix = 5510
+  sqUC,sqSig %iles | 50% 2.14E-03 3.68E-01 | 90% 2.83E-03 3.89E-01 | 98% 3.31E-03 4.19E-01 | 99% 3.43E-03 4.28E-01 |
+
+postage stamp  7, 5  23.000% t=    843.05 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.77  3.43  3.45  3.46
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 2.32E-03 3.72E-01 | 90% 3.10E-03 3.93E-01 | 98% 3.54E-03 4.07E-01 | 99% 3.67E-03 4.13E-01 |
+
+postage stamp  8, 5  23.250% t=    853.17 s
+Cholesky timing ->  0.10  1.68  3.32  3.34  3.36
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.55E-03 3.76E-01 | 90% 3.47E-03 4.01E-01 | 98% 4.00E-03 4.17E-01 | 99% 4.12E-03 4.24E-01 |
+
+postage stamp  7, 6  23.500% t=    857.49 s
+Cholesky timing ->  0.10  1.58  3.21  3.23  3.24
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 2.35E-03 3.72E-01 | 90% 3.14E-03 3.93E-01 | 98% 3.57E-03 4.05E-01 | 99% 3.66E-03 4.10E-01 |
+
+postage stamp  8, 6  23.750% t=    861.74 s
+Cholesky timing ->  0.11  1.61  3.43  3.45  3.46
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 2.53E-03 3.77E-01 | 90% 3.43E-03 4.05E-01 | 98% 4.01E-03 4.31E-01 | 99% 4.13E-03 4.40E-01 |
+
+postage stamp  9, 5  24.000% t=    866.44 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.70  3.36  3.38  3.39
+  n input pix = 5509
+  sqUC,sqSig %iles | 50% 2.60E-03 3.78E-01 | 90% 3.57E-03 4.08E-01 | 98% 4.10E-03 4.29E-01 | 99% 4.30E-03 4.36E-01 |
+
+postage stamp 10, 5  24.250% t=    876.48 s
+Cholesky timing ->  0.10  1.64  3.28  3.30  3.31
+  n input pix = 5502
+  sqUC,sqSig %iles | 50% 2.47E-03 3.76E-01 | 90% 3.38E-03 4.01E-01 | 98% 3.86E-03 4.22E-01 | 99% 4.00E-03 4.28E-01 |
+
+postage stamp  9, 6  24.500% t=    880.77 s
+Cholesky timing ->  0.10  1.51  3.20  3.23  3.24
+  n input pix = 5482
+  sqUC,sqSig %iles | 50% 2.57E-03 3.78E-01 | 90% 3.53E-03 4.10E-01 | 98% 4.05E-03 4.31E-01 | 99% 4.17E-03 4.39E-01 |
+
+postage stamp 10, 6  24.750% t=    885.04 s
+Cholesky timing ->  0.10  1.49  3.23  3.25  3.27
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.48E-03 3.77E-01 | 90% 3.34E-03 4.07E-01 | 98% 3.86E-03 4.27E-01 | 99% 3.99E-03 4.36E-01 |
+
+postage stamp 11, 5  25.000% t=    889.67 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.74  3.32  3.34  3.35
+  n input pix = 5503
+  sqUC,sqSig %iles | 50% 2.24E-03 3.70E-01 | 90% 2.97E-03 3.90E-01 | 98% 3.38E-03 4.03E-01 | 99% 3.50E-03 4.06E-01 |
+
+postage stamp 12, 5  25.250% t=    899.85 s
+Cholesky timing ->  0.10  1.57  3.11  3.13  3.14
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 2.01E-03 3.67E-01 | 90% 2.65E-03 3.84E-01 | 98% 2.98E-03 4.06E-01 | 99% 3.08E-03 4.15E-01 |
+
+postage stamp 11, 6  25.500% t=    903.98 s
+Cholesky timing ->  0.09  1.61  3.29  3.32  3.33
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 2.25E-03 3.72E-01 | 90% 3.01E-03 3.91E-01 | 98% 3.39E-03 4.04E-01 | 99% 3.55E-03 4.10E-01 |
+
+postage stamp 12, 6  25.750% t=    908.35 s
+Cholesky timing ->  0.10  1.68  3.39  3.41  3.42
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 2.07E-03 3.68E-01 | 90% 2.64E-03 3.83E-01 | 98% 2.96E-03 3.95E-01 | 99% 3.07E-03 4.04E-01 |
+
+postage stamp 13, 5  26.000% t=    913.03 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.71  3.29  3.31  3.32
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 1.91E-03 3.64E-01 | 90% 2.36E-03 3.77E-01 | 98% 2.60E-03 3.96E-01 | 99% 2.67E-03 4.01E-01 |
+
+postage stamp 14, 5  26.250% t=    923.22 s
+Cholesky timing ->  0.10  1.51  3.06  3.08  3.09
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.79E-03 3.62E-01 | 90% 2.17E-03 3.73E-01 | 98% 2.37E-03 3.95E-01 | 99% 2.44E-03 3.97E-01 |
+
+postage stamp 13, 6  26.500% t=    927.29 s
+Cholesky timing ->  0.09  1.44  3.01  3.03  3.04
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 1.93E-03 3.64E-01 | 90% 2.37E-03 3.78E-01 | 98% 2.65E-03 4.18E-01 | 99% 2.78E-03 4.27E-01 |
+
+postage stamp 14, 6  26.750% t=    931.36 s
+Cholesky timing ->  0.10  1.50  3.22  3.24  3.26
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 1.70E-03 3.61E-01 | 90% 2.18E-03 3.71E-01 | 98% 2.42E-03 3.93E-01 | 99% 2.49E-03 3.97E-01 |
+
+postage stamp 15, 5  27.000% t=    935.90 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.68  3.33  3.35  3.36
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 1.71E-03 3.60E-01 | 90% 2.14E-03 3.67E-01 | 98% 2.41E-03 3.76E-01 | 99% 2.49E-03 3.92E-01 |
+
+postage stamp 16, 5  27.250% t=    946.32 s
+Cholesky timing ->  0.11  1.54  3.15  3.17  3.18
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 1.75E-03 3.60E-01 | 90% 2.16E-03 3.69E-01 | 98% 2.45E-03 3.74E-01 | 99% 2.57E-03 3.76E-01 |
+
+postage stamp 15, 6  27.500% t=    950.59 s
+Cholesky timing ->  0.10  1.55  3.10  3.12  3.13
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.64E-03 3.60E-01 | 90% 2.05E-03 3.68E-01 | 98% 2.34E-03 3.89E-01 | 99% 2.44E-03 3.92E-01 |
+
+postage stamp 16, 6  27.750% t=    954.95 s
+Cholesky timing ->  0.10  1.51  3.15  3.17  3.19
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 1.66E-03 3.59E-01 | 90% 2.07E-03 3.67E-01 | 98% 2.31E-03 3.94E-01 | 99% 2.39E-03 4.00E-01 |
+
+postage stamp 17, 5  28.000% t=    959.31 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.72  3.24  3.26  3.27
+  n input pix = 5430
+  sqUC,sqSig %iles | 50% 1.82E-03 3.62E-01 | 90% 2.33E-03 3.77E-01 | 98% 2.61E-03 4.02E-01 | 99% 2.70E-03 4.08E-01 |
+
+postage stamp 18, 5  28.250% t=    969.42 s
+Cholesky timing ->  0.11  1.58  3.12  3.15  3.16
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.96E-03 3.66E-01 | 90% 2.67E-03 3.90E-01 | 98% 3.40E-03 4.35E-01 | 99% 3.73E-03 4.47E-01 |
+
+postage stamp 17, 6  28.500% t=    973.59 s
+Cholesky timing ->  0.10  1.61  3.34  3.36  3.37
+  n input pix = 5467
+  sqUC,sqSig %iles | 50% 1.82E-03 3.63E-01 | 90% 2.26E-03 3.79E-01 | 98% 2.52E-03 4.07E-01 | 99% 2.65E-03 4.12E-01 |
+
+postage stamp 18, 6  28.750% t=    977.98 s
+Cholesky timing ->  0.10  1.52  3.18  3.20  3.21
+  n input pix = 5465
+  sqUC,sqSig %iles | 50% 2.03E-03 3.67E-01 | 90% 2.64E-03 4.00E-01 | 98% 3.35E-03 4.39E-01 | 99% 3.68E-03 4.47E-01 |
+
+postage stamp 19, 5  29.000% t=    982.44 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9986; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.69  3.23  3.25  3.26
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 2.09E-03 3.67E-01 | 90% 2.77E-03 3.90E-01 | 98% 3.02E-03 3.96E-01 | 99% 3.12E-03 3.98E-01 |
+
+postage stamp 20, 5  29.250% t=    992.56 s
+Cholesky timing ->  0.11  1.57  3.10  3.13  3.14
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.18E-03 3.69E-01 | 90% 2.86E-03 3.92E-01 | 98% 3.10E-03 4.00E-01 | 99% 3.18E-03 4.03E-01 |
+
+postage stamp 19, 6  29.500% t=    996.69 s
+Cholesky timing ->  0.11  1.61  3.21  3.23  3.24
+  n input pix = 5509
+  sqUC,sqSig %iles | 50% 2.05E-03 3.66E-01 | 90% 2.72E-03 3.87E-01 | 98% 3.04E-03 3.96E-01 | 99% 3.18E-03 3.99E-01 |
+
+postage stamp 20, 6  29.750% t=   1001.05 s
+Cholesky timing ->  0.10  1.57  3.18  3.20  3.21
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.13E-03 3.68E-01 | 90% 2.89E-03 3.91E-01 | 98% 3.20E-03 4.01E-01 | 99% 3.31E-03 4.07E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1, 7  30.000% t=   1005.63 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.67  3.29  3.31  3.32
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.91E-03 3.64E-01 | 90% 2.45E-03 3.81E-01 | 98% 2.83E-03 4.16E-01 | 99% 3.08E-03 4.26E-01 |
+
+postage stamp  2, 7  30.250% t=   1018.81 s
+Cholesky timing ->  0.11  1.58  3.09  3.11  3.12
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.83E-03 3.63E-01 | 90% 2.31E-03 3.77E-01 | 98% 2.60E-03 3.95E-01 | 99% 2.68E-03 3.99E-01 |
+
+postage stamp  1, 8  30.500% t=   1022.93 s
+Cholesky timing ->  0.10  1.60  3.13  3.15  3.16
+  n input pix = 5513
+  sqUC,sqSig %iles | 50% 1.97E-03 3.65E-01 | 90% 2.59E-03 3.83E-01 | 98% 2.88E-03 3.91E-01 | 99% 3.02E-03 3.94E-01 |
+
+postage stamp  2, 8  30.750% t=   1027.11 s
+Cholesky timing ->  0.09  1.53  3.18  3.21  3.22
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 1.96E-03 3.65E-01 | 90% 2.47E-03 3.78E-01 | 98% 2.71E-03 3.85E-01 | 99% 2.79E-03 3.87E-01 |
+
+postage stamp  3, 7  31.000% t=   1031.45 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.62  3.22  3.24  3.25
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 1.86E-03 3.63E-01 | 90% 2.30E-03 3.75E-01 | 98% 2.60E-03 3.91E-01 | 99% 2.73E-03 3.95E-01 |
+
+postage stamp  4, 7  31.250% t=   1041.58 s
+Cholesky timing ->  0.10  1.61  3.19  3.21  3.22
+  n input pix = 5483
+  sqUC,sqSig %iles | 50% 1.88E-03 3.62E-01 | 90% 2.40E-03 3.74E-01 | 98% 2.73E-03 3.80E-01 | 99% 2.79E-03 3.82E-01 |
+
+postage stamp  3, 8  31.500% t=   1045.79 s
+Cholesky timing ->  0.10  1.47  3.01  3.03  3.04
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.97E-03 3.65E-01 | 90% 2.48E-03 3.80E-01 | 98% 2.76E-03 4.14E-01 | 99% 2.90E-03 4.24E-01 |
+
+postage stamp  4, 8  31.750% t=   1050.05 s
+Cholesky timing ->  0.10  1.52  3.16  3.19  3.20
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.92E-03 3.63E-01 | 90% 2.54E-03 3.77E-01 | 98% 2.79E-03 3.83E-01 | 99% 2.83E-03 3.84E-01 |
+
+postage stamp  5, 7  32.000% t=   1054.64 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.69  3.26  3.28  3.29
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.98E-03 3.64E-01 | 90% 2.60E-03 3.79E-01 | 98% 2.92E-03 3.85E-01 | 99% 3.00E-03 3.88E-01 |
+
+postage stamp  6, 7  32.250% t=   1064.95 s
+Cholesky timing ->  0.11  1.62  3.14  3.16  3.17
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.18E-03 3.68E-01 | 90% 2.88E-03 3.89E-01 | 98% 3.19E-03 4.14E-01 | 99% 3.34E-03 4.24E-01 |
+
+postage stamp  5, 8  32.500% t=   1069.15 s
+Cholesky timing ->  0.10  1.57  3.13  3.15  3.16
+  n input pix = 5479
+  sqUC,sqSig %iles | 50% 2.06E-03 3.67E-01 | 90% 2.68E-03 3.84E-01 | 98% 2.96E-03 3.93E-01 | 99% 3.06E-03 3.97E-01 |
+
+postage stamp  6, 8  32.750% t=   1073.30 s
+Cholesky timing ->  0.10  1.60  3.19  3.21  3.22
+  n input pix = 5505
+  sqUC,sqSig %iles | 50% 2.17E-03 3.68E-01 | 90% 2.89E-03 3.90E-01 | 98% 3.18E-03 4.13E-01 | 99% 3.26E-03 4.20E-01 |
+
+postage stamp  7, 7  33.000% t=   1077.65 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.61  3.19  3.21  3.22
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 2.29E-03 3.72E-01 | 90% 3.14E-03 3.95E-01 | 98% 3.52E-03 4.15E-01 | 99% 3.68E-03 4.25E-01 |
+
+postage stamp  8, 7  33.250% t=   1087.96 s
+Cholesky timing ->  0.11  1.60  3.11  3.13  3.15
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 2.43E-03 3.74E-01 | 90% 3.30E-03 4.00E-01 | 98% 3.79E-03 4.21E-01 | 99% 3.92E-03 4.28E-01 |
+
+postage stamp  7, 8  33.500% t=   1092.12 s
+Cholesky timing ->  0.11  1.54  3.00  3.02  3.03
+  n input pix = 5460
+  sqUC,sqSig %iles | 50% 2.27E-03 3.70E-01 | 90% 3.07E-03 3.90E-01 | 98% 3.43E-03 4.03E-01 | 99% 3.52E-03 4.09E-01 |
+
+postage stamp  8, 8  33.750% t=   1096.21 s
+Cholesky timing ->  0.11  1.61  3.10  3.12  3.13
+  n input pix = 5516
+  sqUC,sqSig %iles | 50% 2.38E-03 3.74E-01 | 90% 3.22E-03 3.98E-01 | 98% 3.56E-03 4.10E-01 | 99% 3.63E-03 4.13E-01 |
+
+postage stamp  9, 7  34.000% t=   1100.63 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.63  3.20  3.23  3.24
+  n input pix = 5483
+  sqUC,sqSig %iles | 50% 2.53E-03 3.76E-01 | 90% 3.40E-03 4.02E-01 | 98% 3.90E-03 4.20E-01 | 99% 4.02E-03 4.26E-01 |
+
+postage stamp 10, 7  34.250% t=   1110.71 s
+Cholesky timing ->  0.12  1.69  3.17  3.19  3.20
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 2.49E-03 3.76E-01 | 90% 3.36E-03 4.05E-01 | 98% 3.83E-03 4.29E-01 | 99% 3.98E-03 4.43E-01 |
+
+postage stamp  9, 8  34.500% t=   1114.96 s
+Cholesky timing ->  0.11  1.66  3.21  3.23  3.24
+  n input pix = 5460
+  sqUC,sqSig %iles | 50% 2.44E-03 3.76E-01 | 90% 3.26E-03 3.99E-01 | 98% 3.75E-03 4.16E-01 | 99% 3.86E-03 4.20E-01 |
+
+postage stamp 10, 8  34.750% t=   1119.37 s
+Cholesky timing ->  0.11  1.64  3.36  3.38  3.39
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 2.37E-03 3.75E-01 | 90% 3.27E-03 4.07E-01 | 98% 3.70E-03 4.34E-01 | 99% 3.88E-03 4.44E-01 |
+
+postage stamp 11, 7  35.000% t=   1123.96 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.65  3.11  3.13  3.14
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.26E-03 3.72E-01 | 90% 3.01E-03 3.93E-01 | 98% 3.37E-03 4.08E-01 | 99% 3.51E-03 4.13E-01 |
+
+postage stamp 12, 7  35.250% t=   1134.00 s
+Cholesky timing ->  0.11  1.60  3.12  3.14  3.15
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 2.06E-03 3.68E-01 | 90% 2.63E-03 3.88E-01 | 98% 2.99E-03 4.05E-01 | 99% 3.09E-03 4.09E-01 |
+
+postage stamp 11, 8  35.500% t=   1138.14 s
+Cholesky timing ->  0.10  1.51  3.07  3.09  3.10
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 2.22E-03 3.70E-01 | 90% 2.99E-03 3.92E-01 | 98% 3.35E-03 4.05E-01 | 99% 3.51E-03 4.09E-01 |
+
+postage stamp 12, 8  35.750% t=   1142.24 s
+Cholesky timing ->  0.11  1.71  3.42  3.44  3.45
+  n input pix = 5499
+  sqUC,sqSig %iles | 50% 2.08E-03 3.67E-01 | 90% 2.68E-03 3.85E-01 | 98% 3.10E-03 3.96E-01 | 99% 3.17E-03 3.99E-01 |
+
+postage stamp 13, 7  36.000% t=   1146.88 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.62  3.28  3.30  3.31
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 1.83E-03 3.63E-01 | 90% 2.36E-03 3.74E-01 | 98% 2.67E-03 3.82E-01 | 99% 2.77E-03 3.84E-01 |
+
+postage stamp 14, 7  36.250% t=   1157.32 s
+Cholesky timing ->  0.10  1.52  2.99  3.01  3.01
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 1.72E-03 3.61E-01 | 90% 2.11E-03 3.70E-01 | 98% 2.37E-03 3.93E-01 | 99% 2.54E-03 3.98E-01 |
+
+postage stamp 13, 8  36.500% t=   1161.32 s
+Cholesky timing ->  0.10  1.62  3.28  3.30  3.31
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 1.90E-03 3.63E-01 | 90% 2.37E-03 3.75E-01 | 98% 2.62E-03 3.83E-01 | 99% 2.72E-03 3.86E-01 |
+
+postage stamp 14, 8  36.750% t=   1165.67 s
+Cholesky timing ->  0.09  1.50  3.19  3.21  3.22
+  n input pix = 5492
+  sqUC,sqSig %iles | 50% 1.73E-03 3.60E-01 | 90% 2.13E-03 3.68E-01 | 98% 2.36E-03 3.74E-01 | 99% 2.46E-03 3.75E-01 |
+
+postage stamp 15, 7  37.000% t=   1170.01 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.72  3.28  3.30  3.31
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 1.65E-03 3.59E-01 | 90% 2.00E-03 3.63E-01 | 98% 2.24E-03 3.66E-01 | 99% 2.33E-03 3.68E-01 |
+
+postage stamp 16, 7  37.250% t=   1180.18 s
+Cholesky timing ->  0.10  1.58  3.23  3.25  3.26
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 1.67E-03 3.59E-01 | 90% 2.06E-03 3.65E-01 | 98% 2.43E-03 3.90E-01 | 99% 2.58E-03 4.07E-01 |
+
+postage stamp 15, 8  37.500% t=   1184.42 s
+Cholesky timing ->  0.09  1.57  3.18  3.21  3.22
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 1.66E-03 3.59E-01 | 90% 2.09E-03 3.66E-01 | 98% 2.52E-03 4.13E-01 | 99% 2.72E-03 4.25E-01 |
+
+postage stamp 16, 8  37.750% t=   1188.68 s
+Cholesky timing ->  0.11  1.64  3.32  3.34  3.35
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 1.66E-03 3.60E-01 | 90% 2.16E-03 3.78E-01 | 98% 2.73E-03 4.19E-01 | 99% 3.10E-03 4.27E-01 |
+
+postage stamp 17, 7  38.000% t=   1193.28 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.59  3.07  3.09  3.10
+  n input pix = 5454
+  sqUC,sqSig %iles | 50% 1.75E-03 3.60E-01 | 90% 2.21E-03 3.70E-01 | 98% 2.58E-03 3.86E-01 | 99% 2.81E-03 4.02E-01 |
+
+postage stamp 18, 7  38.250% t=   1203.26 s
+Cholesky timing ->  0.10  1.54  3.05  3.08  3.09
+  n input pix = 5499
+  sqUC,sqSig %iles | 50% 1.85E-03 3.62E-01 | 90% 2.38E-03 3.75E-01 | 98% 2.68E-03 3.82E-01 | 99% 2.74E-03 3.84E-01 |
+
+postage stamp 17, 8  38.500% t=   1207.35 s
+Cholesky timing ->  0.11  1.66  3.30  3.33  3.34
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 1.71E-03 3.60E-01 | 90% 2.22E-03 3.70E-01 | 98% 2.49E-03 4.07E-01 | 99% 2.69E-03 4.15E-01 |
+
+postage stamp 18, 8  38.750% t=   1211.87 s
+Cholesky timing ->  0.10  1.62  3.34  3.36  3.37
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 1.85E-03 3.63E-01 | 90% 2.32E-03 3.77E-01 | 98% 2.59E-03 3.94E-01 | 99% 2.64E-03 3.99E-01 |
+
+postage stamp 19, 7  39.000% t=   1216.45 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9979; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.59  3.02  3.04  3.06
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 2.03E-03 3.66E-01 | 90% 2.69E-03 3.84E-01 | 98% 3.01E-03 3.94E-01 | 99% 3.09E-03 3.96E-01 |
+
+postage stamp 20, 7  39.250% t=   1226.78 s
+Cholesky timing ->  0.10  1.54  3.10  3.12  3.13
+  n input pix = 5541
+  sqUC,sqSig %iles | 50% 2.23E-03 3.71E-01 | 90% 2.95E-03 3.92E-01 | 98% 3.27E-03 4.03E-01 | 99% 3.35E-03 4.07E-01 |
+
+postage stamp 19, 8  39.500% t=   1230.88 s
+Cholesky timing ->  0.09  1.58  3.23  3.25  3.26
+  n input pix = 5509
+  sqUC,sqSig %iles | 50% 2.07E-03 3.67E-01 | 90% 2.61E-03 3.83E-01 | 98% 2.91E-03 3.92E-01 | 99% 3.08E-03 3.94E-01 |
+
+postage stamp 20, 8  39.750% t=   1235.16 s
+Cholesky timing ->  0.10  1.62  3.27  3.29  3.30
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.22E-03 3.70E-01 | 90% 2.94E-03 3.91E-01 | 98% 3.28E-03 4.02E-01 | 99% 3.43E-03 4.05E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1, 9  40.000% t=   1240.06 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.57  2.95  2.97  2.98
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.10E-03 3.68E-01 | 90% 2.73E-03 3.87E-01 | 98% 2.96E-03 3.97E-01 | 99% 3.01E-03 4.00E-01 |
+
+postage stamp  2, 9  40.250% t=   1253.05 s
+Cholesky timing ->  0.10  1.45  2.87  2.89  2.91
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 2.02E-03 3.66E-01 | 90% 2.61E-03 3.82E-01 | 98% 2.85E-03 3.92E-01 | 99% 2.98E-03 3.94E-01 |
+
+postage stamp  1,10  40.500% t=   1256.94 s
+Cholesky timing ->  0.12  1.65  3.15  3.17  3.18
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.11E-03 3.69E-01 | 90% 2.84E-03 3.94E-01 | 98% 3.16E-03 4.14E-01 | 99% 3.30E-03 4.26E-01 |
+
+postage stamp  2,10  40.750% t=   1261.34 s
+Cholesky timing ->  0.11  1.64  3.22  3.25  3.26
+  n input pix = 5449
+  sqUC,sqSig %iles | 50% 2.13E-03 3.70E-01 | 90% 2.80E-03 3.91E-01 | 98% 3.19E-03 4.06E-01 | 99% 3.30E-03 4.11E-01 |
+
+postage stamp  3, 9  41.000% t=   1265.91 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.56  2.97  2.99  3.00
+  n input pix = 5479
+  sqUC,sqSig %iles | 50% 1.98E-03 3.66E-01 | 90% 2.58E-03 3.85E-01 | 98% 2.90E-03 4.08E-01 | 99% 3.09E-03 4.16E-01 |
+
+postage stamp  4, 9  41.250% t=   1275.99 s
+Cholesky timing ->  0.09  1.47  2.97  2.99  3.00
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 2.05E-03 3.66E-01 | 90% 2.66E-03 3.83E-01 | 98% 2.92E-03 3.97E-01 | 99% 2.99E-03 4.04E-01 |
+
+postage stamp  3,10  41.500% t=   1279.98 s
+Cholesky timing ->  0.10  1.57  3.11  3.13  3.14
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 2.15E-03 3.69E-01 | 90% 2.76E-03 3.88E-01 | 98% 3.03E-03 4.07E-01 | 99% 3.13E-03 4.13E-01 |
+
+postage stamp  4,10  41.750% t=   1284.31 s
+Cholesky timing ->  0.10  1.65  3.36  3.38  3.40
+  n input pix = 5465
+  sqUC,sqSig %iles | 50% 2.11E-03 3.66E-01 | 90% 2.79E-03 3.83E-01 | 98% 3.05E-03 3.91E-01 | 99% 3.12E-03 3.94E-01 |
+
+postage stamp  5, 9  42.000% t=   1289.09 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.54  2.97  2.99  3.00
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 2.06E-03 3.66E-01 | 90% 2.78E-03 3.84E-01 | 98% 3.05E-03 3.91E-01 | 99% 3.17E-03 3.93E-01 |
+
+postage stamp  6, 9  42.250% t=   1299.26 s
+Cholesky timing ->  0.10  1.52  3.09  3.11  3.12
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 2.09E-03 3.67E-01 | 90% 2.94E-03 3.88E-01 | 98% 3.23E-03 4.01E-01 | 99% 3.33E-03 4.09E-01 |
+
+postage stamp  5,10  42.500% t=   1303.40 s
+Cholesky timing ->  0.12  1.61  3.19  3.22  3.23
+  n input pix = 5510
+  sqUC,sqSig %iles | 50% 2.06E-03 3.66E-01 | 90% 2.89E-03 3.84E-01 | 98% 3.17E-03 3.92E-01 | 99% 3.23E-03 3.94E-01 |
+
+postage stamp  6,10  42.750% t=   1307.81 s
+Cholesky timing ->  0.11  1.60  3.26  3.28  3.29
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 2.13E-03 3.67E-01 | 90% 2.92E-03 3.87E-01 | 98% 3.17E-03 3.96E-01 | 99% 3.28E-03 4.00E-01 |
+
+postage stamp  7, 9  43.000% t=   1312.47 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.51  2.91  2.93  2.94
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.22E-03 3.69E-01 | 90% 3.00E-03 3.88E-01 | 98% 3.30E-03 3.98E-01 | 99% 3.38E-03 4.01E-01 |
+
+postage stamp  8, 9  43.250% t=   1322.67 s
+Cholesky timing ->  0.10  1.48  3.09  3.11  3.12
+  n input pix = 5482
+  sqUC,sqSig %iles | 50% 2.28E-03 3.70E-01 | 90% 3.01E-03 3.89E-01 | 98% 3.40E-03 4.01E-01 | 99% 3.51E-03 4.04E-01 |
+
+postage stamp  7,10  43.500% t=   1326.79 s
+Cholesky timing ->  0.12  1.59  3.18  3.21  3.22
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.15E-03 3.67E-01 | 90% 2.88E-03 3.86E-01 | 98% 3.16E-03 3.95E-01 | 99% 3.24E-03 3.99E-01 |
+
+postage stamp  8,10  43.750% t=   1331.27 s
+Cholesky timing ->  0.11  1.57  3.26  3.29  3.30
+  n input pix = 5504
+  sqUC,sqSig %iles | 50% 2.21E-03 3.70E-01 | 90% 2.99E-03 3.96E-01 | 98% 3.34E-03 4.32E-01 | 99% 3.48E-03 4.40E-01 |
+
+postage stamp  9, 9  44.000% t=   1335.88 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.51  2.91  2.93  2.94
+  n input pix = 5465
+  sqUC,sqSig %iles | 50% 2.28E-03 3.72E-01 | 90% 3.06E-03 3.96E-01 | 98% 3.44E-03 4.12E-01 | 99% 3.52E-03 4.17E-01 |
+
+postage stamp 10, 9  44.250% t=   1346.17 s
+Cholesky timing ->  0.10  1.46  3.08  3.10  3.12
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 2.32E-03 3.72E-01 | 90% 3.08E-03 3.95E-01 | 98% 3.44E-03 4.07E-01 | 99% 3.49E-03 4.10E-01 |
+
+postage stamp  9,10  44.500% t=   1350.28 s
+Cholesky timing ->  0.11  1.53  3.17  3.19  3.20
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.23E-03 3.71E-01 | 90% 2.91E-03 3.90E-01 | 98% 3.21E-03 4.07E-01 | 99% 3.34E-03 4.20E-01 |
+
+postage stamp 10,10  44.750% t=   1354.74 s
+Cholesky timing ->  0.10  1.55  3.38  3.40  3.42
+  n input pix = 5531
+  sqUC,sqSig %iles | 50% 2.24E-03 3.72E-01 | 90% 2.98E-03 3.96E-01 | 98% 3.31E-03 4.19E-01 | 99% 3.44E-03 4.30E-01 |
+
+postage stamp 11, 9  45.000% t=   1359.61 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.09  1.54  3.04  3.06  3.07
+  n input pix = 5499
+  sqUC,sqSig %iles | 50% 2.30E-03 3.73E-01 | 90% 3.02E-03 3.99E-01 | 98% 3.40E-03 4.24E-01 | 99% 3.48E-03 4.33E-01 |
+
+postage stamp 12, 9  45.250% t=   1369.71 s
+Cholesky timing ->  0.10  1.50  3.05  3.07  3.09
+  n input pix = 5482
+  sqUC,sqSig %iles | 50% 2.06E-03 3.68E-01 | 90% 2.74E-03 3.90E-01 | 98% 3.07E-03 4.01E-01 | 99% 3.13E-03 4.03E-01 |
+
+postage stamp 11,10  45.500% t=   1373.80 s
+Cholesky timing ->  0.09  1.43  2.97  2.99  3.00
+  n input pix = 5452
+  sqUC,sqSig %iles | 50% 2.19E-03 3.70E-01 | 90% 2.95E-03 3.96E-01 | 98% 3.29E-03 4.10E-01 | 99% 3.35E-03 4.21E-01 |
+
+postage stamp 12,10  45.750% t=   1378.06 s
+Cholesky timing ->  0.11  1.54  3.30  3.32  3.34
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 2.12E-03 3.70E-01 | 90% 2.83E-03 3.98E-01 | 98% 3.12E-03 4.19E-01 | 99% 3.21E-03 4.24E-01 |
+
+postage stamp 13, 9  46.000% t=   1382.77 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.62  3.10  3.12  3.13
+  n input pix = 5515
+  sqUC,sqSig %iles | 50% 1.88E-03 3.63E-01 | 90% 2.43E-03 3.77E-01 | 98% 2.68E-03 3.85E-01 | 99% 2.77E-03 3.88E-01 |
+
+postage stamp 14, 9  46.250% t=   1393.20 s
+Cholesky timing ->  0.11  1.66  3.34  3.36  3.38
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 1.76E-03 3.61E-01 | 90% 2.24E-03 3.74E-01 | 98% 2.61E-03 3.96E-01 | 99% 2.73E-03 4.01E-01 |
+
+postage stamp 13,10  46.500% t=   1397.59 s
+Cholesky timing ->  0.09  1.56  3.23  3.25  3.26
+  n input pix = 5425
+  sqUC,sqSig %iles | 50% 1.99E-03 3.65E-01 | 90% 2.52E-03 3.82E-01 | 98% 2.85E-03 3.89E-01 | 99% 2.90E-03 3.92E-01 |
+
+postage stamp 14,10  46.750% t=   1402.09 s
+Cholesky timing ->  0.10  1.56  3.24  3.26  3.27
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 1.84E-03 3.63E-01 | 90% 2.30E-03 3.76E-01 | 98% 2.66E-03 4.04E-01 | 99% 2.86E-03 4.13E-01 |
+
+postage stamp 15, 9  47.000% t=   1406.52 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.50  2.98  3.00  3.01
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.68E-03 3.59E-01 | 90% 2.03E-03 3.66E-01 | 98% 2.43E-03 3.78E-01 | 99% 2.67E-03 3.93E-01 |
+
+postage stamp 16, 9  47.250% t=   1416.32 s
+Cholesky timing ->  0.09  1.60  3.26  3.28  3.30
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 1.61E-03 3.59E-01 | 90% 2.04E-03 3.74E-01 | 98% 2.29E-03 3.94E-01 | 99% 2.33E-03 3.96E-01 |
+
+postage stamp 15,10  47.500% t=   1420.61 s
+Cholesky timing ->  0.10  1.60  3.26  3.29  3.30
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 1.70E-03 3.60E-01 | 90% 2.18E-03 3.69E-01 | 98% 2.52E-03 4.06E-01 | 99% 2.70E-03 4.14E-01 |
+
+postage stamp 16,10  47.750% t=   1425.13 s
+Cholesky timing ->  0.10  1.63  3.39  3.41  3.42
+  n input pix = 5491
+  sqUC,sqSig %iles | 50% 1.65E-03 3.59E-01 | 90% 2.07E-03 3.66E-01 | 98% 2.30E-03 3.90E-01 | 99% 2.37E-03 3.94E-01 |
+
+postage stamp 17, 9  48.000% t=   1429.82 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.53  2.92  2.94  2.95
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 1.72E-03 3.60E-01 | 90% 2.11E-03 3.66E-01 | 98% 2.33E-03 3.70E-01 | 99% 2.38E-03 3.72E-01 |
+
+postage stamp 18, 9  48.250% t=   1439.75 s
+Cholesky timing ->  0.10  1.64  3.31  3.33  3.34
+  n input pix = 5525
+  sqUC,sqSig %iles | 50% 1.85E-03 3.62E-01 | 90% 2.29E-03 3.72E-01 | 98% 2.54E-03 3.78E-01 | 99% 2.66E-03 3.81E-01 |
+
+postage stamp 17,10  48.500% t=   1444.09 s
+Cholesky timing ->  0.10  1.56  3.32  3.35  3.36
+  n input pix = 5499
+  sqUC,sqSig %iles | 50% 1.74E-03 3.60E-01 | 90% 2.10E-03 3.66E-01 | 98% 2.35E-03 3.70E-01 | 99% 2.52E-03 3.71E-01 |
+
+postage stamp 18,10  48.750% t=   1448.53 s
+Cholesky timing ->  0.10  1.59  3.36  3.38  3.39
+  n input pix = 5519
+  sqUC,sqSig %iles | 50% 1.81E-03 3.62E-01 | 90% 2.31E-03 3.72E-01 | 98% 2.61E-03 3.77E-01 | 99% 2.73E-03 3.79E-01 |
+
+postage stamp 19, 9  49.000% t=   1453.29 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9972; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.59  3.08  3.10  3.11
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 1.98E-03 3.65E-01 | 90% 2.59E-03 3.79E-01 | 98% 2.92E-03 3.89E-01 | 99% 3.03E-03 3.92E-01 |
+
+postage stamp 20, 9  49.250% t=   1463.47 s
+Cholesky timing ->  0.10  1.70  3.31  3.33  3.34
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.22E-03 3.70E-01 | 90% 3.00E-03 3.93E-01 | 98% 3.53E-03 4.20E-01 | 99% 3.63E-03 4.36E-01 |
+
+postage stamp 19,10  49.500% t=   1467.77 s
+Cholesky timing ->  0.10  1.57  3.10  3.12  3.13
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.01E-03 3.66E-01 | 90% 2.59E-03 3.81E-01 | 98% 2.90E-03 3.91E-01 | 99% 3.02E-03 3.93E-01 |
+
+postage stamp 20,10  49.750% t=   1472.12 s
+Cholesky timing ->  0.09  1.62  3.27  3.29  3.30
+  n input pix = 5469
+  sqUC,sqSig %iles | 50% 2.27E-03 3.72E-01 | 90% 2.97E-03 3.94E-01 | 98% 3.46E-03 4.21E-01 | 99% 3.63E-03 4.36E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1,11  50.000% t=   1476.83 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.53  3.03  3.05  3.06
+  n input pix = 5453
+  sqUC,sqSig %iles | 50% 2.28E-03 3.72E-01 | 90% 3.01E-03 3.98E-01 | 98% 3.33E-03 4.20E-01 | 99% 3.43E-03 4.28E-01 |
+
+postage stamp  2,11  50.250% t=   1489.94 s
+Cholesky timing ->  0.12  1.71  3.32  3.35  3.36
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.29E-03 3.74E-01 | 90% 2.97E-03 4.00E-01 | 98% 3.34E-03 4.20E-01 | 99% 3.44E-03 4.28E-01 |
+
+postage stamp  1,12  50.500% t=   1494.42 s
+Cholesky timing ->  0.11  1.51  3.06  3.08  3.09
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.27E-03 3.71E-01 | 90% 3.08E-03 3.96E-01 | 98% 3.44E-03 4.08E-01 | 99% 3.55E-03 4.13E-01 |
+
+postage stamp  2,12  50.750% t=   1498.74 s
+Cholesky timing ->  0.10  1.57  3.11  3.13  3.14
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 2.34E-03 3.73E-01 | 90% 3.16E-03 3.99E-01 | 98% 3.69E-03 4.20E-01 | 99% 3.82E-03 4.27E-01 |
+
+postage stamp  3,11  51.000% t=   1503.04 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.61  3.04  3.05  3.06
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 2.25E-03 3.71E-01 | 90% 2.92E-03 3.93E-01 | 98% 3.27E-03 4.20E-01 | 99% 3.40E-03 4.31E-01 |
+
+postage stamp  4,11  51.250% t=   1512.90 s
+Cholesky timing ->  0.09  1.66  3.36  3.39  3.40
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.14E-03 3.68E-01 | 90% 2.95E-03 3.86E-01 | 98% 3.30E-03 3.97E-01 | 99% 3.43E-03 4.00E-01 |
+
+postage stamp  3,12  51.500% t=   1517.29 s
+Cholesky timing ->  0.10  1.52  3.22  3.24  3.25
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.31E-03 3.72E-01 | 90% 3.14E-03 3.93E-01 | 98% 3.61E-03 4.06E-01 | 99% 3.72E-03 4.11E-01 |
+
+postage stamp  4,12  51.750% t=   1521.66 s
+Cholesky timing ->  0.11  1.52  3.11  3.13  3.14
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 2.28E-03 3.72E-01 | 90% 3.06E-03 3.92E-01 | 98% 3.37E-03 4.05E-01 | 99% 3.44E-03 4.08E-01 |
+
+postage stamp  5,11  52.000% t=   1526.04 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.52  3.02  3.04  3.05
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.18E-03 3.68E-01 | 90% 2.96E-03 3.90E-01 | 98% 3.26E-03 4.12E-01 | 99% 3.37E-03 4.24E-01 |
+
+postage stamp  6,11  52.250% t=   1535.94 s
+Cholesky timing ->  0.11  1.57  3.26  3.28  3.29
+  n input pix = 5492
+  sqUC,sqSig %iles | 50% 2.12E-03 3.66E-01 | 90% 2.88E-03 3.85E-01 | 98% 3.13E-03 3.93E-01 | 99% 3.18E-03 3.94E-01 |
+
+postage stamp  5,12  52.500% t=   1540.26 s
+Cholesky timing ->  0.12  1.65  3.32  3.34  3.35
+  n input pix = 5526
+  sqUC,sqSig %iles | 50% 2.18E-03 3.69E-01 | 90% 2.93E-03 3.90E-01 | 98% 3.20E-03 4.06E-01 | 99% 3.31E-03 4.11E-01 |
+
+postage stamp  6,12  52.750% t=   1544.87 s
+Cholesky timing ->  0.10  1.51  3.04  3.06  3.07
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 2.03E-03 3.65E-01 | 90% 2.85E-03 3.84E-01 | 98% 3.15E-03 3.91E-01 | 99% 3.21E-03 3.93E-01 |
+
+postage stamp  7,11  53.000% t=   1549.33 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.61  3.16  3.18  3.19
+  n input pix = 5491
+  sqUC,sqSig %iles | 50% 2.09E-03 3.69E-01 | 90% 2.89E-03 3.95E-01 | 98% 3.21E-03 4.30E-01 | 99% 3.32E-03 4.42E-01 |
+
+postage stamp  8,11  53.250% t=   1559.41 s
+Cholesky timing ->  0.10  1.71  3.33  3.35  3.36
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 2.09E-03 3.67E-01 | 90% 2.73E-03 3.84E-01 | 98% 3.05E-03 4.00E-01 | 99% 3.13E-03 4.06E-01 |
+
+postage stamp  7,12  53.500% t=   1563.83 s
+Cholesky timing ->  0.11  1.67  3.34  3.37  3.38
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 2.04E-03 3.64E-01 | 90% 2.65E-03 3.80E-01 | 98% 2.92E-03 3.87E-01 | 99% 3.07E-03 3.90E-01 |
+
+postage stamp  8,12  53.750% t=   1568.36 s
+Cholesky timing ->  0.10  1.55  3.20  3.22  3.23
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 2.02E-03 3.65E-01 | 90% 2.53E-03 3.78E-01 | 98% 2.80E-03 3.85E-01 | 99% 2.90E-03 3.88E-01 |
+
+postage stamp  9,11  54.000% t=   1572.86 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.63  3.23  3.25  3.26
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.09E-03 3.67E-01 | 90% 2.67E-03 3.83E-01 | 98% 2.98E-03 3.93E-01 | 99% 3.10E-03 3.96E-01 |
+
+postage stamp 10,11  54.250% t=   1582.95 s
+Cholesky timing ->  0.11  1.62  3.24  3.26  3.27
+  n input pix = 5492
+  sqUC,sqSig %iles | 50% 2.09E-03 3.68E-01 | 90% 2.77E-03 3.86E-01 | 98% 3.08E-03 3.97E-01 | 99% 3.13E-03 4.02E-01 |
+
+postage stamp  9,12  54.500% t=   1587.27 s
+Cholesky timing ->  0.10  1.56  3.13  3.15  3.16
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 1.98E-03 3.67E-01 | 90% 2.53E-03 3.86E-01 | 98% 2.80E-03 4.18E-01 | 99% 2.91E-03 4.29E-01 |
+
+postage stamp 10,12  54.750% t=   1591.54 s
+Cholesky timing ->  0.10  1.62  3.24  3.27  3.28
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 2.06E-03 3.68E-01 | 90% 2.62E-03 3.86E-01 | 98% 2.91E-03 3.94E-01 | 99% 2.99E-03 3.97E-01 |
+
+postage stamp 11,11  55.000% t=   1595.94 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.61  3.04  3.06  3.07
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.18E-03 3.70E-01 | 90% 2.87E-03 3.92E-01 | 98% 3.12E-03 4.05E-01 | 99% 3.21E-03 4.07E-01 |
+
+postage stamp 12,11  55.250% t=   1605.78 s
+Cholesky timing ->  0.11  1.69  3.32  3.35  3.36
+  n input pix = 5462
+  sqUC,sqSig %iles | 50% 2.13E-03 3.72E-01 | 90% 2.82E-03 3.97E-01 | 98% 3.07E-03 4.15E-01 | 99% 3.14E-03 4.21E-01 |
+
+postage stamp 11,12  55.500% t=   1610.19 s
+Cholesky timing ->  0.12  1.62  3.15  3.18  3.19
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 2.07E-03 3.67E-01 | 90% 2.75E-03 3.89E-01 | 98% 3.02E-03 3.97E-01 | 99% 3.13E-03 4.00E-01 |
+
+postage stamp 12,12  55.750% t=   1614.56 s
+Cholesky timing ->  0.11  1.52  3.09  3.11  3.12
+  n input pix = 5474
+  sqUC,sqSig %iles | 50% 2.03E-03 3.66E-01 | 90% 2.78E-03 3.90E-01 | 98% 3.06E-03 3.99E-01 | 99% 3.17E-03 4.00E-01 |
+
+postage stamp 13,11  56.000% t=   1618.98 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.64  3.05  3.06  3.08
+  n input pix = 5455
+  sqUC,sqSig %iles | 50% 1.96E-03 3.70E-01 | 90% 2.62E-03 3.93E-01 | 98% 2.95E-03 4.10E-01 | 99% 3.05E-03 4.17E-01 |
+
+postage stamp 14,11  56.250% t=   1628.79 s
+Cholesky timing ->  0.12  1.70  3.26  3.28  3.29
+  n input pix = 5437
+  sqUC,sqSig %iles | 50% 1.83E-03 3.62E-01 | 90% 2.36E-03 3.79E-01 | 98% 2.65E-03 4.00E-01 | 99% 2.73E-03 4.07E-01 |
+
+postage stamp 13,12  56.500% t=   1633.15 s
+Cholesky timing ->  0.11  1.62  3.16  3.18  3.19
+  n input pix = 5410
+  sqUC,sqSig %iles | 50% 2.03E-03 3.66E-01 | 90% 2.71E-03 3.88E-01 | 98% 2.97E-03 3.96E-01 | 99% 3.08E-03 3.98E-01 |
+
+postage stamp 14,12  56.750% t=   1637.40 s
+Cholesky timing ->  0.11  1.60  3.28  3.31  3.32
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.04E-03 3.69E-01 | 90% 2.56E-03 3.96E-01 | 98% 2.96E-03 4.28E-01 | 99% 3.20E-03 4.37E-01 |
+
+postage stamp 15,11  57.000% t=   1641.82 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.50  2.94  2.96  2.97
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.75E-03 3.61E-01 | 90% 2.18E-03 3.70E-01 | 98% 2.41E-03 3.76E-01 | 99% 2.56E-03 3.77E-01 |
+
+postage stamp 16,11  57.250% t=   1651.43 s
+Cholesky timing ->  0.11  1.69  3.31  3.33  3.34
+  n input pix = 5450
+  sqUC,sqSig %iles | 50% 1.74E-03 3.60E-01 | 90% 2.13E-03 3.68E-01 | 98% 2.36E-03 3.74E-01 | 99% 2.45E-03 3.81E-01 |
+
+postage stamp 15,12  57.500% t=   1655.77 s
+Cholesky timing ->  0.10  1.58  3.14  3.16  3.18
+  n input pix = 5430
+  sqUC,sqSig %iles | 50% 1.88E-03 3.63E-01 | 90% 2.35E-03 3.77E-01 | 98% 2.78E-03 4.21E-01 | 99% 3.05E-03 4.31E-01 |
+
+postage stamp 16,12  57.750% t=   1660.07 s
+Cholesky timing ->  0.11  1.60  3.15  3.17  3.18
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 1.75E-03 3.63E-01 | 90% 2.30E-03 3.91E-01 | 98% 2.66E-03 4.12E-01 | 99% 2.74E-03 4.17E-01 |
+
+postage stamp 17,11  58.000% t=   1664.49 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.57  3.11  3.13  3.14
+  n input pix = 5509
+  sqUC,sqSig %iles | 50% 1.74E-03 3.61E-01 | 90% 2.18E-03 3.70E-01 | 98% 2.45E-03 3.93E-01 | 99% 2.55E-03 3.96E-01 |
+
+postage stamp 18,11  58.250% t=   1674.65 s
+Cholesky timing ->  0.10  1.59  3.13  3.15  3.16
+  n input pix = 5492
+  sqUC,sqSig %iles | 50% 1.86E-03 3.62E-01 | 90% 2.36E-03 3.73E-01 | 98% 2.62E-03 3.78E-01 | 99% 2.67E-03 3.80E-01 |
+
+postage stamp 17,12  58.500% t=   1678.80 s
+Cholesky timing ->  0.11  1.57  3.06  3.08  3.09
+  n input pix = 5446
+  sqUC,sqSig %iles | 50% 1.82E-03 3.62E-01 | 90% 2.32E-03 3.72E-01 | 98% 2.62E-03 4.04E-01 | 99% 2.79E-03 4.13E-01 |
+
+postage stamp 18,12  58.750% t=   1682.92 s
+Cholesky timing ->  0.11  1.75  3.38  3.40  3.41
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 1.92E-03 3.63E-01 | 90% 2.39E-03 3.74E-01 | 98% 2.68E-03 3.80E-01 | 99% 2.77E-03 3.82E-01 |
+
+postage stamp 19,11  59.000% t=   1687.42 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9965; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.61  3.16  3.19  3.20
+  n input pix = 5517
+  sqUC,sqSig %iles | 50% 2.05E-03 3.67E-01 | 90% 2.59E-03 3.85E-01 | 98% 2.99E-03 4.04E-01 | 99% 3.09E-03 4.13E-01 |
+
+postage stamp 20,11  59.250% t=   1697.64 s
+Cholesky timing ->  0.10  1.61  3.10  3.12  3.13
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.20E-03 3.72E-01 | 90% 2.97E-03 3.96E-01 | 98% 3.39E-03 4.11E-01 | 99% 3.54E-03 4.17E-01 |
+
+postage stamp 19,12  59.500% t=   1701.74 s
+Cholesky timing ->  0.10  1.70  3.25  3.27  3.28
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.01E-03 3.66E-01 | 90% 2.64E-03 3.82E-01 | 98% 3.03E-03 3.96E-01 | 99% 3.12E-03 4.05E-01 |
+
+postage stamp 20,12  59.750% t=   1706.12 s
+Cholesky timing ->  0.11  1.67  3.23  3.25  3.26
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 2.22E-03 3.70E-01 | 90% 3.00E-03 3.90E-01 | 98% 3.39E-03 4.05E-01 | 99% 3.52E-03 4.11E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1,13  60.000% t=   1710.79 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.62  3.16  3.18  3.19
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.32E-03 3.72E-01 | 90% 3.14E-03 3.96E-01 | 98% 3.60E-03 4.09E-01 | 99% 3.72E-03 4.13E-01 |
+
+postage stamp  2,13  60.250% t=   1723.78 s
+Cholesky timing ->  0.12  1.79  3.51  3.53  3.54
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 2.45E-03 3.75E-01 | 90% 3.27E-03 4.00E-01 | 98% 3.74E-03 4.12E-01 | 99% 3.87E-03 4.17E-01 |
+
+postage stamp  1,14  60.500% t=   1728.43 s
+Cholesky timing ->  0.11  1.68  3.24  3.26  3.27
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.37E-03 3.75E-01 | 90% 3.14E-03 3.96E-01 | 98% 3.60E-03 4.09E-01 | 99% 3.76E-03 4.12E-01 |
+
+postage stamp  2,14  60.750% t=   1732.93 s
+Cholesky timing ->  0.11  1.56  3.16  3.18  3.19
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.47E-03 3.77E-01 | 90% 3.35E-03 4.00E-01 | 98% 3.82E-03 4.13E-01 | 99% 3.93E-03 4.21E-01 |
+
+postage stamp  3,13  61.000% t=   1737.43 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.55  2.99  3.01  3.02
+  n input pix = 5459
+  sqUC,sqSig %iles | 50% 2.44E-03 3.74E-01 | 90% 3.28E-03 3.98E-01 | 98% 3.67E-03 4.14E-01 | 99% 3.80E-03 4.21E-01 |
+
+postage stamp  4,13  61.250% t=   1747.14 s
+Cholesky timing ->  0.11  1.61  3.23  3.25  3.26
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 2.33E-03 3.74E-01 | 90% 3.16E-03 3.98E-01 | 98% 3.56E-03 4.21E-01 | 99% 3.67E-03 4.33E-01 |
+
+postage stamp  3,14  61.500% t=   1751.49 s
+Cholesky timing ->  0.12  1.66  3.19  3.21  3.22
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 2.52E-03 3.77E-01 | 90% 3.40E-03 4.01E-01 | 98% 3.97E-03 4.19E-01 | 99% 4.07E-03 4.24E-01 |
+
+postage stamp  4,14  61.750% t=   1755.83 s
+Cholesky timing ->  0.11  1.71  3.23  3.25  3.26
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 2.41E-03 3.76E-01 | 90% 3.31E-03 4.06E-01 | 98% 3.74E-03 4.29E-01 | 99% 3.92E-03 4.41E-01 |
+
+postage stamp  5,13  62.000% t=   1760.30 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.56  3.03  3.05  3.06
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 2.17E-03 3.69E-01 | 90% 2.98E-03 3.89E-01 | 98% 3.35E-03 4.04E-01 | 99% 3.42E-03 4.07E-01 |
+
+postage stamp  6,13  62.250% t=   1770.36 s
+Cholesky timing ->  0.11  1.58  2.98  3.00  3.01
+  n input pix = 5490
+  sqUC,sqSig %iles | 50% 2.08E-03 3.67E-01 | 90% 2.73E-03 3.85E-01 | 98% 3.01E-03 3.95E-01 | 99% 3.12E-03 4.01E-01 |
+
+postage stamp  5,14  62.500% t=   1774.37 s
+Cholesky timing ->  0.11  1.68  3.26  3.29  3.30
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.21E-03 3.70E-01 | 90% 2.96E-03 3.89E-01 | 98% 3.32E-03 4.01E-01 | 99% 3.41E-03 4.05E-01 |
+
+postage stamp  6,14  62.750% t=   1778.75 s
+Cholesky timing ->  0.11  1.69  3.33  3.35  3.37
+  n input pix = 5457
+  sqUC,sqSig %iles | 50% 2.08E-03 3.67E-01 | 90% 2.67E-03 3.85E-01 | 98% 2.96E-03 3.99E-01 | 99% 3.06E-03 4.03E-01 |
+
+postage stamp  7,13  63.000% t=   1783.27 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.09  1.63  3.28  3.30  3.31
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 2.01E-03 3.67E-01 | 90% 2.58E-03 3.88E-01 | 98% 2.81E-03 4.10E-01 | 99% 2.90E-03 4.15E-01 |
+
+postage stamp  8,13  63.250% t=   1793.56 s
+Cholesky timing ->  0.09  1.52  3.00  3.02  3.03
+  n input pix = 5464
+  sqUC,sqSig %iles | 50% 1.89E-03 3.63E-01 | 90% 2.43E-03 3.75E-01 | 98% 2.76E-03 3.81E-01 | 99% 2.85E-03 3.83E-01 |
+
+postage stamp  7,14  63.500% t=   1797.67 s
+Cholesky timing ->  0.10  1.51  3.01  3.03  3.05
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 1.93E-03 3.65E-01 | 90% 2.55E-03 3.83E-01 | 98% 2.92E-03 4.23E-01 | 99% 3.23E-03 4.33E-01 |
+
+postage stamp  8,14  63.750% t=   1801.77 s
+Cholesky timing ->  0.11  1.58  3.16  3.18  3.19
+  n input pix = 5454
+  sqUC,sqSig %iles | 50% 1.84E-03 3.61E-01 | 90% 2.30E-03 3.72E-01 | 98% 2.59E-03 3.77E-01 | 99% 2.70E-03 3.78E-01 |
+
+postage stamp  9,13  64.000% t=   1806.26 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.62  3.25  3.27  3.28
+  n input pix = 5483
+  sqUC,sqSig %iles | 50% 1.88E-03 3.64E-01 | 90% 2.41E-03 3.78E-01 | 98% 2.70E-03 3.95E-01 | 99% 2.77E-03 4.00E-01 |
+
+postage stamp 10,13  64.250% t=   1816.58 s
+Cholesky timing ->  0.11  1.52  2.99  3.01  3.02
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.92E-03 3.65E-01 | 90% 2.46E-03 3.82E-01 | 98% 2.75E-03 3.95E-01 | 99% 2.85E-03 3.98E-01 |
+
+postage stamp  9,14  64.500% t=   1820.64 s
+Cholesky timing ->  0.10  1.55  3.13  3.15  3.16
+  n input pix = 5521
+  sqUC,sqSig %iles | 50% 1.82E-03 3.62E-01 | 90% 2.22E-03 3.70E-01 | 98% 2.43E-03 3.76E-01 | 99% 2.57E-03 3.78E-01 |
+
+postage stamp 10,14  64.750% t=   1825.03 s
+Cholesky timing ->  0.10  1.60  3.26  3.28  3.29
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 1.87E-03 3.63E-01 | 90% 2.32E-03 3.74E-01 | 98% 2.59E-03 3.80E-01 | 99% 2.66E-03 3.82E-01 |
+
+postage stamp 11,13  65.000% t=   1829.69 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.61  3.16  3.18  3.20
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 1.99E-03 3.66E-01 | 90% 2.63E-03 3.84E-01 | 98% 2.88E-03 3.93E-01 | 99% 2.97E-03 3.95E-01 |
+
+postage stamp 12,13  65.250% t=   1839.87 s
+Cholesky timing ->  0.11  1.56  3.02  3.04  3.05
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 2.12E-03 3.72E-01 | 90% 2.80E-03 3.97E-01 | 98% 3.05E-03 4.18E-01 | 99% 3.13E-03 4.26E-01 |
+
+postage stamp 11,14  65.500% t=   1844.00 s
+Cholesky timing ->  0.10  1.49  3.07  3.10  3.11
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 1.96E-03 3.64E-01 | 90% 2.48E-03 3.81E-01 | 98% 2.79E-03 3.88E-01 | 99% 2.92E-03 3.91E-01 |
+
+postage stamp 12,14  65.750% t=   1848.37 s
+Cholesky timing ->  0.10  1.58  3.25  3.27  3.29
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.00E-03 3.65E-01 | 90% 2.71E-03 3.87E-01 | 98% 2.98E-03 3.96E-01 | 99% 3.07E-03 3.98E-01 |
+
+postage stamp 13,13  66.000% t=   1853.05 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.61  3.23  3.25  3.26
+  n input pix = 5445
+  sqUC,sqSig %iles | 50% 2.13E-03 3.69E-01 | 90% 2.82E-03 3.94E-01 | 98% 3.16E-03 4.26E-01 | 99% 3.31E-03 4.37E-01 |
+
+postage stamp 14,13  66.250% t=   1863.22 s
+Cholesky timing ->  0.10  1.51  2.96  2.98  2.99
+  n input pix = 5441
+  sqUC,sqSig %iles | 50% 1.96E-03 3.66E-01 | 90% 2.58E-03 3.87E-01 | 98% 2.85E-03 3.95E-01 | 99% 2.91E-03 3.97E-01 |
+
+postage stamp 13,14  66.500% t=   1867.27 s
+Cholesky timing ->  0.10  1.49  3.03  3.05  3.06
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 2.01E-03 3.67E-01 | 90% 2.79E-03 3.91E-01 | 98% 3.07E-03 4.00E-01 | 99% 3.14E-03 4.02E-01 |
+
+postage stamp 14,14  66.750% t=   1871.42 s
+Cholesky timing ->  0.11  1.56  3.20  3.23  3.24
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 2.08E-03 3.72E-01 | 90% 2.82E-03 3.98E-01 | 98% 3.17E-03 4.27E-01 | 99% 3.30E-03 4.38E-01 |
+
+postage stamp 15,13  67.000% t=   1876.03 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.51  3.10  3.12  3.13
+  n input pix = 5436
+  sqUC,sqSig %iles | 50% 1.87E-03 3.63E-01 | 90% 2.43E-03 3.77E-01 | 98% 2.77E-03 3.86E-01 | 99% 2.85E-03 3.88E-01 |
+
+postage stamp 16,13  67.250% t=   1886.07 s
+Cholesky timing ->  0.10  1.57  3.05  3.07  3.08
+  n input pix = 5455
+  sqUC,sqSig %iles | 50% 1.87E-03 3.64E-01 | 90% 2.35E-03 3.78E-01 | 98% 2.68E-03 3.96E-01 | 99% 2.84E-03 4.01E-01 |
+
+postage stamp 15,14  67.500% t=   1890.24 s
+Cholesky timing ->  0.11  1.49  2.96  2.98  2.99
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 2.04E-03 3.66E-01 | 90% 2.56E-03 3.82E-01 | 98% 2.81E-03 3.89E-01 | 99% 2.92E-03 3.91E-01 |
+
+postage stamp 16,14  67.750% t=   1894.26 s
+Cholesky timing ->  0.12  1.65  3.32  3.35  3.36
+  n input pix = 5515
+  sqUC,sqSig %iles | 50% 1.95E-03 3.65E-01 | 90% 2.45E-03 3.80E-01 | 98% 2.67E-03 4.07E-01 | 99% 2.72E-03 4.12E-01 |
+
+postage stamp 17,13  68.000% t=   1898.91 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.51  3.20  3.23  3.24
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 1.94E-03 3.64E-01 | 90% 2.41E-03 3.78E-01 | 98% 2.74E-03 4.21E-01 | 99% 2.85E-03 4.28E-01 |
+
+postage stamp 18,13  68.250% t=   1909.16 s
+Cholesky timing ->  0.11  1.58  3.17  3.19  3.20
+  n input pix = 5469
+  sqUC,sqSig %iles | 50% 1.97E-03 3.64E-01 | 90% 2.54E-03 3.80E-01 | 98% 2.96E-03 4.15E-01 | 99% 3.08E-03 4.23E-01 |
+
+postage stamp 17,14  68.500% t=   1913.49 s
+Cholesky timing ->  0.11  1.49  2.95  2.97  2.98
+  n input pix = 5459
+  sqUC,sqSig %iles | 50% 1.94E-03 3.63E-01 | 90% 2.48E-03 3.76E-01 | 98% 2.78E-03 3.82E-01 | 99% 2.95E-03 3.85E-01 |
+
+postage stamp 18,14  68.750% t=   1917.49 s
+Cholesky timing ->  0.11  1.58  3.26  3.29  3.30
+  n input pix = 5503
+  sqUC,sqSig %iles | 50% 2.05E-03 3.66E-01 | 90% 2.69E-03 3.84E-01 | 98% 3.02E-03 4.17E-01 | 99% 3.10E-03 4.28E-01 |
+
+postage stamp 19,13  69.000% t=   1922.09 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9958; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.09  1.55  3.31  3.33  3.34
+  n input pix = 5500
+  sqUC,sqSig %iles | 50% 2.05E-03 3.66E-01 | 90% 2.74E-03 3.82E-01 | 98% 3.07E-03 3.90E-01 | 99% 3.14E-03 3.92E-01 |
+
+postage stamp 20,13  69.250% t=   1932.43 s
+Cholesky timing ->  0.09  1.48  3.19  3.21  3.23
+  n input pix = 5476
+  sqUC,sqSig %iles | 50% 2.25E-03 3.70E-01 | 90% 3.03E-03 3.94E-01 | 98% 3.40E-03 4.17E-01 | 99% 3.57E-03 4.27E-01 |
+
+postage stamp 19,14  69.500% t=   1936.70 s
+Cholesky timing ->  0.10  1.45  2.92  2.94  2.95
+  n input pix = 5458
+  sqUC,sqSig %iles | 50% 2.12E-03 3.68E-01 | 90% 2.84E-03 3.87E-01 | 98% 3.09E-03 4.02E-01 | 99% 3.23E-03 4.08E-01 |
+
+postage stamp 20,14  69.750% t=   1940.83 s
+Cholesky timing ->  0.11  1.59  3.17  3.19  3.20
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.22E-03 3.69E-01 | 90% 3.07E-03 3.91E-01 | 98% 3.45E-03 4.12E-01 | 99% 3.57E-03 4.29E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1,15  70.000% t=   1945.56 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.60  3.31  3.33  3.34
+  n input pix = 5491
+  sqUC,sqSig %iles | 50% 2.32E-03 3.72E-01 | 90% 3.10E-03 3.93E-01 | 98% 3.57E-03 4.08E-01 | 99% 3.72E-03 4.12E-01 |
+
+postage stamp  2,15  70.250% t=   1958.42 s
+Cholesky timing ->  0.10  1.61  3.36  3.38  3.39
+  n input pix = 5525
+  sqUC,sqSig %iles | 50% 2.57E-03 3.77E-01 | 90% 3.47E-03 4.02E-01 | 98% 3.93E-03 4.17E-01 | 99% 4.09E-03 4.22E-01 |
+
+postage stamp  1,16  70.500% t=   1962.90 s
+Cholesky timing ->  0.11  1.54  3.15  3.17  3.18
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 2.39E-03 3.74E-01 | 90% 3.14E-03 3.98E-01 | 98% 3.54E-03 4.19E-01 | 99% 3.73E-03 4.26E-01 |
+
+postage stamp  2,16  70.750% t=   1967.37 s
+Cholesky timing ->  0.11  1.65  3.33  3.35  3.36
+  n input pix = 5507
+  sqUC,sqSig %iles | 50% 2.53E-03 3.76E-01 | 90% 3.40E-03 4.00E-01 | 98% 3.93E-03 4.15E-01 | 99% 4.04E-03 4.20E-01 |
+
+postage stamp  3,15  71.000% t=   1972.17 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.58  3.24  3.27  3.28
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.58E-03 3.77E-01 | 90% 3.50E-03 4.02E-01 | 98% 4.03E-03 4.17E-01 | 99% 4.17E-03 4.24E-01 |
+
+postage stamp  4,15  71.250% t=   1982.11 s
+Cholesky timing ->  0.11  1.60  3.21  3.23  3.24
+  n input pix = 5505
+  sqUC,sqSig %iles | 50% 2.42E-03 3.74E-01 | 90% 3.28E-03 3.97E-01 | 98% 3.73E-03 4.14E-01 | 99% 3.84E-03 4.19E-01 |
+
+postage stamp  3,16  71.500% t=   1986.41 s
+Cholesky timing ->  0.10  1.64  3.39  3.41  3.43
+  n input pix = 5513
+  sqUC,sqSig %iles | 50% 2.55E-03 3.76E-01 | 90% 3.45E-03 4.01E-01 | 98% 3.97E-03 4.17E-01 | 99% 4.12E-03 4.24E-01 |
+
+postage stamp  4,16  71.750% t=   1990.98 s
+Cholesky timing ->  0.10  1.56  3.40  3.43  3.44
+  n input pix = 5477
+  sqUC,sqSig %iles | 50% 2.47E-03 3.75E-01 | 90% 3.31E-03 3.98E-01 | 98% 3.79E-03 4.13E-01 | 99% 3.93E-03 4.19E-01 |
+
+postage stamp  5,15  72.000% t=   1995.58 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.10  1.55  3.15  3.17  3.18
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 2.27E-03 3.71E-01 | 90% 2.95E-03 3.94E-01 | 98% 3.35E-03 4.15E-01 | 99% 3.48E-03 4.24E-01 |
+
+postage stamp  6,15  72.250% t=   2005.76 s
+Cholesky timing ->  0.11  1.59  3.22  3.24  3.25
+  n input pix = 5510
+  sqUC,sqSig %iles | 50% 2.02E-03 3.66E-01 | 90% 2.65E-03 3.81E-01 | 98% 2.97E-03 3.90E-01 | 99% 3.04E-03 3.92E-01 |
+
+postage stamp  5,16  72.500% t=   2010.15 s
+Cholesky timing ->  0.10  1.45  3.06  3.08  3.10
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 2.27E-03 3.73E-01 | 90% 3.04E-03 3.96E-01 | 98% 3.39E-03 4.24E-01 | 99% 3.54E-03 4.33E-01 |
+
+postage stamp  6,16  72.750% t=   2014.48 s
+Cholesky timing ->  0.10  1.61  3.27  3.30  3.31
+  n input pix = 5485
+  sqUC,sqSig %iles | 50% 2.01E-03 3.67E-01 | 90% 2.60E-03 3.82E-01 | 98% 2.93E-03 3.94E-01 | 99% 3.04E-03 4.00E-01 |
+
+postage stamp  7,15  73.000% t=   2019.01 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.77  3.56  3.58  3.60
+  n input pix = 5473
+  sqUC,sqSig %iles | 50% 1.89E-03 3.63E-01 | 90% 2.38E-03 3.74E-01 | 98% 2.68E-03 3.80E-01 | 99% 2.82E-03 3.82E-01 |
+
+postage stamp  8,15  73.250% t=   2029.41 s
+Cholesky timing ->  0.10  1.59  3.26  3.28  3.29
+  n input pix = 5516
+  sqUC,sqSig %iles | 50% 1.82E-03 3.62E-01 | 90% 2.20E-03 3.75E-01 | 98% 2.60E-03 4.05E-01 | 99% 2.79E-03 4.13E-01 |
+
+postage stamp  7,16  73.500% t=   2033.81 s
+Cholesky timing ->  0.10  1.61  3.23  3.25  3.26
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 1.88E-03 3.62E-01 | 90% 2.29E-03 3.73E-01 | 98% 2.60E-03 3.79E-01 | 99% 2.68E-03 3.83E-01 |
+
+postage stamp  8,16  73.750% t=   2038.20 s
+Cholesky timing ->  0.10  1.64  3.27  3.29  3.30
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 1.74E-03 3.60E-01 | 90% 2.18E-03 3.69E-01 | 98% 2.49E-03 3.93E-01 | 99% 2.95E-03 4.07E-01 |
+
+postage stamp  9,15  74.000% t=   2042.75 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.80  3.45  3.47  3.49
+  n input pix = 5479
+  sqUC,sqSig %iles | 50% 1.76E-03 3.61E-01 | 90% 2.17E-03 3.71E-01 | 98% 2.66E-03 4.06E-01 | 99% 2.84E-03 4.15E-01 |
+
+postage stamp 10,15  74.250% t=   2052.99 s
+Cholesky timing ->  0.12  1.72  3.30  3.33  3.34
+  n input pix = 5496
+  sqUC,sqSig %iles | 50% 1.80E-03 3.61E-01 | 90% 2.34E-03 3.75E-01 | 98% 2.89E-03 4.24E-01 | 99% 3.36E-03 4.37E-01 |
+
+postage stamp  9,16  74.500% t=   2057.48 s
+Cholesky timing ->  0.11  1.67  3.28  3.30  3.32
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 1.68E-03 3.60E-01 | 90% 2.26E-03 3.71E-01 | 98% 3.04E-03 4.24E-01 | 99% 3.38E-03 4.36E-01 |
+
+postage stamp 10,16  74.750% t=   2061.92 s
+Cholesky timing ->  0.11  1.70  3.40  3.43  3.44
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 1.73E-03 3.60E-01 | 90% 2.22E-03 3.70E-01 | 98% 2.77E-03 4.18E-01 | 99% 3.28E-03 4.32E-01 |
+
+postage stamp 11,15  75.000% t=   2066.69 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.73  3.39  3.41  3.43
+  n input pix = 5505
+  sqUC,sqSig %iles | 50% 1.86E-03 3.62E-01 | 90% 2.41E-03 3.78E-01 | 98% 2.72E-03 3.91E-01 | 99% 2.80E-03 4.13E-01 |
+
+postage stamp 12,15  75.250% t=   2076.85 s
+Cholesky timing ->  0.12  1.80  3.36  3.38  3.40
+  n input pix = 5522
+  sqUC,sqSig %iles | 50% 1.97E-03 3.65E-01 | 90% 2.64E-03 3.84E-01 | 98% 2.91E-03 3.93E-01 | 99% 2.98E-03 3.95E-01 |
+
+postage stamp 11,16  75.500% t=   2081.37 s
+Cholesky timing ->  0.11  1.64  3.16  3.18  3.20
+  n input pix = 5528
+  sqUC,sqSig %iles | 50% 1.85E-03 3.62E-01 | 90% 2.26E-03 3.73E-01 | 98% 2.53E-03 3.79E-01 | 99% 2.61E-03 3.81E-01 |
+
+postage stamp 12,16  75.750% t=   2085.62 s
+Cholesky timing ->  0.12  1.78  3.41  3.43  3.44
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.00E-03 3.65E-01 | 90% 2.52E-03 3.82E-01 | 98% 2.84E-03 3.90E-01 | 99% 2.92E-03 3.91E-01 |
+
+postage stamp 13,15  76.000% t=   2090.29 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.69  3.35  3.38  3.39
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 2.13E-03 3.68E-01 | 90% 2.81E-03 3.90E-01 | 98% 3.04E-03 4.00E-01 | 99% 3.10E-03 4.02E-01 |
+
+postage stamp 14,15  76.250% t=   2100.44 s
+Cholesky timing ->  0.13  1.76  3.50  3.52  3.53
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.12E-03 3.68E-01 | 90% 2.81E-03 3.90E-01 | 98% 3.10E-03 4.01E-01 | 99% 3.19E-03 4.03E-01 |
+
+postage stamp 13,16  76.500% t=   2105.08 s
+Cholesky timing ->  0.12  1.69  3.27  3.29  3.30
+  n input pix = 5514
+  sqUC,sqSig %iles | 50% 2.06E-03 3.66E-01 | 90% 2.78E-03 3.89E-01 | 98% 3.04E-03 3.97E-01 | 99% 3.15E-03 3.99E-01 |
+
+postage stamp 14,16  76.750% t=   2109.43 s
+Cholesky timing ->  0.12  1.79  3.42  3.44  3.45
+  n input pix = 5495
+  sqUC,sqSig %iles | 50% 2.13E-03 3.68E-01 | 90% 2.92E-03 3.94E-01 | 98% 3.22E-03 4.02E-01 | 99% 3.31E-03 4.05E-01 |
+
+postage stamp 15,15  77.000% t=   2114.03 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.65  3.32  3.34  3.35
+  n input pix = 5502
+  sqUC,sqSig %iles | 50% 2.05E-03 3.67E-01 | 90% 2.69E-03 3.85E-01 | 98% 2.98E-03 3.95E-01 | 99% 3.05E-03 3.99E-01 |
+
+postage stamp 16,15  77.250% t=   2124.14 s
+Cholesky timing ->  0.13  1.72  3.27  3.29  3.30
+  n input pix = 5488
+  sqUC,sqSig %iles | 50% 2.02E-03 3.67E-01 | 90% 2.65E-03 3.82E-01 | 98% 3.01E-03 3.91E-01 | 99% 3.11E-03 3.94E-01 |
+
+postage stamp 15,16  77.500% t=   2128.58 s
+Cholesky timing ->  0.12  1.73  3.29  3.31  3.32
+  n input pix = 5519
+  sqUC,sqSig %iles | 50% 2.18E-03 3.70E-01 | 90% 2.91E-03 3.91E-01 | 98% 3.24E-03 4.02E-01 | 99% 3.34E-03 4.05E-01 |
+
+postage stamp 16,16  77.750% t=   2132.94 s
+Cholesky timing ->  0.13  1.79  3.48  3.51  3.52
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 2.15E-03 3.70E-01 | 90% 2.81E-03 3.88E-01 | 98% 3.15E-03 3.98E-01 | 99% 3.26E-03 4.01E-01 |
+
+postage stamp 17,15  78.000% t=   2137.64 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.69  3.30  3.32  3.33
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 2.03E-03 3.66E-01 | 90% 2.68E-03 3.80E-01 | 98% 2.99E-03 3.89E-01 | 99% 3.13E-03 3.92E-01 |
+
+postage stamp 18,15  78.250% t=   2147.73 s
+Cholesky timing ->  0.14  1.70  3.28  3.30  3.31
+  n input pix = 5456
+  sqUC,sqSig %iles | 50% 2.08E-03 3.65E-01 | 90% 2.76E-03 3.82E-01 | 98% 2.97E-03 3.89E-01 | 99% 3.05E-03 3.91E-01 |
+
+postage stamp 17,16  78.500% t=   2152.13 s
+Cholesky timing ->  0.11  1.66  3.33  3.35  3.36
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.17E-03 3.72E-01 | 90% 2.86E-03 3.99E-01 | 98% 3.16E-03 4.21E-01 | 99% 3.23E-03 4.27E-01 |
+
+postage stamp 18,16  78.750% t=   2156.53 s
+Cholesky timing ->  0.11  1.62  3.29  3.31  3.32
+  n input pix = 5468
+  sqUC,sqSig %iles | 50% 2.16E-03 3.69E-01 | 90% 2.92E-03 3.91E-01 | 98% 3.25E-03 4.14E-01 | 99% 3.36E-03 4.17E-01 |
+
+postage stamp 19,15  79.000% t=   2160.99 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9951; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.57  3.09  3.11  3.12
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 2.19E-03 3.70E-01 | 90% 2.95E-03 3.92E-01 | 98% 3.22E-03 4.15E-01 | 99% 3.35E-03 4.21E-01 |
+
+postage stamp 20,15  79.250% t=   2170.80 s
+Cholesky timing ->  0.12  1.78  3.45  3.48  3.49
+  n input pix = 5477
+  sqUC,sqSig %iles | 50% 2.21E-03 3.69E-01 | 90% 3.13E-03 3.93E-01 | 98% 3.39E-03 4.08E-01 | 99% 3.52E-03 4.14E-01 |
+
+postage stamp 19,16  79.500% t=   2175.33 s
+Cholesky timing ->  0.12  1.58  3.04  3.06  3.07
+  n input pix = 5448
+  sqUC,sqSig %iles | 50% 2.12E-03 3.68E-01 | 90% 3.05E-03 3.90E-01 | 98% 3.36E-03 4.04E-01 | 99% 3.46E-03 4.13E-01 |
+
+postage stamp 20,16  79.750% t=   2179.62 s
+Cholesky timing ->  0.12  1.73  3.38  3.40  3.41
+  n input pix = 5499
+  sqUC,sqSig %iles | 50% 2.18E-03 3.67E-01 | 90% 3.04E-03 3.88E-01 | 98% 3.29E-03 3.97E-01 | 99% 3.35E-03 3.98E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1,17  80.000% t=   2184.64 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.64  3.23  3.25  3.26
+  n input pix = 5504
+  sqUC,sqSig %iles | 50% 2.33E-03 3.72E-01 | 90% 3.07E-03 3.94E-01 | 98% 3.45E-03 4.11E-01 | 99% 3.57E-03 4.21E-01 |
+
+postage stamp  2,17  80.250% t=   2197.73 s
+Cholesky timing ->  0.12  1.78  3.41  3.44  3.45
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.47E-03 3.76E-01 | 90% 3.32E-03 4.02E-01 | 98% 3.82E-03 4.23E-01 | 99% 3.89E-03 4.28E-01 |
+
+postage stamp  1,18  80.500% t=   2202.19 s
+Cholesky timing ->  0.11  1.74  3.41  3.43  3.45
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 2.23E-03 3.71E-01 | 90% 3.08E-03 3.94E-01 | 98% 3.45E-03 4.13E-01 | 99% 3.54E-03 4.18E-01 |
+
+postage stamp  2,18  80.750% t=   2206.69 s
+Cholesky timing ->  0.11  1.63  3.40  3.43  3.44
+  n input pix = 5504
+  sqUC,sqSig %iles | 50% 2.40E-03 3.74E-01 | 90% 3.23E-03 3.95E-01 | 98% 3.65E-03 4.10E-01 | 99% 3.73E-03 4.13E-01 |
+
+postage stamp  3,17  81.000% t=   2211.33 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.76  3.37  3.40  3.41
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.60E-03 3.78E-01 | 90% 3.49E-03 4.05E-01 | 98% 4.00E-03 4.30E-01 | 99% 4.15E-03 4.39E-01 |
+
+postage stamp  4,17  81.250% t=   2221.64 s
+Cholesky timing ->  0.11  1.55  3.03  3.05  3.06
+  n input pix = 5456
+  sqUC,sqSig %iles | 50% 2.49E-03 3.78E-01 | 90% 3.35E-03 4.06E-01 | 98% 3.83E-03 4.31E-01 | 99% 4.03E-03 4.40E-01 |
+
+postage stamp  3,18  81.500% t=   2225.73 s
+Cholesky timing ->  0.11  1.67  3.42  3.44  3.46
+  n input pix = 5479
+  sqUC,sqSig %iles | 50% 2.47E-03 3.75E-01 | 90% 3.30E-03 3.99E-01 | 98% 3.74E-03 4.14E-01 | 99% 3.90E-03 4.17E-01 |
+
+postage stamp  4,18  81.750% t=   2230.23 s
+Cholesky timing ->  0.10  1.61  3.31  3.33  3.34
+  n input pix = 5446
+  sqUC,sqSig %iles | 50% 2.39E-03 3.75E-01 | 90% 3.23E-03 4.01E-01 | 98% 3.70E-03 4.17E-01 | 99% 3.84E-03 4.26E-01 |
+
+postage stamp  5,17  82.000% t=   2234.72 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.76  3.44  3.46  3.48
+  n input pix = 5437
+  sqUC,sqSig %iles | 50% 2.28E-03 3.74E-01 | 90% 3.04E-03 4.06E-01 | 98% 3.45E-03 4.31E-01 | 99% 3.59E-03 4.39E-01 |
+
+postage stamp  6,17  82.250% t=   2245.09 s
+Cholesky timing ->  0.11  1.69  3.33  3.36  3.37
+  n input pix = 5464
+  sqUC,sqSig %iles | 50% 2.03E-03 3.68E-01 | 90% 2.59E-03 3.86E-01 | 98% 2.90E-03 4.05E-01 | 99% 3.05E-03 4.11E-01 |
+
+postage stamp  5,18  82.500% t=   2249.47 s
+Cholesky timing ->  0.11  1.56  3.07  3.10  3.11
+  n input pix = 5451
+  sqUC,sqSig %iles | 50% 2.36E-03 3.77E-01 | 90% 3.17E-03 4.10E-01 | 98% 3.66E-03 4.41E-01 | 99% 3.82E-03 4.47E-01 |
+
+postage stamp  6,18  82.750% t=   2253.71 s
+Cholesky timing ->  0.11  1.60  3.23  3.26  3.27
+  n input pix = 5457
+  sqUC,sqSig %iles | 50% 2.11E-03 3.69E-01 | 90% 2.72E-03 3.91E-01 | 98% 3.32E-03 4.28E-01 | 99% 3.51E-03 4.39E-01 |
+
+postage stamp  7,17  83.000% t=   2258.30 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.81  3.51  3.53  3.55
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 1.85E-03 3.63E-01 | 90% 2.34E-03 3.77E-01 | 98% 2.67E-03 4.00E-01 | 99% 2.75E-03 4.05E-01 |
+
+postage stamp  8,17  83.250% t=   2268.81 s
+Cholesky timing ->  0.12  1.71  3.46  3.48  3.49
+  n input pix = 5520
+  sqUC,sqSig %iles | 50% 1.71E-03 3.60E-01 | 90% 2.11E-03 3.67E-01 | 98% 2.42E-03 3.87E-01 | 99% 2.50E-03 4.00E-01 |
+
+postage stamp  7,18  83.500% t=   2273.33 s
+Cholesky timing ->  0.11  1.67  3.24  3.26  3.28
+  n input pix = 5506
+  sqUC,sqSig %iles | 50% 1.84E-03 3.63E-01 | 90% 2.35E-03 3.76E-01 | 98% 2.64E-03 3.85E-01 | 99% 2.74E-03 3.93E-01 |
+
+postage stamp  8,18  83.750% t=   2277.64 s
+Cholesky timing ->  0.12  1.61  3.34  3.36  3.37
+  n input pix = 5492
+  sqUC,sqSig %iles | 50% 1.75E-03 3.60E-01 | 90% 2.20E-03 3.71E-01 | 98% 2.74E-03 4.21E-01 | 99% 3.10E-03 4.30E-01 |
+
+postage stamp  9,17  84.000% t=   2282.38 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.63  3.29  3.31  3.32
+  n input pix = 5483
+  sqUC,sqSig %iles | 50% 1.67E-03 3.59E-01 | 90% 2.02E-03 3.64E-01 | 98% 2.28E-03 3.67E-01 | 99% 2.34E-03 3.68E-01 |
+
+postage stamp 10,17  84.250% t=   2292.42 s
+Cholesky timing ->  0.11  1.76  3.61  3.63  3.64
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 1.69E-03 3.59E-01 | 90% 2.04E-03 3.65E-01 | 98% 2.29E-03 3.69E-01 | 99% 2.45E-03 3.70E-01 |
+
+postage stamp  9,18  84.500% t=   2297.09 s
+Cholesky timing ->  0.11  1.62  3.17  3.19  3.20
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 1.63E-03 3.59E-01 | 90% 2.07E-03 3.64E-01 | 98% 2.48E-03 4.05E-01 | 99% 2.74E-03 4.21E-01 |
+
+postage stamp 10,18  84.750% t=   2301.32 s
+Cholesky timing ->  0.11  1.58  3.28  3.30  3.31
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 1.61E-03 3.59E-01 | 90% 2.06E-03 3.64E-01 | 98% 2.51E-03 4.03E-01 | 99% 2.77E-03 4.19E-01 |
+
+postage stamp 11,17  85.000% t=   2305.81 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.75  3.58  3.60  3.62
+  n input pix = 5481
+  sqUC,sqSig %iles | 50% 1.76E-03 3.60E-01 | 90% 2.22E-03 3.70E-01 | 98% 2.46E-03 3.76E-01 | 99% 2.59E-03 3.78E-01 |
+
+postage stamp 12,17  85.250% t=   2316.34 s
+Cholesky timing ->  0.11  1.60  3.29  3.31  3.32
+  n input pix = 5502
+  sqUC,sqSig %iles | 50% 1.89E-03 3.66E-01 | 90% 2.50E-03 3.91E-01 | 98% 2.88E-03 4.15E-01 | 99% 3.01E-03 4.29E-01 |
+
+postage stamp 11,18  85.500% t=   2320.69 s
+Cholesky timing ->  0.11  1.55  3.07  3.09  3.10
+  n input pix = 5479
+  sqUC,sqSig %iles | 50% 1.74E-03 3.60E-01 | 90% 2.28E-03 3.71E-01 | 98% 2.74E-03 4.18E-01 | 99% 3.18E-03 4.30E-01 |
+
+postage stamp 12,18  85.750% t=   2324.95 s
+Cholesky timing ->  0.11  1.63  3.39  3.41  3.42
+  n input pix = 5459
+  sqUC,sqSig %iles | 50% 1.91E-03 3.64E-01 | 90% 2.36E-03 3.79E-01 | 98% 2.70E-03 3.95E-01 | 99% 2.75E-03 4.01E-01 |
+
+postage stamp 13,17  86.000% t=   2329.52 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.71  3.49  3.52  3.53
+  n input pix = 5477
+  sqUC,sqSig %iles | 50% 2.12E-03 3.68E-01 | 90% 2.79E-03 3.91E-01 | 98% 3.12E-03 4.19E-01 | 99% 3.21E-03 4.32E-01 |
+
+postage stamp 14,17  86.250% t=   2339.97 s
+Cholesky timing ->  0.11  1.76  3.47  3.49  3.50
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 2.29E-03 3.72E-01 | 90% 3.00E-03 4.00E-01 | 98% 3.30E-03 4.24E-01 | 99% 3.43E-03 4.31E-01 |
+
+postage stamp 13,18  86.500% t=   2344.49 s
+Cholesky timing ->  0.11  1.65  3.25  3.27  3.28
+  n input pix = 5487
+  sqUC,sqSig %iles | 50% 2.08E-03 3.67E-01 | 90% 2.68E-03 3.85E-01 | 98% 2.99E-03 3.93E-01 | 99% 3.13E-03 3.98E-01 |
+
+postage stamp 14,18  86.750% t=   2349.03 s
+Cholesky timing ->  0.11  1.53  3.21  3.23  3.24
+  n input pix = 5445
+  sqUC,sqSig %iles | 50% 2.21E-03 3.71E-01 | 90% 2.97E-03 3.93E-01 | 98% 3.30E-03 4.04E-01 | 99% 3.39E-03 4.07E-01 |
+
+postage stamp 15,17  87.000% t=   2353.62 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.72  3.55  3.57  3.58
+  n input pix = 5463
+  sqUC,sqSig %iles | 50% 2.30E-03 3.72E-01 | 90% 3.04E-03 3.99E-01 | 98% 3.42E-03 4.26E-01 | 99% 3.48E-03 4.32E-01 |
+
+postage stamp 16,17  87.250% t=   2364.09 s
+Cholesky timing ->  0.11  1.69  3.50  3.52  3.53
+  n input pix = 5459
+  sqUC,sqSig %iles | 50% 2.25E-03 3.71E-01 | 90% 2.97E-03 3.91E-01 | 98% 3.35E-03 4.06E-01 | 99% 3.47E-03 4.16E-01 |
+
+postage stamp 15,18  87.500% t=   2368.64 s
+Cholesky timing ->  0.11  1.55  3.11  3.13  3.14
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 2.34E-03 3.76E-01 | 90% 3.15E-03 4.02E-01 | 98% 3.57E-03 4.17E-01 | 99% 3.72E-03 4.20E-01 |
+
+postage stamp 16,18  87.750% t=   2372.92 s
+Cholesky timing ->  0.11  1.53  3.21  3.23  3.24
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 2.45E-03 3.78E-01 | 90% 3.29E-03 4.10E-01 | 98% 3.73E-03 4.34E-01 | 99% 3.84E-03 4.42E-01 |
+
+postage stamp 17,17  88.000% t=   2377.29 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.66  3.40  3.42  3.43
+  n input pix = 5458
+  sqUC,sqSig %iles | 50% 2.25E-03 3.70E-01 | 90% 3.03E-03 3.90E-01 | 98% 3.43E-03 4.01E-01 | 99% 3.56E-03 4.05E-01 |
+
+postage stamp 18,17  88.250% t=   2387.51 s
+Cholesky timing ->  0.11  1.64  3.37  3.40  3.41
+  n input pix = 5470
+  sqUC,sqSig %iles | 50% 2.17E-03 3.69E-01 | 90% 3.08E-03 3.90E-01 | 98% 3.39E-03 4.00E-01 | 99% 3.49E-03 4.03E-01 |
+
+postage stamp 17,18  88.500% t=   2392.04 s
+Cholesky timing ->  0.11  1.56  3.19  3.21  3.22
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.34E-03 3.73E-01 | 90% 3.20E-03 3.96E-01 | 98% 3.62E-03 4.16E-01 | 99% 3.75E-03 4.24E-01 |
+
+postage stamp 18,18  88.750% t=   2396.45 s
+Cholesky timing ->  0.11  1.59  3.30  3.32  3.33
+  n input pix = 5511
+  sqUC,sqSig %iles | 50% 2.27E-03 3.70E-01 | 90% 3.14E-03 3.90E-01 | 98% 3.49E-03 4.02E-01 | 99% 3.54E-03 4.04E-01 |
+
+postage stamp 19,17  89.000% t=   2400.95 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9944; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.63  3.33  3.36  3.37
+  n input pix = 5486
+  sqUC,sqSig %iles | 50% 2.23E-03 3.71E-01 | 90% 3.06E-03 3.95E-01 | 98% 3.31E-03 4.13E-01 | 99% 3.38E-03 4.19E-01 |
+
+postage stamp 20,17  89.250% t=   2411.19 s
+Cholesky timing ->  0.11  1.60  3.26  3.28  3.29
+  n input pix = 5480
+  sqUC,sqSig %iles | 50% 2.15E-03 3.69E-01 | 90% 2.98E-03 3.90E-01 | 98% 3.23E-03 4.00E-01 | 99% 3.29E-03 4.04E-01 |
+
+postage stamp 19,18  89.500% t=   2415.51 s
+Cholesky timing ->  0.11  1.57  3.11  3.13  3.14
+  n input pix = 5505
+  sqUC,sqSig %iles | 50% 2.19E-03 3.68E-01 | 90% 3.05E-03 3.89E-01 | 98% 3.35E-03 3.97E-01 | 99% 3.41E-03 4.00E-01 |
+
+postage stamp 20,18  89.750% t=   2419.87 s
+Cholesky timing ->  0.11  1.59  3.13  3.15  3.16
+  n input pix = 5508
+  sqUC,sqSig %iles | 50% 2.06E-03 3.68E-01 | 90% 2.92E-03 3.88E-01 | 98% 3.22E-03 3.95E-01 | 99% 3.33E-03 3.97E-01 |
+
+  --> intermediate output -->
+
+postage stamp  1,19  90.000% t=   2424.43 s
+INPUT/PSF computation at RA=  9.5510, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+INPUT/PSF computation at RA=  9.5500, Dec=-43.9938; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.78  3.36  3.38  3.39
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 2.22E-03 3.69E-01 | 90% 2.98E-03 3.89E-01 | 98% 3.34E-03 3.99E-01 | 99% 3.41E-03 4.03E-01 |
+
+postage stamp  2,19  90.250% t=   2437.52 s
+Cholesky timing ->  0.12  1.70  3.19  3.21  3.22
+  n input pix = 5494
+  sqUC,sqSig %iles | 50% 2.31E-03 3.71E-01 | 90% 3.06E-03 3.90E-01 | 98% 3.44E-03 4.03E-01 | 99% 3.53E-03 4.05E-01 |
+
+postage stamp  1,20  90.500% t=   2441.90 s
+Cholesky timing ->  0.11  1.62  3.08  3.11  3.12
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 2.18E-03 3.68E-01 | 90% 2.91E-03 3.89E-01 | 98% 3.20E-03 4.07E-01 | 99% 3.30E-03 4.13E-01 |
+
+postage stamp  2,20  90.750% t=   2445.99 s
+Cholesky timing ->  0.11  1.63  3.31  3.33  3.34
+  n input pix = 5518
+  sqUC,sqSig %iles | 50% 2.19E-03 3.69E-01 | 90% 2.94E-03 3.88E-01 | 98% 3.26E-03 3.99E-01 | 99% 3.38E-03 4.02E-01 |
+
+postage stamp  3,19  91.000% t=   2450.44 s
+INPUT/PSF computation at RA=  9.5490, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.83  3.42  3.44  3.45
+  n input pix = 5518
+  sqUC,sqSig %iles | 50% 2.35E-03 3.73E-01 | 90% 3.15E-03 3.94E-01 | 98% 3.54E-03 4.08E-01 | 99% 3.64E-03 4.12E-01 |
+
+postage stamp  4,19  91.250% t=   2460.81 s
+Cholesky timing ->  0.12  1.76  3.28  3.30  3.32
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 2.41E-03 3.75E-01 | 90% 3.18E-03 4.01E-01 | 98% 3.62E-03 4.20E-01 | 99% 3.69E-03 4.28E-01 |
+
+postage stamp  3,20  91.500% t=   2465.27 s
+Cholesky timing ->  0.11  1.59  3.08  3.10  3.11
+  n input pix = 5471
+  sqUC,sqSig %iles | 50% 2.29E-03 3.73E-01 | 90% 3.04E-03 3.96E-01 | 98% 3.38E-03 4.14E-01 | 99% 3.48E-03 4.19E-01 |
+
+postage stamp  4,20  91.750% t=   2469.35 s
+Cholesky timing ->  0.11  1.56  3.06  3.08  3.09
+  n input pix = 5475
+  sqUC,sqSig %iles | 50% 2.24E-03 3.72E-01 | 90% 3.02E-03 3.97E-01 | 98% 3.39E-03 4.08E-01 | 99% 3.47E-03 4.11E-01 |
+
+postage stamp  5,19  92.000% t=   2473.51 s
+INPUT/PSF computation at RA=  9.5481, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.81  3.44  3.46  3.47
+  n input pix = 5482
+  sqUC,sqSig %iles | 50% 2.26E-03 3.71E-01 | 90% 3.02E-03 3.94E-01 | 98% 3.41E-03 4.08E-01 | 99% 3.57E-03 4.13E-01 |
+
+postage stamp  6,19  92.250% t=   2483.81 s
+Cholesky timing ->  0.13  1.77  3.45  3.47  3.49
+  n input pix = 5493
+  sqUC,sqSig %iles | 50% 2.02E-03 3.66E-01 | 90% 2.69E-03 3.85E-01 | 98% 3.10E-03 3.98E-01 | 99% 3.38E-03 4.05E-01 |
+
+postage stamp  5,20  92.500% t=   2488.42 s
+Cholesky timing ->  0.12  1.55  3.10  3.12  3.13
+  n input pix = 5464
+  sqUC,sqSig %iles | 50% 2.23E-03 3.71E-01 | 90% 2.99E-03 3.98E-01 | 98% 3.34E-03 4.17E-01 | 99% 3.46E-03 4.25E-01 |
+
+postage stamp  6,20  92.750% t=   2492.53 s
+Cholesky timing ->  0.12  1.68  3.30  3.32  3.34
+  n input pix = 5497
+  sqUC,sqSig %iles | 50% 2.13E-03 3.68E-01 | 90% 2.77E-03 3.88E-01 | 98% 3.08E-03 3.98E-01 | 99% 3.19E-03 4.01E-01 |
+
+postage stamp  7,19  93.000% t=   2496.97 s
+INPUT/PSF computation at RA=  9.5471, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.71  3.35  3.37  3.40
+  n input pix = 5526
+  sqUC,sqSig %iles | 50% 1.87E-03 3.63E-01 | 90% 2.39E-03 3.76E-01 | 98% 2.66E-03 3.84E-01 | 99% 2.75E-03 3.86E-01 |
+
+postage stamp  8,19  93.250% t=   2507.08 s
+Cholesky timing ->  0.14  1.68  3.21  3.24  3.25
+  n input pix = 5512
+  sqUC,sqSig %iles | 50% 1.76E-03 3.60E-01 | 90% 2.16E-03 3.69E-01 | 98% 2.42E-03 3.74E-01 | 99% 2.49E-03 3.76E-01 |
+
+postage stamp  7,20  93.500% t=   2511.53 s
+Cholesky timing ->  0.12  1.73  3.32  3.34  3.35
+  n input pix = 5510
+  sqUC,sqSig %iles | 50% 1.95E-03 3.64E-01 | 90% 2.46E-03 3.79E-01 | 98% 2.72E-03 3.88E-01 | 99% 2.79E-03 3.90E-01 |
+
+postage stamp  8,20  93.750% t=   2515.96 s
+Cholesky timing ->  0.11  1.69  3.38  3.40  3.41
+  n input pix = 5513
+  sqUC,sqSig %iles | 50% 1.76E-03 3.60E-01 | 90% 2.21E-03 3.71E-01 | 98% 2.47E-03 3.77E-01 | 99% 2.53E-03 3.79E-01 |
+
+postage stamp  9,19  94.000% t=   2520.45 s
+INPUT/PSF computation at RA=  9.5461, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.13  1.71  3.24  3.27  3.28
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 1.70E-03 3.59E-01 | 90% 2.12E-03 3.66E-01 | 98% 2.58E-03 4.15E-01 | 99% 3.00E-03 4.28E-01 |
+
+postage stamp 10,19  94.250% t=   2530.64 s
+Cholesky timing ->  0.12  1.68  3.17  3.20  3.21
+  n input pix = 5467
+  sqUC,sqSig %iles | 50% 1.61E-03 3.59E-01 | 90% 2.04E-03 3.72E-01 | 98% 2.37E-03 3.99E-01 | 99% 2.49E-03 4.09E-01 |
+
+postage stamp  9,20  94.500% t=   2534.91 s
+Cholesky timing ->  0.11  1.55  3.13  3.15  3.16
+  n input pix = 5478
+  sqUC,sqSig %iles | 50% 1.63E-03 3.59E-01 | 90% 2.07E-03 3.65E-01 | 98% 2.34E-03 3.69E-01 | 99% 2.43E-03 3.70E-01 |
+
+postage stamp 10,20  94.750% t=   2539.04 s
+Cholesky timing ->  0.11  1.61  3.17  3.19  3.20
+  n input pix = 5449
+  sqUC,sqSig %iles | 50% 1.66E-03 3.60E-01 | 90% 2.13E-03 3.84E-01 | 98% 3.01E-03 4.32E-01 | 99% 3.24E-03 4.41E-01 |
+
+postage stamp 11,19  95.000% t=   2543.45 s
+INPUT/PSF computation at RA=  9.5452, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.76  3.39  3.41  3.42
+  n input pix = 5423
+  sqUC,sqSig %iles | 50% 1.74E-03 3.61E-01 | 90% 2.16E-03 3.79E-01 | 98% 2.51E-03 4.05E-01 | 99% 2.57E-03 4.12E-01 |
+
+postage stamp 12,19  95.250% t=   2553.76 s
+Cholesky timing ->  0.12  1.69  3.32  3.35  3.36
+  n input pix = 5484
+  sqUC,sqSig %iles | 50% 1.83E-03 3.63E-01 | 90% 2.29E-03 3.77E-01 | 98% 2.57E-03 3.94E-01 | 99% 2.62E-03 3.99E-01 |
+
+postage stamp 11,20  95.500% t=   2558.25 s
+Cholesky timing ->  0.12  1.70  3.24  3.26  3.27
+  n input pix = 5449
+  sqUC,sqSig %iles | 50% 1.71E-03 3.61E-01 | 90% 2.09E-03 3.78E-01 | 98% 2.32E-03 3.93E-01 | 99% 2.42E-03 3.95E-01 |
+
+postage stamp 12,20  95.750% t=   2562.62 s
+Cholesky timing ->  0.10  1.52  2.97  2.99  3.01
+  n input pix = 5445
+  sqUC,sqSig %iles | 50% 1.84E-03 3.64E-01 | 90% 2.30E-03 3.76E-01 | 98% 2.61E-03 3.88E-01 | 99% 2.69E-03 3.89E-01 |
+
+postage stamp 13,19  96.000% t=   2566.70 s
+INPUT/PSF computation at RA=  9.5442, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.76  3.40  3.43  3.44
+  n input pix = 5455
+  sqUC,sqSig %iles | 50% 2.06E-03 3.67E-01 | 90% 2.70E-03 3.90E-01 | 98% 3.21E-03 4.26E-01 | 99% 3.45E-03 4.38E-01 |
+
+postage stamp 14,19  96.250% t=   2576.88 s
+Cholesky timing ->  0.13  1.77  3.51  3.53  3.54
+  n input pix = 5482
+  sqUC,sqSig %iles | 50% 2.27E-03 3.72E-01 | 90% 3.03E-03 3.96E-01 | 98% 3.40E-03 4.18E-01 | 99% 3.58E-03 4.27E-01 |
+
+postage stamp 13,20  96.500% t=   2581.52 s
+Cholesky timing ->  0.11  1.58  3.28  3.30  3.32
+  n input pix = 5467
+  sqUC,sqSig %iles | 50% 2.05E-03 3.68E-01 | 90% 2.62E-03 3.88E-01 | 98% 2.94E-03 4.03E-01 | 99% 3.06E-03 4.08E-01 |
+
+postage stamp 14,20  96.750% t=   2585.82 s
+Cholesky timing ->  0.11  1.55  2.96  2.98  2.99
+  n input pix = 5460
+  sqUC,sqSig %iles | 50% 2.26E-03 3.72E-01 | 90% 3.01E-03 3.93E-01 | 98% 3.41E-03 4.15E-01 | 99% 3.53E-03 4.26E-01 |
+
+postage stamp 15,19  97.000% t=   2589.96 s
+INPUT/PSF computation at RA=  9.5432, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.64  3.19  3.21  3.22
+  n input pix = 5435
+  sqUC,sqSig %iles | 50% 2.46E-03 3.75E-01 | 90% 3.27E-03 4.00E-01 | 98% 3.70E-03 4.15E-01 | 99% 3.75E-03 4.18E-01 |
+
+postage stamp 16,19  97.250% t=   2599.99 s
+Cholesky timing ->  0.11  1.55  3.19  3.21  3.22
+  n input pix = 5453
+  sqUC,sqSig %iles | 50% 2.48E-03 3.76E-01 | 90% 3.34E-03 4.00E-01 | 98% 3.85E-03 4.15E-01 | 99% 3.98E-03 4.20E-01 |
+
+postage stamp 15,20  97.500% t=   2604.22 s
+Cholesky timing ->  0.12  1.57  3.23  3.26  3.27
+  n input pix = 5472
+  sqUC,sqSig %iles | 50% 2.48E-03 3.77E-01 | 90% 3.37E-03 4.08E-01 | 98% 3.93E-03 4.39E-01 | 99% 4.01E-03 4.45E-01 |
+
+postage stamp 16,20  97.750% t=   2608.56 s
+Cholesky timing ->  0.10  1.45  2.99  3.01  3.02
+  n input pix = 5456
+  sqUC,sqSig %iles | 50% 2.60E-03 3.80E-01 | 90% 3.55E-03 4.12E-01 | 98% 4.14E-03 4.33E-01 | 99% 4.29E-03 4.39E-01 |
+
+postage stamp 17,19  98.000% t=   2612.77 s
+INPUT/PSF computation at RA=  9.5423, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.12  1.63  3.18  3.21  3.22
+  n input pix = 5466
+  sqUC,sqSig %iles | 50% 2.45E-03 3.73E-01 | 90% 3.32E-03 3.95E-01 | 98% 3.78E-03 4.11E-01 | 99% 3.89E-03 4.15E-01 |
+
+postage stamp 18,19  98.250% t=   2622.99 s
+Cholesky timing ->  0.12  1.74  3.45  3.47  3.48
+  n input pix = 5527
+  sqUC,sqSig %iles | 50% 2.37E-03 3.72E-01 | 90% 3.25E-03 3.94E-01 | 98% 3.65E-03 4.06E-01 | 99% 3.77E-03 4.11E-01 |
+
+postage stamp 17,20  98.500% t=   2627.62 s
+Cholesky timing ->  0.11  1.59  3.12  3.14  3.15
+  n input pix = 5508
+  sqUC,sqSig %iles | 50% 2.58E-03 3.78E-01 | 90% 3.51E-03 4.02E-01 | 98% 4.03E-03 4.18E-01 | 99% 4.15E-03 4.24E-01 |
+
+postage stamp 18,20  98.750% t=   2631.79 s
+Cholesky timing ->  0.11  1.56  3.04  3.06  3.08
+  n input pix = 5498
+  sqUC,sqSig %iles | 50% 2.39E-03 3.73E-01 | 90% 3.29E-03 3.95E-01 | 98% 3.74E-03 4.08E-01 | 99% 3.84E-03 4.13E-01 |
+
+postage stamp 19,19  99.000% t=   2635.97 s
+INPUT/PSF computation at RA=  9.5413, Dec=-43.9937; using input exposures: [0, 1, 2, 3, 4]
+Cholesky timing ->  0.11  1.44  2.94  2.97  2.98
+  n input pix = 5520
+  sqUC,sqSig %iles | 50% 2.16E-03 3.68E-01 | 90% 3.05E-03 3.89E-01 | 98% 3.39E-03 3.99E-01 | 99% 3.50E-03 4.03E-01 |
+
+postage stamp 20,19  99.250% t=   2645.74 s
+Cholesky timing ->  0.11  1.59  3.08  3.11  3.12
+  n input pix = 5501
+  sqUC,sqSig %iles | 50% 2.08E-03 3.65E-01 | 90% 2.78E-03 3.83E-01 | 98% 3.07E-03 3.91E-01 | 99% 3.22E-03 3.94E-01 |
+
+postage stamp 19,20  99.500% t=   2649.87 s
+Cholesky timing ->  0.12  1.53  2.88  2.91  2.92
+  n input pix = 5540
+  sqUC,sqSig %iles | 50% 2.18E-03 3.68E-01 | 90% 2.96E-03 3.87E-01 | 98% 3.28E-03 3.98E-01 | 99% 3.40E-03 4.01E-01 |
+
+postage stamp 20,20  99.750% t=   2653.81 s
+Cholesky timing ->  0.11  1.55  2.99  3.01  3.02
+  n input pix = 5489
+  sqUC,sqSig %iles | 50% 2.06E-03 3.66E-01 | 90% 2.68E-03 3.82E-01 | 98% 3.00E-03 3.89E-01 | 99% 3.04E-03 3.92E-01 |
+
+finished at t = 2657.94 s
