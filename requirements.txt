@@ -5,3 +5,12 @@ galsim
 ngmix
 metadetect
 sep
+numba
+scipy
+gwcs
+filelock
+fitsio
+asdf
+healpy
+jupyter
+jupyterlab
