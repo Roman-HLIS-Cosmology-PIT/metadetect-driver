@@ -461,10 +461,10 @@ class MetaDetectRunner:
         shear_combs = None
         if det_bands is not None:
             # Select only detection and shear bands from bands in coadds provided.
-            det_idx = np.arange(len(bands))[np.isin(self.bands, det_bands)]
+            det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
             det_combs = [det_idx]
         if shear_bands is not None:
-            shear_idx = np.arange(len(bands))[np.isin(self.bands, shear_bands)]
+            shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
             shear_combs = [shear_idx]
 
         # Run metadetect
