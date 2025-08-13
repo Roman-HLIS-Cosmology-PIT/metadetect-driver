@@ -18,6 +18,7 @@ from .config import parse_driver_cfg
 import warnings
 import yaml
 
+# load default metadetect config file
 with open('../config/metadetect_default.yaml', 'r') as file:
         METADETECT_CONFIG= yaml.safe_load(file)
 
@@ -30,7 +31,6 @@ class MetaDetectRunner:
     methods to build catalogs from the multi-band imaging.
     """
     NATIVE_PIX = 0.11  # arcsec/pixel (Roman native pixel scale)
-    # load default metadetect config file
 
     def __init__(self, coadds, meta_cfg=None, driver_cfg=None):
         """
@@ -119,10 +119,10 @@ class MetaDetectRunner:
             blocks in the specified columns will be ran.
             If given, block_ids should be None. [default : None]
         save: bool, optional
-            Whether or not the save the combined final catalog, composed of all processed blocks,
+            Whether or not to save the combined final catalog, composed of all processed blocks,
             to the output directory in the driver config (self.driver_cfg) [default : False]
         save_blocks: bool, optional
-            Whether or not the save the catalog from all processed blocks individually,
+            Whether or not to save the catalog from all processed blocks individually,
             to the output directory in the driver config (self.driver_cfg). The outputs
             will be in a directory "BlockCatalogs", each catalog in subdirectories ordered
             by row number. [default : False]
@@ -137,7 +137,7 @@ class MetaDetectRunner:
             it return None.
         """
         # do some sanity checks on the block index inputs, and convert block_ids to block_rows, block_cols
-        block_indices = self._block_inputs (block_ids , block_rows, block_cols) # tuple, stored in single var
+        block_indices = self._block_inputs (block_ids , block_rows, block_cols) # block_rows, block_cols stored as tuple
 
         ## If the inputs are mosaics or single blocks changes where we start processing.
         if self.input_type == "mosaic":
@@ -241,7 +241,7 @@ class MetaDetectRunner:
                 os.makedirs(block_row_dir, exist_ok=True) 
                 block_file = os.path.join(block_row_dir, f'Catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet')
                 cat.to_parquet(block_file, engine='pyarrow', compression=None)
-        # Concatenate all blocks into one catalog. If only one block is passed, we make it into a list before
+        # Concatenate all blocks into one catalog. If only one block is passed, we made it into a list in make_catalog function
         catalog = pd.concat(catalog, ignore_index=True)
         if save:
             outfile =os.path.join(self.driver_cfg['outdir'], 'MetaDetect_Catalog.parquet')
@@ -348,38 +348,24 @@ class MetaDetectRunner:
     # ----------------------------
     # ngmix observation builders
     # ----------------------------
-    def get_ngmix_data(self, blk):
-        """
-        Generate inputs needed to make ngmix Observation for a single block.
 
-         Parameters
+    def make_mbobs(self, blks):
+        """
+        Build an ngmix MultiBandObsList from a list of blocks (each a different band).
+
+        Parameters
         ----------
-        blk : OutImage object representing a single block (one band).
+        blks : list of OutImage objects
         
         Returns
         -------
-        image : np.ndarray
-            Coadded image for the requested layer.
-        img_jacobian : ngmix.Jacobian
-            Image-plane Jacobian derived from WCS at the reference pixel.
-        psf_img : np.ndarray
-            PSF image.
-        noise_sigma : float
-            Global RMS of the image background.
+        mbobs : ngmix MultiBandObservation
         """
-        image = blk.get_coadded_layer(self.driver_cfg['layer'])
-
-        # Build GalSim WCS and Jacobian anchored at header reference
-        w = galsim.AstropyWCS(wcs=self.get_wcs(blk))
-        img_jacobian = w.jacobian(image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1]))
-
-        # Estimate background RMS using SEP
-        bkg = sep.Background(image.astype(image.dtype.newbyteorder('=')))
-        noise_sigma = bkg.globalrms
-
-        # Draw PSF image
-        psf_img = self.get_psf(blk, w)
-        return image, img_jacobian, psf_img, noise_sigma
+        mbobs = ngmix.MultiBandObsList()
+        for blk in (blks if isinstance(blks, list) else [blks]): # loop over blocks of different bands
+            obslist = self.make_ngmix_obs(blk)
+            mbobs.append(obslist)
+        return mbobs
 
     def make_ngmix_obs(self, blk):
         """
@@ -417,24 +403,40 @@ class MetaDetectRunner:
         obslist = ngmix.ObsList()
         obslist.append(obs)
         return obslist
-
-    def make_mbobs(self, blks):
+        
+    def get_ngmix_data(self, blk):
         """
-        Build an ngmix MultiBandObsList from a list of blocks (each a different band).
+        Generate inputs needed to make ngmix Observation for a single block.
 
-        Parameters
+         Parameters
         ----------
-        blks : list of OutImage objects
+        blk : OutImage object representing a single block (one band).
         
         Returns
         -------
-        mbobs : ngmix MultiBandObservation
+        image : np.ndarray
+            Coadded image for the requested layer.
+        img_jacobian : ngmix.Jacobian
+            Image-plane Jacobian derived from WCS at the reference pixel.
+        psf_img : np.ndarray
+            PSF image.
+        noise_sigma : float
+            Global RMS of the image background.
         """
-        mbobs = ngmix.MultiBandObsList()
-        for blk in (blks if isinstance(blks, list) else [blks]): # loop over blocks of different bands
-            obslist = self.make_ngmix_obs(blk)
-            mbobs.append(obslist)
-        return mbobs
+        image = blk.get_coadded_layer(self.driver_cfg['layer'])
+
+        # Build GalSim WCS and Jacobian 
+        w = galsim.AstropyWCS(wcs=self.get_wcs(blk))
+        img_jacobian = w.jacobian(image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1]))
+
+        # Estimate background RMS using SEP
+        bkg = sep.Background(image.astype(image.dtype.newbyteorder('=')))
+        noise_sigma = bkg.globalrms
+
+        # Draw PSF image
+        psf_img = self.get_psf(blk, w)
+        return image, img_jacobian, psf_img, noise_sigma
+
 
 
     # ----------------------------
@@ -565,7 +567,7 @@ class MetaDetectRunner:
         fwhm = cfg.sigmatarget * MetaDetectRunner.NATIVE_PIX * 2.355
         psf = galsim.Gaussian(fwhm=fwhm)
 
-        # Optional Airy core with/without obscuration, then convolve with Gaussian smoothing.
+        # Optional Airy with/without obscuration, then convolve with Gaussian.
         if cfg.outpsf in ('AIRYOBSC', 'AIRYUNOBSC'):
             obsc = Stn.obsc if cfg.outpsf == 'AIRYOBSC' else 0.0
             # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
@@ -716,7 +718,7 @@ class MetaDetectRunner:
             'dec_meta': dec_pos[keep_mask],
         }
 
-        # Copy/select requested columns; convert flux-like columns
+        # Select requested columns; convert flux-like columns
         for col in self.driver_cfg['keepcols']:
             key = f"{self.meta_cfg['model']}_{col}"
             if 'flux' in col:
