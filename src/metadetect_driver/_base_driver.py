@@ -7,7 +7,7 @@ import yaml
 __all__ = ["BaseDriver"]
 
 
-class BaseDriver(object):
+class BaseDriver:
     """Driver class to run metadetecion"""
 
     def __init__(self, config_file):
