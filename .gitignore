@@ -24,6 +24,9 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+src/
+.initialize_new_project.sh
+_readthedocs/
 MANIFEST
 
 # PyInstaller
