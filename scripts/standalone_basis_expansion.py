@@ -52,7 +52,7 @@ class ShapeletBasis:
         
         if self.mode == 'cartesian':
             self._setup_cartesian_grid()
-        else:
+        elif self.mode == 'polar':
             self._setup_polar_grid()
 
     ## --------------- Setup and Indexing Methods ---------------
