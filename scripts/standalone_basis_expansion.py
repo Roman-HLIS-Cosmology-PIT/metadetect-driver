@@ -80,7 +80,7 @@ class ShapeletBasis:
         if self.mode == 'cartesian':
             Nx, Ny = np.where(self._ngrid == k)
             return int(Nx[0]), int(Ny[0])
-        else:
+        elif self.mode == 'polar':
             return self._polar_map[k]
 
     ## --------------- Basis Function Evaluation Methods ---------------
