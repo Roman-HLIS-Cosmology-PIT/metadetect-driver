@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 import warnings
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
