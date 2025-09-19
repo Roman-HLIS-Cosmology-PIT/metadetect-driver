@@ -252,20 +252,20 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-    def write_catalog(self, catalogs, block_indices, save_blocks=True):
+    def write_catalogs(self, catalogs, block_indices, save_blocks=True):
+        _output_dir = self.driver_cfg["outdir"]
+        logger.info(f"Writing catalogs to {_output_dir}")
+        os.makedirs(_output_dir, exist_ok=True)
+
         _schema = catalogs[0].schema
 
-        os.makedirs(self.driver_cfg["outdir"], exist_ok=True)
-
-        output_file = os.path.join(self.driver_cfg["outdir"], "metadetect_catalog.parquet")
-
-        logger.info(f"Writing catalog to {output_file}")
+        output_file = os.path.join(_output_dir, "metadetect_catalog.parquet")
 
         with pq.ParquetWriter(output_file, schema=_schema) as pq_writer:
 
             if save_blocks:
                 blocks_ran = self._get_block_pairs(block_indices)
-                block_dir = os.path.join(self.driver_cfg["outdir"], "blocks")
+                block_dir = os.path.join(_output_dir, "blocks")
 
                 os.makedirs(block_dir, exist_ok=True)
                 logger.info(f"Writing blocks to {block_dir}")
@@ -353,17 +353,17 @@ class MetaDetectRunner:
         """
         ibx, iby = block_to_run
         # make multi-band list of blocks
-        blks = [mosaic.outimages[iby][ibx] for mosaic in self.coadds]
-        return self._make_cat_block(blks)  # run metadetection and produce catalog
+        blocks = [mosaic.outimages[iby][ibx] for mosaic in self.coadds]
+        return self._make_cat_block(blocks)  # run metadetection and produce catalog
 
-    def _make_cat_block(self, blks):
+    def _make_cat_block(self, blocks):
         """
         Run MetaDetection over a single block or list of blocks. Each block in
         list represents a different band.
 
          Parameters
         ----------
-        blks : list of OutImage objects (multi-band)
+        blocks : list of OutImage objects (multi-band)
 
         Returns
         -------
@@ -371,48 +371,46 @@ class MetaDetectRunner:
             Catalog catalog for the block.
         """
 
-        # Make ngmix multi-band observation object
-        mbobs = self.make_mbobs(blks)
-        # Run Metadetection
+        mbobs = self.make_mbobs(blocks)
         res = self.run_metadetect(mbobs)
-        return self.construct_table(blks, res)  # Convert Metadetection results into a catalog
+        return self.construct_table(blocks, res)
 
     # ----------------------------
     # ngmix observation builders
     # ----------------------------
 
-    def make_mbobs(self, blks):
+    def make_mbobs(self, blocks):
         """
         Build an ngmix MultiBandObsList from a list of blocks (each a different band).
 
         Parameters
         ----------
-        blks : list of OutImage objects
+        blocks : list of OutImage objects
 
         Returns
         -------
         mbobs : ngmix MultiBandObservation
         """
         mbobs = ngmix.MultiBandObsList()
-        for blk in blks if isinstance(blks, list) else [blks]:  # loop over blocks of different bands
-            obslist = self.make_ngmix_obs(blk)
+        for block in blocks if isinstance(blocks, list) else [blocks]:  # loop over blocks of different bands
+            obslist = self.make_ngmix_obs(block)
             mbobs.append(obslist)
         return mbobs
 
-    def make_ngmix_obs(self, blk):
+    def make_ngmix_obs(self, block):
         """
         Create an ngmix ObsList for a single block image.
 
         Parameters
         ----------
-        blk : OutImage
+        block : OutImage
             PyIMCOM block
 
         Returns
         -------
         obslist : ngmix Observation
         """
-        img, img_jacobian, psf_img, noise_sigma = self.get_ngmix_data(blk)
+        img, img_jacobian, psf_img, noise_sigma = self.get_ngmix_data(block)
 
         # Centers
         psf_cen = (psf_img.shape[0] - 1) / 2.0
@@ -436,13 +434,13 @@ class MetaDetectRunner:
         obslist.append(obs)
         return obslist
 
-    def get_ngmix_data(self, blk):
+    def get_ngmix_data(self, block):
         """
         Generate inputs needed to make ngmix Observation for a single block.
 
          Parameters
         ----------
-        blk : OutImage object representing a single block (one band).
+        block : OutImage object representing a single block (one band).
 
         Returns
         -------
@@ -455,10 +453,10 @@ class MetaDetectRunner:
         noise_sigma : float
             Global RMS of the image background.
         """
-        image = blk.get_coadded_layer(self.driver_cfg["layer"])
+        image = block.get_coadded_layer(self.driver_cfg["layer"])
 
         # Build GalSim WCS and Jacobian
-        w = galsim.AstropyWCS(wcs=self.get_wcs(blk))
+        w = galsim.AstropyWCS(wcs=self.get_wcs(block))
         img_jacobian = w.jacobian(image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1]))
 
         # Estimate background RMS using SEP
@@ -466,7 +464,7 @@ class MetaDetectRunner:
         noise_sigma = bkg.globalrms
 
         # Draw PSF image
-        psf_img = self.get_psf(blk, w)
+        psf_img = self.get_psf(block, w)
         return image, img_jacobian, psf_img, noise_sigma
 
     # ----------------------------
@@ -521,13 +519,13 @@ class MetaDetectRunner:
         Returns
         -------
         list[str]
-            Band labels matching each block in `blks`.
+            Band labels matching each block in `blocks`.
         """
         # if self.input_type == 'block':
-        #    blks = self.coadds
+        #    blocks = self.coadds
         # elif self.input_type == 'mosaic':
         # for mosaics simply use one of the
-        #    blks = [mosaic.outimages[0][0] for mosaic in self.coadds]
+        #    blocks = [mosaic.outimages[0][0] for mosaic in self.coadds]
 
         band_list = []
         for coadd in self.coadds:
@@ -539,13 +537,13 @@ class MetaDetectRunner:
     # WCS / PSF helpers
     # ----------------------------
     @staticmethod
-    def get_wcs(blk):
+    def get_wcs(block):
         """
         Construct WCS for a block from its configuration.
 
         Parameters
         ----------
-        blk : OutImage
+        block : OutImage
             PyIMCOM block
 
         Returns
@@ -558,8 +556,8 @@ class MetaDetectRunner:
         Code mirrors:
         https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom/blob/main/coadd.py
         """
-        cfg = blk.cfg
-        ibx, iby = blk.ibx, blk.iby
+        cfg = block.cfg
+        ibx, iby = block.ibx, block.iby
         outwcs = wcs.WCS(naxis=2)
         outwcs.wcs.crpix = [
             (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
@@ -572,13 +570,13 @@ class MetaDetectRunner:
         return outwcs
 
     @staticmethod
-    def get_psf_obj(blk):
+    def get_psf_obj(block):
         """
         Build a GalSim PSF from the block configuration.
 
         Parameters
         ----------
-        blk : OutImage
+        block : OutImage
             PyIMCOM block
 
         Returns
@@ -591,7 +589,7 @@ class MetaDetectRunner:
         - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
         - The AIRY kernels are also be convolved with a Gaussian.
         """
-        cfg = blk.cfg
+        cfg = block.cfg
 
         # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
         fwhm = cfg.sigmatarget * MetaDetectRunner.NATIVE_PIX * 2.355
@@ -608,13 +606,13 @@ class MetaDetectRunner:
 
         return psf
 
-    def get_psf(self, blk, w):
+    def get_psf(self, block, w):
         """
         Draw a PSF image for a block given.
 
         Parameters
         ----------
-        blk : OutImage
+        block : OutImage
             PyIMCOM block.
         w : galsim.BaseWCS
             GalSim WCS instance.
@@ -624,7 +622,7 @@ class MetaDetectRunner:
         psf_img: np.ndarray
             PSF image array with shape (psf_img_size, psf_img_size).
         """
-        psf = self.get_psf_obj(blk)
+        psf = self.get_psf_obj(block)
         psf_img = psf.drawImage(
             nx=self.driver_cfg["psf_img_size"],
             ny=self.driver_cfg["psf_img_size"],
@@ -682,7 +680,7 @@ class MetaDetectRunner:
         npix_post_stamp = self.cfg.n2  # pixels per postage stamp
         return int(pad * npix_post_stamp)
 
-    def get_bounded_region(self, res):
+    def get_bounded_region(self, res, shear_step):
         """
         Build a mask that excludes detections too close to image edges.
         Determine what detections from the image to exclude from catalog.
@@ -708,15 +706,15 @@ class MetaDetectRunner:
             bound_size = self.driver_cfg["bound_size"]
 
         img_size = self.cfg.NsideP  # (ny, nx)
-        x = res["noshear"]["sx_col"]
-        y = res["noshear"]["sx_row"]
+        x = res[shear_step]["sx_col"]
+        y = res[shear_step]["sx_row"]
         keep = (x > bound_size) & (x < img_size - bound_size) & (y > bound_size) & (y < img_size - bound_size)
         return keep
 
     # ----------------------------
     # Results construction
     # ----------------------------
-    def construct_table(self, blks, res):
+    def construct_table(self, blocks, res):
         """
         Convert metadetect results into a catalog pyarrow Table.
         Keeps only columns requested in driver_cfg['keepcols'] and applies edge mask.
@@ -724,7 +722,7 @@ class MetaDetectRunner:
 
         Parameters
         ----------
-        blks : list of OutImage objects
+        blocks : list of OutImage objects
 
         res : dict
             Metadetect result dict.
