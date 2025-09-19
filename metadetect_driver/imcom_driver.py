@@ -4,7 +4,7 @@ import numpy as np
 import sep
 from astropy.io import fits
 
-from .base_driver import BaseDriver
+from . import BaseDriver
 
 __all__ = ["IMCOMDriver"]
 
