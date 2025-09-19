@@ -427,7 +427,7 @@ class MetaDetectRunner:
         obs = ngmix.Observation(
             image=img,
             jacobian=img_jac,
-            weight=np.ones(img.shape, dtype=float) / noise_sigma**2,
+            weight=np.full(img.shape, 1 / noise_sigma**2, dtype=float),
             psf=psf_obs,
             ormask=np.zeros(img.shape, dtype=np.int32),
             bmask=np.zeros(img.shape, dtype=np.int32),
