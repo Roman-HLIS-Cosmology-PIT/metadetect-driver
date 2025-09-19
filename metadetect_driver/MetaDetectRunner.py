@@ -4,7 +4,8 @@ from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 import galsim
 import ngmix
 import metadetect
@@ -99,8 +100,8 @@ class MetaDetectRunner:
     # User functions and helpers
     # ----------------------------
 
-    def make_catalog(
-        self, block_ids=None, block_rows=None, block_cols=None, save=False, save_blocks=False, return_cat=True
+    def make_catalogs(
+        self, block_ids=None, block_rows=None, block_cols=None,
     ):
         """
         Main driver to run MetaDetection and produce a catalog.
@@ -150,7 +151,7 @@ class MetaDetectRunner:
 
         Returns
         -------
-        pandas DataFrame or None
+        pyarrow Table or None
             The final combined catalog from all processed blocks if return_cat = True. Otherwise
             it return None.
         """
@@ -158,19 +159,17 @@ class MetaDetectRunner:
         block_indices = self._block_inputs(
             block_ids, block_rows, block_cols
         )  # block_rows, block_cols stored as tuple
+        logger.info(f"Processing blocks {block_indices}")
 
         ## If the inputs are mosaics or single blocks changes where we start processing.
         if self.input_type == "mosaic":
             catalog = self._make_cat_mosaic(block_indices)
         elif self.input_type == "block":
-            catalog = [
+            catalogs = [
                 self._make_cat_block(self.coadds)
             ]  # make into list since its only one catalog (see _save_outputs)
 
-        # get combined final catalog from observations and save to disk if needed.
-        catalog = self._save_outputs(catalog, block_indices, save, save_blocks)
-        if return_cat:
-            return catalog
+        return catalogs, block_indices
 
     def _block_inputs(self, block_ids, block_rows, block_cols):
         """
@@ -248,43 +247,41 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-    def _save_outputs(self, catalog, block_indices, save, save_blocks):
-        """
-        Makes final catalog of all processed blocks by concatinating the catalogs
-        from each block. If specified, the catalog from each block is also saved
-        as an output. If specified, the final combined output is saved as an output.
 
-        Parameters
-        ----------
-        block_indices : tuple
-        save : bool
-        save_blocks :  bool
+    def write_catalog(self, catalogs, block_indices, save_blocks=True):
+        _schema = catalogs[0].schema
 
-        Returns
-        -------
-        pandas DataFrame
-            The final combined catalog.
-        """
-        blocks_ran = self._get_block_pairs(block_indices)
+        os.makedirs(self.driver_cfg['outdir'], exist_ok=True)
 
-        if save_blocks:
-            block_dir = os.path.join(self.driver_cfg["outdir"], "BlockCatalogs")
-            # make new directory in output directory to store individual catalogs
-            os.makedirs(block_dir, exist_ok=True)
-            for cat, block_idx in zip(catalog, blocks_ran):
-                block_row_dir = os.path.join(block_dir, str(block_idx[1]))
-                # make new directory for each row
-                os.makedirs(block_row_dir, exist_ok=True)
-                block_file = os.path.join(
-                    block_row_dir, f"Catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet"
-                )
-                cat.to_parquet(block_file, engine="pyarrow", compression=None)
-        # Concatenate all blocks into one catalog. If only one block is passed, we made it into a list in make_catalog function
-        catalog = pd.concat(catalog, ignore_index=True)
-        if save:
-            outfile = os.path.join(self.driver_cfg["outdir"], "MetaDetect_Catalog.parquet")
-            catalog.to_parquet(outfile, engine="pyarrow", compression=None)
-        return catalog
+        output_file = os.path.join(self.driver_cfg["outdir"], "metadetect_catalog.parquet")
+
+        logger.info(f"Writing catalog to {output_file}")
+
+        with pq.ParquetWriter(output_file, schema=_schema) as pq_writer:
+
+            if save_blocks:
+                blocks_ran = self._get_block_pairs(block_indices)
+                block_dir = os.path.join(self.driver_cfg["outdir"], "blocks")
+
+                os.makedirs(block_dir, exist_ok=True)
+                logger.info(f"Writing blocks to {block_dir}")
+
+            for catalog, block_idx in zip(catalogs, blocks_ran):
+                logger.info(f"Writing block {block_idx[0]:02d}_{block_idx[1]:02d}")
+                pq_writer.write_table(catalog)
+
+                if save_blocks:
+                    block_row_dir = os.path.join(block_dir, str(block_idx[1]))
+                    os.makedirs(block_row_dir, exist_ok=True)
+
+                    block_file = os.path.join(
+                        block_row_dir, f"metadetect_catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet"
+                    )
+
+                    pq.write_table(catalog, block_file)
+
+        logger.info("Writing finished")
+
 
     # ----------------------------
     # Mosaic-level functions
@@ -300,7 +297,7 @@ class MetaDetectRunner:
 
         Returns
         -------
-        list of pandas DataFrames
+        list of pyarrow Tables
             Every element of the list is the resulting catalog from every processed block.
         """
         # get what blocks within the mosaic to run
@@ -348,7 +345,7 @@ class MetaDetectRunner:
 
         Returns
         -------
-        pandas DataFrame
+        pyarrow Table
             Catalog catalog for the block.
         """
         ibx, iby = block_to_run
@@ -367,7 +364,7 @@ class MetaDetectRunner:
 
         Returns
         -------
-        pandas DataFrame
+        pyarrow Table
             Catalog catalog for the block.
         """
 
@@ -375,7 +372,7 @@ class MetaDetectRunner:
         mbobs = self.make_mbobs(blks)
         # Run Metadetection
         res = self.run_metadetect(mbobs)
-        return self.construct_dataframe(blks, res)  # Convert Metadetection results into a catalog
+        return self.construct_table(blks, res)  # Convert Metadetection results into a catalog
 
     # ----------------------------
     # ngmix observation builders
@@ -716,9 +713,9 @@ class MetaDetectRunner:
     # ----------------------------
     # Results construction
     # ----------------------------
-    def construct_dataframe(self, blks, res):
+    def construct_table(self, blks, res):
         """
-        Convert metadetect results into a catalog pandas DataFrame.
+        Convert metadetect results into a catalog pyarrow Table.
         Keeps only columns requested in driver_cfg['keepcols'] and applies edge mask.
         Also converts IMCOM fluxes to e-/cm^2/s, and computes RA/DEC for detections.
 
@@ -731,7 +728,7 @@ class MetaDetectRunner:
 
         Returns
         -------
-        pandas DataFrame
+        pyarrow Table
             Catalog of detected objects.
 
         """
@@ -763,4 +760,4 @@ class MetaDetectRunner:
             else:
                 resultdict[key] = res["noshear"][key][keep_mask]
 
-        return pd.DataFrame(resultdict)
+        return pa.Table.from_pydict(resultdict)
