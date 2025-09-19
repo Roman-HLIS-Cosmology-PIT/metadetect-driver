@@ -1,3 +1,4 @@
+import logging
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -18,6 +19,10 @@ from pyimcom.config import Settings as Stn
 from .config import parse_driver_cfg
 import warnings
 import yaml
+
+
+logger = logging.getLogger(__name__)
+
 
 DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / "config" / "metadetect_default.yaml"
 
@@ -49,10 +54,15 @@ class MetaDetectRunner:
         driver_cfg : dict, optional
             Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
         """
+        logger.info(f"Instantiating MetaDetectRunner")
+        logger.debug(f"MetaDetect config: {meta_cfg}")
+        logger.debug(f"Driver config: {driver_cfg}")
+
         self.coadds = (
             coadds if isinstance(coadds, (list, np.ndarray)) else [coadds]
         )  # convert to list if not already given as list
         # determine if user input were Mosaic or OutImage objects
+
         self.input_type = self._determine_input_type()
         if self.input_type == "unrecognized":
             raise TypeError("Coadds must be PyIMCOM Mosaic or OutImage objects.")
@@ -65,6 +75,9 @@ class MetaDetectRunner:
         self.cfg = self.coadds[0].cfg
         # get the bands corresponding to the input images.
         self.bands = self.get_bands()
+        _bands = " ".join(self.bands)
+
+        logger.info(f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}")
 
     def _determine_input_type(self):
         """
