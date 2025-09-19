@@ -1,25 +1,26 @@
 import logging
+import os
+import sys
+import warnings
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
+import galsim
+import galsim.roman as roman
+import metadetect
+import ngmix
 import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
-import galsim
-import ngmix
-import metadetect
-import galsim.roman as roman
 import sep
+import yaml
 from astropy import wcs
-import os, sys
 
 from pyimcom.analysis import OutImage, Mosaic
-from pyimcom.config import Settings as Stn
+from pyimcom.config import Settings
 
 from .config import parse_driver_cfg
-import warnings
-import yaml
 
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ class MetaDetectRunner:
         self.cfg = self.coadds[0].cfg
         # get the bands corresponding to the input images.
         self.bands = self.get_bands()
-        _bands = " ".join(self.bands)
+        _bands = " ".join(np.unique(self.bands))
 
         logger.info(f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}")
 
@@ -162,11 +163,12 @@ class MetaDetectRunner:
         block_indices = self._block_inputs(
             block_ids, block_rows, block_cols
         )  # block_rows, block_cols stored as tuple
-        logger.info(f"Processing blocks {block_indices}")
+        if block_indices is not None:
+            logger.info(f"Processing blocks {block_indices}")
 
         ## If the inputs are mosaics or single blocks changes where we start processing.
         if self.input_type == "mosaic":
-            catalog = self._make_cat_mosaic(block_indices)
+            catalogs = self._make_cat_mosaic(block_indices)
         elif self.input_type == "block":
             catalogs = [
                 self._make_cat_block(self.coadds)
@@ -514,7 +516,7 @@ class MetaDetectRunner:
         """
         Get band names for provided blocks.
         PyIMCOM has a certain ordering of the filters (e.g. filter 2 is H158).
-        So, we get the appropiate band name from Stn.RomanFilters (Stn is PyIMCOM settings)
+        So, we get the appropiate band name from Settings.RomanFilters (Settings is PyIMCOM settings)
 
         Returns
         -------
@@ -529,7 +531,7 @@ class MetaDetectRunner:
 
         band_list = []
         for coadd in self.coadds:
-            band = Stn.RomanFilters[coadd.cfg.use_filter]
+            band = Settings.RomanFilters[coadd.cfg.use_filter]
             band_list.append(band)
         return band_list
 
@@ -597,10 +599,10 @@ class MetaDetectRunner:
 
         # Optional Airy with/without obscuration, then convolve with Gaussian.
         if cfg.outpsf in ("AIRYOBSC", "AIRYUNOBSC"):
-            obsc = Stn.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
+            obsc = Settings.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
             # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
             # so we multiply by roman native pixel scale (0.11) to convert to arcsec
-            lam_over_diam = Stn.QFilterNative[cfg.use_filter] * MetaDetectRunner.NATIVE_PIX  # arcsec
+            lam_over_diam = Settings.QFilterNative[cfg.use_filter] * MetaDetectRunner.NATIVE_PIX  # arcsec
             airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
             psf = galsim.Convolve([airy, psf])
 
