@@ -5,9 +5,20 @@ from typing import Optional, Union, Iterable
 import yaml
 
 # ---- Allowed values ----
-ALLOWED_BANDS = ["R062", "Z087", "Y106", "J129", "H158", "F184", "K213", "W146"]
+ALLOWED_BANDS = [
+    "R062",
+    "Z087",
+    "Y106",
+    "J129",
+    "H158",
+    "F184",
+    "K213",
+    "W146",
+]
 
-DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / "config" / "driver_default.yaml"
+DEFAULT_CONFIG_FILE = (
+    Path(__file__).parent.parent / "config" / "driver_default.yaml"
+)
 
 with open(DEFAULT_CONFIG_FILE, "r") as file:
     DEFAULT_DRIVER_CFG = yaml.safe_load(file)
@@ -30,17 +41,25 @@ def _coerce_list(val, elem_type, key_name):
     elif isinstance(val, Iterable) and not isinstance(val, (str, bytes)):
         out = list(val)
     else:
-        raise TypeError(f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}")
+        raise TypeError(
+            f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}"
+        )
     # element-wise checks
     for x in out:
         if isinstance(x, bool) and elem_type is int:
-            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}, got bool")
+            raise TypeError(
+                f"'{key_name}' elements must be {elem_type.__name__}, got bool"
+            )
         if not isinstance(x, elem_type):
-            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}")
+            raise TypeError(
+                f"'{key_name}' elements must be {elem_type.__name__}"
+            )
     return out
 
 
-def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> Optional[list[str]]:
+def _validate_bands(
+    val: Optional[Union[str, Iterable[str]]], key_name: str
+) -> Optional[list[str]]:
     """
     Coerce to list[str] (if provided) and validate against ALLOWED_BANDS.
     """
@@ -49,7 +68,9 @@ def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> 
     bands = _coerce_list(val, str, key_name)
     bad = [b for b in bands if b not in ALLOWED_BANDS]
     if bad:
-        raise ValueError(f"Invalid entries in '{key_name}': {bad}. Allowed: {ALLOWED_BANDS}")
+        raise ValueError(
+            f"Invalid entries in '{key_name}': {bad}. Allowed: {ALLOWED_BANDS}"
+        )
     return bands
 
 
@@ -73,7 +94,11 @@ def parse_driver_cfg(driver_cfg: Optional[dict]) -> dict:
 
     # keepcols: always ensure list, fallback to default if None/empty
     keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
-    cfg["keepcols"] = keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
+    cfg["keepcols"] = (
+        keep
+        if (keep and len(keep) > 0)
+        else list(DEFAULT_DRIVER_CFG["keepcols"])
+    )
 
     # ---- Validation ----
     # sizes
