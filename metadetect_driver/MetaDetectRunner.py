@@ -101,7 +101,10 @@ class MetaDetectRunner:
     # ----------------------------
 
     def make_catalogs(
-        self, block_ids=None, block_rows=None, block_cols=None,
+        self,
+        block_ids=None,
+        block_rows=None,
+        block_cols=None,
     ):
         """
         Main driver to run MetaDetection and produce a catalog.
@@ -247,11 +250,10 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-
     def write_catalog(self, catalogs, block_indices, save_blocks=True):
         _schema = catalogs[0].schema
 
-        os.makedirs(self.driver_cfg['outdir'], exist_ok=True)
+        os.makedirs(self.driver_cfg["outdir"], exist_ok=True)
 
         output_file = os.path.join(self.driver_cfg["outdir"], "metadetect_catalog.parquet")
 
@@ -281,7 +283,6 @@ class MetaDetectRunner:
                     pq.write_table(catalog, block_file)
 
         logger.info("Writing finished")
-
 
     # ----------------------------
     # Mosaic-level functions
