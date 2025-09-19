@@ -19,12 +19,11 @@ from .config import parse_driver_cfg
 import warnings
 import yaml
 
-DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / 'config' / 'metadetect_default.yaml'
+DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / "config" / "metadetect_default.yaml"
 
 # load default metadetect config file
-with open(DEFAULT_CONFIG_FILE, 'r') as file:
+with open(DEFAULT_CONFIG_FILE, "r") as file:
     METADETECT_CONFIG = yaml.safe_load(file)
-
 
 
 class MetaDetectRunner:
@@ -33,6 +32,7 @@ class MetaDetectRunner:
     Stores the input coadds, MetaDetection config, and driver config, and provides
     methods to build catalogs from the multi-band imaging.
     """
+
     NATIVE_PIX = 0.11  # arcsec/pixel (Roman native pixel scale)
 
     def __init__(self, coadds, meta_cfg=None, driver_cfg=None):
@@ -49,21 +49,22 @@ class MetaDetectRunner:
         driver_cfg : dict, optional
             Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
         """
-        self.coadds = coadds if isinstance(coadds, (list, np.ndarray)) else [coadds] # convert to list if not already given as list
+        self.coadds = (
+            coadds if isinstance(coadds, (list, np.ndarray)) else [coadds]
+        )  # convert to list if not already given as list
         # determine if user input were Mosaic or OutImage objects
         self.input_type = self._determine_input_type()
         if self.input_type == "unrecognized":
             raise TypeError("Coadds must be PyIMCOM Mosaic or OutImage objects.")
-            
+
         self.meta_cfg = deepcopy(meta_cfg) if meta_cfg is not None else deepcopy(METADETECT_CONFIG)
         # parse driver config
         self.driver_cfg = parse_driver_cfg(driver_cfg)
         # Set the PyIMCOM config used to make images. The config will vary between bands, but some
-        # parameters (e.g.location center, number of blocks) will be the same. 
+        # parameters (e.g.location center, number of blocks) will be the same.
         self.cfg = self.coadds[0].cfg
         # get the bands corresponding to the input images.
         self.bands = self.get_bands()
-
 
     def _determine_input_type(self):
         """
@@ -81,12 +82,13 @@ class MetaDetectRunner:
         else:
             return "unrecognized"
 
-
     # ----------------------------
     # User functions and helpers
     # ----------------------------
 
-    def make_catalog(self, block_ids = None, block_rows = None, block_cols = None, save = False, save_blocks = False, return_cat = True):
+    def make_catalog(
+        self, block_ids=None, block_rows=None, block_cols=None, save=False, save_blocks=False, return_cat=True
+    ):
         """
         Main driver to run MetaDetection and produce a catalog.
         The parameters block_ids, block_rows, and block cols determines
@@ -130,7 +132,7 @@ class MetaDetectRunner:
             will be in a directory "BlockCatalogs", each catalog in subdirectories ordered
             by row number. [default : False]
         return_cat: bool, optional
-            Whether or not to return the final combined catalog when calling this function. 
+            Whether or not to return the final combined catalog when calling this function.
             [default : True]
 
         Returns
@@ -140,26 +142,28 @@ class MetaDetectRunner:
             it return None.
         """
         # do some sanity checks on the block index inputs, and convert block_ids to block_rows, block_cols
-        block_indices = self._block_inputs (block_ids , block_rows, block_cols) # block_rows, block_cols stored as tuple
+        block_indices = self._block_inputs(
+            block_ids, block_rows, block_cols
+        )  # block_rows, block_cols stored as tuple
 
         ## If the inputs are mosaics or single blocks changes where we start processing.
         if self.input_type == "mosaic":
             catalog = self._make_cat_mosaic(block_indices)
         elif self.input_type == "block":
-            catalog = [self._make_cat_block(self.coadds)] # make into list since its only one catalog (see _save_outputs)
+            catalog = [
+                self._make_cat_block(self.coadds)
+            ]  # make into list since its only one catalog (see _save_outputs)
 
         # get combined final catalog from observations and save to disk if needed.
-        catalog = self._save_outputs (catalog, block_indices, save, save_blocks)
+        catalog = self._save_outputs(catalog, block_indices, save, save_blocks)
         if return_cat:
             return catalog
-            
-        
-            
-    def _block_inputs (self, block_ids , block_rows, block_cols):
+
+    def _block_inputs(self, block_ids, block_rows, block_cols):
         """
         Sanity checks on the input block positions. Checks if inputs given
         are integers, converts integers to lists when needed, and checks if blocks
-        are within Mosaic. It also converts block_ids (if not None) to their 
+        are within Mosaic. It also converts block_ids (if not None) to their
         corresponding row and column positions in mosaic.
 
         Parameters
@@ -172,38 +176,54 @@ class MetaDetectRunner:
         -------
         block_rows : list or None
         block_cols : list or None
-        
+
         """
-        if (block_ids is not None or block_rows is not None or block_cols is not None) and self.input_type == 'block':
-            warnings.warn("Ignoring input block id/row/col since input images represent a single block or multi-band block already.")
+        if (
+            block_ids is not None or block_rows is not None or block_cols is not None
+        ) and self.input_type == "block":
+            warnings.warn(
+                "Ignoring input block id/row/col since input images represent a single block or multi-band block already."
+            )
             return None, None
         if block_ids is not None and (block_rows is not None or block_cols is not None):
-             raise ValueError("If specifying block_id, then do not specify block_rows or block_cols, and vice versa.")
-            
+            raise ValueError(
+                "If specifying block_id, then do not specify block_rows or block_cols, and vice versa."
+            )
+
         if block_rows is not None:
-            block_rows =  block_rows if (isinstance(block_rows, (list, np.ndarray)) or block_rows is None) else [block_rows]
+            block_rows = (
+                block_rows
+                if (isinstance(block_rows, (list, np.ndarray)) or block_rows is None)
+                else [block_rows]
+            )
             if not all(isinstance(block_row, (int, np.integer)) for block_row in block_rows):
                 raise ValueError("block_rows must be an integer or list of integers.")
-            #check all block_rows are less than the number of blocks on each side of mosaic
+            # check all block_rows are less than the number of blocks on each side of mosaic
             if not all(block_row < self.cfg.nblock for block_row in block_rows):
                 raise ValueError("Elements in block_rows must be less than Mosaic number of blocks")
-        if block_cols is not None :
-            block_cols =  block_cols if (isinstance(block_cols, (list, np.ndarray)) or block_cols is None) else [block_cols]
-            if not all(isinstance(block_col,  (int, np.integer)) for block_col in block_cols):
+        if block_cols is not None:
+            block_cols = (
+                block_cols
+                if (isinstance(block_cols, (list, np.ndarray)) or block_cols is None)
+                else [block_cols]
+            )
+            if not all(isinstance(block_col, (int, np.integer)) for block_col in block_cols):
                 raise ValueError("block_cols must be an integer or list of integers.")
-            #check all block_cols are less than the number of blocks on each side of mosaic
+            # check all block_cols are less than the number of blocks on each side of mosaic
             if not all(block_col < self.cfg.nblock for block_col in block_cols):
                 raise ValueError("Elements in block_cols must be less than Mosaic number of blocks.")
-        if block_rows is not None and  block_cols is not None:
+        if block_rows is not None and block_cols is not None:
             if len(block_rows) != len(block_cols):
-               raise ValueError("If both block_rows and block cols are given, arrays must be the same length.") 
-                
+                raise ValueError(
+                    "If both block_rows and block cols are given, arrays must be the same length."
+                )
+
         if block_ids is not None:
-            block_ids =  block_ids if isinstance(block_ids, (list, np.ndarray)) else [block_ids]
+            block_ids = block_ids if isinstance(block_ids, (list, np.ndarray)) else [block_ids]
             # check all block_ids passed are integers
-            if not all(isinstance(block_id,  (int, np.integer)) for block_id in block_ids):
+            if not all(isinstance(block_id, (int, np.integer)) for block_id in block_ids):
                 raise ValueError("block_ids must be an integer or list of integers.")
-            #check all block_ids are less than the total number of blocks in a mosaic
+            # check all block_ids are less than the total number of blocks in a mosaic
             if not all(block_id < self.cfg.nblock**2 for block_id in block_ids):
                 raise ValueError("Elements in block_ids must be less than Mosaic number of blocks squared.")
 
@@ -215,7 +235,7 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-    def _save_outputs (self, catalog, block_indices, save, save_blocks):
+    def _save_outputs(self, catalog, block_indices, save, save_blocks):
         """
         Makes final catalog of all processed blocks by concatinating the catalogs
         from each block. If specified, the catalog from each block is also saved
@@ -233,30 +253,29 @@ class MetaDetectRunner:
             The final combined catalog.
         """
         blocks_ran = self._get_block_pairs(block_indices)
-            
+
         if save_blocks:
-            block_dir = os.path.join(self.driver_cfg['outdir'], 'BlockCatalogs') 
+            block_dir = os.path.join(self.driver_cfg["outdir"], "BlockCatalogs")
             # make new directory in output directory to store individual catalogs
-            os.makedirs(block_dir, exist_ok=True) 
+            os.makedirs(block_dir, exist_ok=True)
             for cat, block_idx in zip(catalog, blocks_ran):
                 block_row_dir = os.path.join(block_dir, str(block_idx[1]))
                 # make new directory for each row
-                os.makedirs(block_row_dir, exist_ok=True) 
-                block_file = os.path.join(block_row_dir, f'Catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet')
-                cat.to_parquet(block_file, engine='pyarrow', compression=None)
+                os.makedirs(block_row_dir, exist_ok=True)
+                block_file = os.path.join(
+                    block_row_dir, f"Catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet"
+                )
+                cat.to_parquet(block_file, engine="pyarrow", compression=None)
         # Concatenate all blocks into one catalog. If only one block is passed, we made it into a list in make_catalog function
         catalog = pd.concat(catalog, ignore_index=True)
         if save:
-            outfile =os.path.join(self.driver_cfg['outdir'], 'MetaDetect_Catalog.parquet')
-            catalog.to_parquet(outfile, engine='pyarrow', compression=None)
+            outfile = os.path.join(self.driver_cfg["outdir"], "MetaDetect_Catalog.parquet")
+            catalog.to_parquet(outfile, engine="pyarrow", compression=None)
         return catalog
-             
 
     # ----------------------------
     # Mosaic-level functions
     # ----------------------------
-
-        
 
     def _make_cat_mosaic(self, block_indices):
         """
@@ -274,8 +293,8 @@ class MetaDetectRunner:
         # get what blocks within the mosaic to run
         block_to_run = self._get_block_pairs(block_indices)
         # Run blocks in parallel
-        with ProcessPoolExecutor(max_workers=self.driver_cfg['max_workers']) as ex:
-            return list(ex.map(self._run_block, block_to_run, chunksize=self.driver_cfg['chunksize']))
+        with ProcessPoolExecutor(max_workers=self.driver_cfg["max_workers"]) as ex:
+            return list(ex.map(self._run_block, block_to_run, chunksize=self.driver_cfg["chunksize"]))
 
     def _get_block_pairs(self, block_indices):
         """
@@ -284,7 +303,7 @@ class MetaDetectRunner:
         Parameters
         ----------
         block_indices : tuple
-        
+
         Returns
         -------
         list of tuples
@@ -293,29 +312,27 @@ class MetaDetectRunner:
         block_rows, block_cols = block_indices
         # if specific set of rows and columns are provided
         if block_cols is not None and block_rows is not None:
-            args = [(ibx, iby)
-                for ibx, iby in zip(block_cols, block_rows)]
+            args = [(ibx, iby) for ibx, iby in zip(block_cols, block_rows)]
             return args
         if block_cols is None:
-            block_cols = np.arange(self.cfg.nblock) # the defaults to running all columns
+            block_cols = np.arange(self.cfg.nblock)  # the defaults to running all columns
         if block_rows is None:
-            block_rows = np.arange(self.cfg.nblock) # the defaults to running all rows
-        args = [(ibx, iby)
-                for ibx in block_cols for iby in block_rows]
+            block_rows = np.arange(self.cfg.nblock)  # the defaults to running all rows
+        args = [(ibx, iby) for ibx in block_cols for iby in block_rows]
         return args
 
     # ----------------------------
     # Block-level functions
     # ----------------------------
-    
+
     def _run_block(self, block_to_run):
         """
         Run processing for a single multi-band block
-    
+
         Parameters
         ----------
         block_to_run : tuple of lists
-    
+
         Returns
         -------
         pandas DataFrame
@@ -324,17 +341,17 @@ class MetaDetectRunner:
         ibx, iby = block_to_run
         # make multi-band list of blocks
         blks = [mosaic.outimages[iby][ibx] for mosaic in self.coadds]
-        return self._make_cat_block(blks) # run metadetection and produce catalog
-        
+        return self._make_cat_block(blks)  # run metadetection and produce catalog
+
     def _make_cat_block(self, blks):
         """
-        Run MetaDetection over a single block or list of blocks. Each block in 
+        Run MetaDetection over a single block or list of blocks. Each block in
         list represents a different band.
 
          Parameters
         ----------
         blks : list of OutImage objects (multi-band)
-    
+
         Returns
         -------
         pandas DataFrame
@@ -345,8 +362,7 @@ class MetaDetectRunner:
         mbobs = self.make_mbobs(blks)
         # Run Metadetection
         res = self.run_metadetect(mbobs)
-        return self.construct_dataframe(blks, res) # Convert Metadetection results into a catalog
-
+        return self.construct_dataframe(blks, res)  # Convert Metadetection results into a catalog
 
     # ----------------------------
     # ngmix observation builders
@@ -359,13 +375,13 @@ class MetaDetectRunner:
         Parameters
         ----------
         blks : list of OutImage objects
-        
+
         Returns
         -------
         mbobs : ngmix MultiBandObservation
         """
         mbobs = ngmix.MultiBandObsList()
-        for blk in (blks if isinstance(blks, list) else [blks]): # loop over blocks of different bands
+        for blk in blks if isinstance(blks, list) else [blks]:  # loop over blocks of different bands
             obslist = self.make_ngmix_obs(blk)
             mbobs.append(obslist)
         return mbobs
@@ -378,7 +394,7 @@ class MetaDetectRunner:
         ----------
         blk : OutImage
             PyIMCOM block
-        
+
         Returns
         -------
         obslist : ngmix Observation
@@ -406,7 +422,7 @@ class MetaDetectRunner:
         obslist = ngmix.ObsList()
         obslist.append(obs)
         return obslist
-        
+
     def get_ngmix_data(self, blk):
         """
         Generate inputs needed to make ngmix Observation for a single block.
@@ -414,7 +430,7 @@ class MetaDetectRunner:
          Parameters
         ----------
         blk : OutImage object representing a single block (one band).
-        
+
         Returns
         -------
         image : np.ndarray
@@ -426,21 +442,19 @@ class MetaDetectRunner:
         noise_sigma : float
             Global RMS of the image background.
         """
-        image = blk.get_coadded_layer(self.driver_cfg['layer'])
+        image = blk.get_coadded_layer(self.driver_cfg["layer"])
 
-        # Build GalSim WCS and Jacobian 
+        # Build GalSim WCS and Jacobian
         w = galsim.AstropyWCS(wcs=self.get_wcs(blk))
         img_jacobian = w.jacobian(image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1]))
 
         # Estimate background RMS using SEP
-        bkg = sep.Background(image.astype(image.dtype.newbyteorder('=')))
+        bkg = sep.Background(image.astype(image.dtype.newbyteorder("=")))
         noise_sigma = bkg.globalrms
 
         # Draw PSF image
         psf_img = self.get_psf(blk, w)
         return image, img_jacobian, psf_img, noise_sigma
-
-
 
     # ----------------------------
     # Running metadetect
@@ -459,8 +473,8 @@ class MetaDetectRunner:
         res : dict
             Metadetect results.
         """
-        det_bands = self.driver_cfg['det_bands']
-        shear_bands = self.driver_cfg['shear_bands']
+        det_bands = self.driver_cfg["det_bands"]
+        shear_bands = self.driver_cfg["shear_bands"]
 
         det_combs = None
         shear_combs = None
@@ -476,7 +490,7 @@ class MetaDetectRunner:
         res = metadetect.do_metadetect(
             deepcopy(self.meta_cfg),
             mbobs=mbobs,
-            rng=np.random.RandomState(seed=self.driver_cfg['mdet_seed']),
+            rng=np.random.RandomState(seed=self.driver_cfg["mdet_seed"]),
             det_band_combs=det_combs,
             shear_band_combs=shear_combs,
         )
@@ -496,12 +510,12 @@ class MetaDetectRunner:
         list[str]
             Band labels matching each block in `blks`.
         """
-        #if self.input_type == 'block':
+        # if self.input_type == 'block':
         #    blks = self.coadds
-        #elif self.input_type == 'mosaic':
-            # for mosaics simply use one of the 
+        # elif self.input_type == 'mosaic':
+        # for mosaics simply use one of the
         #    blks = [mosaic.outimages[0][0] for mosaic in self.coadds]
-        
+
         band_list = []
         for coadd in self.coadds:
             band = Stn.RomanFilters[coadd.cfg.use_filter]
@@ -571,8 +585,8 @@ class MetaDetectRunner:
         psf = galsim.Gaussian(fwhm=fwhm)
 
         # Optional Airy with/without obscuration, then convolve with Gaussian.
-        if cfg.outpsf in ('AIRYOBSC', 'AIRYUNOBSC'):
-            obsc = Stn.obsc if cfg.outpsf == 'AIRYOBSC' else 0.0
+        if cfg.outpsf in ("AIRYOBSC", "AIRYUNOBSC"):
+            obsc = Stn.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
             # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
             # so we multiply by roman native pixel scale (0.11) to convert to arcsec
             lam_over_diam = Stn.QFilterNative[cfg.use_filter] * MetaDetectRunner.NATIVE_PIX  # arcsec
@@ -599,13 +613,11 @@ class MetaDetectRunner:
         """
         psf = self.get_psf_obj(blk)
         psf_img = psf.drawImage(
-            nx=self.driver_cfg['psf_img_size'],
-            ny=self.driver_cfg['psf_img_size'],
+            nx=self.driver_cfg["psf_img_size"],
+            ny=self.driver_cfg["psf_img_size"],
             wcs=w,
         ).array
         return psf_img
-
-    
 
     # ----------------------------
     # Unit conversions
@@ -628,13 +640,15 @@ class MetaDetectRunner:
         IMCOM flux unit is e- / (0.11 arcsec)^2 / exposure.
         We convert to e-/cm^2/s using Roman collecting area and exposure,
         and correct for the coadd oversampling relative to native pixels.
-        The (NATIVE_PIX**2/oversample_pix**2) takes into account that the 
-        coadds are oversampled and not in the native Roman pixel scale. 
+        The (NATIVE_PIX**2/oversample_pix**2) takes into account that the
+        coadds are oversampled and not in the native Roman pixel scale.
         AB magnitude can be calculated using galsim.roman zeropoints
         """
         # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
         oversample_pix = self.cfg.dtheta * (180.0 / np.pi) * 3600.0  # deg --> arcsec
-        norm_fact = roman.exptime * roman.collecting_area * (MetaDetectRunner.NATIVE_PIX**2 / oversample_pix**2)
+        norm_fact = (
+            roman.exptime * roman.collecting_area * (MetaDetectRunner.NATIVE_PIX**2 / oversample_pix**2)
+        )
         flux_converted = flux / norm_fact
         return flux_converted
 
@@ -651,17 +665,17 @@ class MetaDetectRunner:
         int
             Bound size in pixels.
         """
-        pad = self.cfg.postage_pad          # number of postage stamps of padding
-        npix_post_stamp = self.cfg.n2       # pixels per postage stamp
+        pad = self.cfg.postage_pad  # number of postage stamps of padding
+        npix_post_stamp = self.cfg.n2  # pixels per postage stamp
         return int(pad * npix_post_stamp)
 
     def get_bounded_region(self, res):
         """
         Build a mask that excludes detections too close to image edges.
-        Determine what detections from the image to exclude from catalog. 
+        Determine what detections from the image to exclude from catalog.
         This is applied after Metadetect is run. This avoids including objects
         too close to the edge of the image, where detections can be bad.
-        
+
 
         Parameters
         ----------
@@ -675,12 +689,12 @@ class MetaDetectRunner:
         """
         #'bound_size' sets the maximum distance (in pixels) a detection can be from the edge of the image
         # If 'bound_size' is None, the boundsize is set to be the padded region from the coadded image.
-        if self.driver_cfg['bound_size'] is None:
+        if self.driver_cfg["bound_size"] is None:
             bound_size = self.det_bound_from_padding()
         else:
-            bound_size = self.driver_cfg['bound_size']
+            bound_size = self.driver_cfg["bound_size"]
 
-        img_size = self.cfg.NsideP # (ny, nx)
+        img_size = self.cfg.NsideP  # (ny, nx)
         x = res["noshear"]["sx_col"]
         y = res["noshear"]["sx_row"]
         keep = (x > bound_size) & (x < img_size - bound_size) & (y > bound_size) & (y < img_size - bound_size)
@@ -698,7 +712,7 @@ class MetaDetectRunner:
         Parameters
         ----------
         blks : list of OutImage objects
-        
+
         res : dict
             Metadetect result dict.
 
@@ -711,36 +725,29 @@ class MetaDetectRunner:
         # World coordinates
         w = galsim.AstropyWCS(wcs=self.get_wcs(blks[0]))
         x, y = res["noshear"]["sx_col"], res["noshear"]["sx_row"]
-        ra_pos, dec_pos = w.toWorld(x, y, units='deg')
+        ra_pos, dec_pos = w.toWorld(x, y, units="deg")
 
         # get masked region. All detections outside the bounded region are excluded from catalog
         keep_mask = self.get_bounded_region(res)
 
         resultdict = {
-            'ra_meta': ra_pos[keep_mask],
-            'dec_meta': dec_pos[keep_mask],
+            "ra_meta": ra_pos[keep_mask],
+            "dec_meta": dec_pos[keep_mask],
         }
 
         # Select requested columns; convert flux-like columns
-        for col in self.driver_cfg['keepcols']:
+        for col in self.driver_cfg["keepcols"]:
             key = f"{self.meta_cfg['model']}_{col}"
-            if 'flux' in col:
+            if "flux" in col:
                 # for flux columns, first convert units. See imcom_flux_conv for why we do this.
-                flux = self.imcom_flux_conv(res['noshear'][key])
+                flux = self.imcom_flux_conv(res["noshear"][key])
                 cf = np.asarray(flux)
                 if cf.ndim == 1:
-                    cf = cf[:, None] # make it (N, 1) instead of (N,)
+                    cf = cf[:, None]  # make it (N, 1) instead of (N,)
                 for i, band in enumerate(self.bands):
                     # flux is stored as a (N_det, N_band) array if more than one band
                     resultdict[f"{self.meta_cfg['model']}_{band}_{col}"] = cf[:, i][keep_mask]
             else:
-                resultdict[key] = res['noshear'][key][keep_mask]
+                resultdict[key] = res["noshear"][key][keep_mask]
 
         return pd.DataFrame(resultdict)
-
-    
-
-    
-
-
-
