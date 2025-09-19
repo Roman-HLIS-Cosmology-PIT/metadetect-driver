@@ -1,5 +1,6 @@
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -18,9 +19,11 @@ from .config import parse_driver_cfg
 import warnings
 import yaml
 
+DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / 'config' / 'metadetect_default.yaml'
+
 # load default metadetect config file
-with open('../config/metadetect_default.yaml', 'r') as file:
-        METADETECT_CONFIG= yaml.safe_load(file)
+with open(DEFAULT_CONFIG_FILE, 'r') as file:
+    METADETECT_CONFIG = yaml.safe_load(file)
 
 
 

@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 from copy import deepcopy
 from typing import Optional, Union, Iterable
 import yaml
@@ -5,8 +8,10 @@ import yaml
 # ---- Allowed values ----
 ALLOWED_BANDS = ['R062', 'Z087', 'Y106', 'J129', 'H158', 'F184', 'K213', 'W146']
 
-with open('../config/driver_default.yaml', 'r') as file:
-    DEFAULT_DRIVER_CFG= yaml.safe_load(file)
+DEFAULT_CONFIG_FILE = Path(__file__).parent.parent / 'config' / 'driver_default.yaml'
+
+with open(DEFAULT_CONFIG_FILE, 'r') as file:
+    DEFAULT_DRIVER_CFG = yaml.safe_load(file)
 
 # ---- Helpers ----
 def _coerce_list(val, elem_type, key_name):
