@@ -735,32 +735,37 @@ class MetaDetectRunner:
             Catalog of detected objects.
 
         """
-        # World coordinates
-        w = galsim.AstropyWCS(wcs=self.get_wcs(blks[0]))
-        x, y = res["noshear"]["sx_col"], res["noshear"]["sx_row"]
-        ra_pos, dec_pos = w.toWorld(x, y, units="deg")
+        results = []
+        for shear_step in res.keys():
+            # World coordinates
+            w = galsim.AstropyWCS(wcs=self.get_wcs(blocks[0]))
+            x, y = res[shear_step]["sx_col"], res[shear_step]["sx_row"]
+            ra_pos, dec_pos = w.toWorld(x, y, units="deg")
 
-        # get masked region. All detections outside the bounded region are excluded from catalog
-        keep_mask = self.get_bounded_region(res)
+            # get masked region. All detections outside the bounded region are excluded from catalog
+            keep_mask = self.get_bounded_region(res, shear_step)
 
-        resultdict = {
-            "ra_meta": ra_pos[keep_mask],
-            "dec_meta": dec_pos[keep_mask],
-        }
+            resultdict = {}
+            # TODO propagate shear_step structure to output?
+            resultdict["shear_step"] = [shear_step for _ in range(sum(keep_mask))]
+            resultdict["ra_meta"] = ra_pos[keep_mask]
+            resultdict["dec_meta"] = dec_pos[keep_mask]
 
-        # Select requested columns; convert flux-like columns
-        for col in self.driver_cfg["keepcols"]:
-            key = f"{self.meta_cfg['model']}_{col}"
-            if "flux" in col:
-                # for flux columns, first convert units. See imcom_flux_conv for why we do this.
-                flux = self.imcom_flux_conv(res["noshear"][key])
-                cf = np.asarray(flux)
-                if cf.ndim == 1:
-                    cf = cf[:, None]  # make it (N, 1) instead of (N,)
-                for i, band in enumerate(self.bands):
-                    # flux is stored as a (N_det, N_band) array if more than one band
-                    resultdict[f"{self.meta_cfg['model']}_{band}_{col}"] = cf[:, i][keep_mask]
-            else:
-                resultdict[key] = res["noshear"][key][keep_mask]
+            # Select requested columns; convert flux-like columns
+            for col in self.driver_cfg["keepcols"]:
+                key = f"{self.meta_cfg['model']}_{col}"
+                if "flux" in col:
+                    # for flux columns, first convert units. See imcom_flux_conv for why we do this.
+                    flux = self.imcom_flux_conv(res[shear_step][key])
+                    cf = np.asarray(flux)
+                    if cf.ndim == 1:
+                        cf = cf[:, None]  # make it (N, 1) instead of (N,)
+                    for i, band in enumerate(self.bands):
+                        # flux is stored as a (N_det, N_band) array if more than one band
+                        resultdict[f"{self.meta_cfg['model']}_{band}_{col}"] = cf[:, i][keep_mask]
+                else:
+                    resultdict[key] = res[shear_step][key][keep_mask]
 
-        return pa.Table.from_pydict(resultdict)
+            results.append(pa.Table.from_pydict(resultdict))
+
+        return pa.concat_tables(results)
