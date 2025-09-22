@@ -1,3 +1,4 @@
+import importlib.metadata
 import logging
 import os
 import warnings
@@ -308,6 +309,14 @@ class MetaDetectRunner:
         os.makedirs(_output_dir, exist_ok=True)
 
         _schema = catalogs[0].schema
+        _schema = _schema.with_metadata({
+            "package": __package__,
+            "version": importlib.metadata.version(__package__),
+            "galsim_version": importlib.metadata.version("galsim"),
+            "metadetect_version": importlib.metadata.version("metadetect"),
+            "ngmix_version": importlib.metadata.version("ngmix"),
+            "pyimcom_version": importlib.metadata.version("pyimcom"),
+        })
 
         output_file = os.path.join(_output_dir, "metadetect_catalog.parquet")
 
