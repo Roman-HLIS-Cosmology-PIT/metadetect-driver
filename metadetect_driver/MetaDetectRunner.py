@@ -1,6 +1,5 @@
 import importlib.metadata
 import logging
-import os
 import warnings
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
@@ -303,10 +302,12 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-    def write_catalogs(self, catalogs, block_indices, save_blocks=True):
-        _output_dir = self.driver_cfg["outdir"]
-        logger.info(f"Writing catalogs to {_output_dir}")
-        os.makedirs(_output_dir, exist_ok=True)
+    def write_catalogs(self, outdir, catalogs, block_indices, save_blocks=True):
+        # _output_dir = self.driver_cfg["outdir"]
+        output_path = Path(outdir)
+
+        logger.info(f"Writing catalogs to {output_path}")
+        output_path.mkdir(parents=True, exist_ok=True)
 
         _schema = catalogs[0].schema
         _schema = _schema.with_metadata({
@@ -318,16 +319,16 @@ class MetaDetectRunner:
             "pyimcom_version": importlib.metadata.version("pyimcom"),
         })
 
-        output_file = os.path.join(_output_dir, "metadetect_catalog.parquet")
+        output_file = output_path / "metadetect_catalog.parquet"
 
         with pq.ParquetWriter(output_file, schema=_schema) as pq_writer:
 
             if save_blocks:
                 blocks_ran = self._get_block_pairs(block_indices)
-                block_dir = os.path.join(_output_dir, "blocks")
+                block_path = output_path / "blocks"
 
-                os.makedirs(block_dir, exist_ok=True)
-                logger.info(f"Writing blocks to {block_dir}")
+                block_path.mkdir(parents=True, exist_ok=True)
+                logger.info(f"Writing blocks to {block_path}")
 
             for catalog, block_idx in zip(catalogs, blocks_ran):
                 logger.info(
@@ -336,13 +337,10 @@ class MetaDetectRunner:
                 pq_writer.write_table(catalog)
 
                 if save_blocks:
-                    block_row_dir = os.path.join(block_dir, str(block_idx[1]))
-                    os.makedirs(block_row_dir, exist_ok=True)
+                    block_row_path = block_path / str(block_idx[1])
+                    block_row_path.mkdir(parents=True, exist_ok=True)
 
-                    block_file = os.path.join(
-                        block_row_dir,
-                        f"metadetect_catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet",
-                    )
+                    block_file = block_row_path / f"metadetect_catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet"
 
                     pq.write_table(catalog, block_file)
 
