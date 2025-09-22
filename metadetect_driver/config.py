@@ -21,9 +21,7 @@ _ALLOWED_BANDS = [
     "W146",
 ]
 
-_DEFAULT_DRIVER_CONFIG = (
-    Path(__file__).parent.parent / "config" / "driver_default.yaml"
-)
+_DEFAULT_DRIVER_CONFIG = Path(__file__).parent.parent / "config" / "driver_default.yaml"
 
 
 def _load_default_driver_config():
@@ -50,25 +48,17 @@ def _coerce_list(val, elem_type, key_name):
     elif isinstance(val, Iterable) and not isinstance(val, (str, bytes)):
         out = list(val)
     else:
-        raise TypeError(
-            f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}"
-        )
+        raise TypeError(f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}")
     # element-wise checks
     for x in out:
         if isinstance(x, bool) and elem_type is int:
-            raise TypeError(
-                f"'{key_name}' elements must be {elem_type.__name__}, got bool"
-            )
+            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}, got bool")
         if not isinstance(x, elem_type):
-            raise TypeError(
-                f"'{key_name}' elements must be {elem_type.__name__}"
-            )
+            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}")
     return out
 
 
-def _validate_bands(
-    val: Optional[Union[str, Iterable[str]]], key_name: str
-) -> Optional[list[str]]:
+def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> Optional[list[str]]:
     """
     Coerce to list[str] (if provided) and validate against ALLOWED_BANDS.
     """
@@ -77,9 +67,7 @@ def _validate_bands(
     bands = _coerce_list(val, str, key_name)
     bad = [b for b in bands if b not in _ALLOWED_BANDS]
     if bad:
-        raise ValueError(
-            f"Invalid entries in '{key_name}': {bad}. Allowed: {_ALLOWED_BANDS}"
-        )
+        raise ValueError(f"Invalid entries in '{key_name}': {bad}. Allowed: {_ALLOWED_BANDS}")
     return bands
 
 
@@ -106,11 +94,7 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
 
     # keepcols: always ensure list, fallback to default if None/empty
     keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
-    cfg["keepcols"] = (
-        keep
-        if (keep and len(keep) > 0)
-        else list(DEFAULT_DRIVER_CFG["keepcols"])
-    )
+    cfg["keepcols"] = keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
     logger.debug(f"config keepcols: {cfg['keepcols']}")
 
     # ---- Validation ----
