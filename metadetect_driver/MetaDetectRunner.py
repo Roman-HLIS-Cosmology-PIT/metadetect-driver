@@ -19,19 +19,21 @@ from astropy import wcs
 from pyimcom.analysis import OutImage, Mosaic
 from pyimcom.config import Settings
 
-from .config import parse_driver_cfg
+from .config import parse_driver_config
 
 
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_CONFIG_FILE = (
+_DEFAULT_METADETECT_CONFIG = (
     Path(__file__).parent.parent / "config" / "metadetect_default.yaml"
 )
 
-# load default metadetect config file
-with open(DEFAULT_CONFIG_FILE, "r") as file:
-    METADETECT_CONFIG = yaml.safe_load(file)
+def load_default_metadetect_config():
+    with open(_DEFAULT_METADETECT_CONFIG, "r") as file:
+        config = yaml.safe_load(file)
+
+    return config
 
 
 class MetaDetectRunner:
@@ -72,13 +74,14 @@ class MetaDetectRunner:
                 "Coadds must be PyIMCOM Mosaic or OutImage objects."
             )
 
+        _default_config = load_default_metadetect_config()
         self.meta_cfg = (
             deepcopy(meta_cfg)
             if meta_cfg is not None
-            else deepcopy(METADETECT_CONFIG)
+            else _default_config
         )
         # parse driver config
-        self.driver_cfg = parse_driver_cfg(driver_cfg)
+        self.driver_cfg = parse_driver_config(driver_cfg)
         # Set the PyIMCOM config used to make images. The config will vary between bands, but some
         # parameters (e.g.location center, number of blocks) will be the same.
         self.cfg = self.coadds[0].cfg
