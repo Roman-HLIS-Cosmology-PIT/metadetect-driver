@@ -1,5 +1,6 @@
 import importlib.metadata
 import logging
+import sys
 import warnings
 from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
@@ -267,10 +268,15 @@ class MetaDetectRunner:
             {
                 "package": __package__,
                 "version": importlib.metadata.version(__package__),
+                "python_version": sys.version,
+                "astropy_version": importlib.metadata.version("astropy"),
                 "galsim_version": importlib.metadata.version("galsim"),
                 "metadetect_version": importlib.metadata.version("metadetect"),
                 "ngmix_version": importlib.metadata.version("ngmix"),
+                "numpy_version": importlib.metadata.version("numpy"),
                 "pyimcom_version": importlib.metadata.version("pyimcom"),
+                "sep_version": importlib.metadata.version("sep"),
+                "pyarrow_version": importlib.metadata.version("pyarrow"),
             }
         )
 
