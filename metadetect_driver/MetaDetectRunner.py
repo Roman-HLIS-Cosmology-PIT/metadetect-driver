@@ -1,4 +1,5 @@
 import importlib.metadata
+import importlib.resources
 import logging
 import sys
 import warnings
@@ -26,10 +27,14 @@ from .config import parse_driver_config
 logger = logging.getLogger(__name__)
 
 
-_DEFAULT_METADETECT_CONFIG = Path(__file__).parent.parent / "config" / "metadetect_default.yaml"
+_DEFAULT_METADETECT_CONFIG = (
+    importlib.resources.files(__package__).parent
+    / "config"
+    / "metadetect_default.yaml"
+)
 
 
-def get_metadata():
+def _get_metadata():
     return {
         f"{__package__} version": importlib.metadata.version(__package__),
         "python version": sys.version,
@@ -45,7 +50,7 @@ def get_metadata():
     }
 
 
-def load_default_metadetect_config():
+def _load_default_metadetect_config():
     with open(_DEFAULT_METADETECT_CONFIG, "r") as file:
         config = yaml.safe_load(file)
 
@@ -86,10 +91,14 @@ class MetaDetectRunner:
 
         self.input_type = self._determine_input_type()
         if self.input_type == "unrecognized":
-            raise TypeError("Coadds must be PyIMCOM Mosaic or OutImage objects.")
+            raise TypeError(
+                "Coadds must be PyIMCOM Mosaic or OutImage objects."
+            )
 
-        _default_config = load_default_metadetect_config()
-        self.meta_cfg = deepcopy(meta_cfg) if meta_cfg is not None else _default_config
+        _default_config = _load_default_metadetect_config()
+        self.meta_cfg = (
+            deepcopy(meta_cfg) if meta_cfg is not None else _default_config
+        )
         # parse driver config
         self.driver_cfg = parse_driver_config(driver_cfg)
         # Set the PyIMCOM config used to make images. The config will vary between bands, but some
@@ -101,7 +110,9 @@ class MetaDetectRunner:
 
         self.shear_steps = self.get_shear_steps()
 
-        logger.info(f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}")
+        logger.info(
+            f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}"
+        )
 
     def get_shear_steps(self):
         return self.meta_cfg["metacal"].get("types", None)
@@ -221,13 +232,17 @@ class MetaDetectRunner:
 
         """
         if (
-            block_ids is not None or block_rows is not None or block_cols is not None
+            block_ids is not None
+            or block_rows is not None
+            or block_cols is not None
         ) and self.input_type == "block":
             warnings.warn(
                 "Ignoring input block id/row/col since input images represent a single block or multi-band block already."
             )
             return None, None
-        if block_ids is not None and (block_rows is not None or block_cols is not None):
+        if block_ids is not None and (
+            block_rows is not None or block_cols is not None
+        ):
             raise ValueError(
                 "If specifying block_id, then do not specify block_rows or block_cols, and vice versa."
             )
@@ -235,25 +250,49 @@ class MetaDetectRunner:
         if block_rows is not None:
             block_rows = (
                 block_rows
-                if (isinstance(block_rows, (list, np.ndarray)) or block_rows is None)
+                if (
+                    isinstance(block_rows, (list, np.ndarray))
+                    or block_rows is None
+                )
                 else [block_rows]
             )
-            if not all(isinstance(block_row, (int, np.integer)) for block_row in block_rows):
-                raise ValueError("block_rows must be an integer or list of integers.")
+            if not all(
+                isinstance(block_row, (int, np.integer))
+                for block_row in block_rows
+            ):
+                raise ValueError(
+                    "block_rows must be an integer or list of integers."
+                )
             # check all block_rows are less than the number of blocks on each side of mosaic
-            if not all(block_row < self.cfg.nblock for block_row in block_rows):
-                raise ValueError("Elements in block_rows must be less than Mosaic number of blocks")
+            if not all(
+                block_row < self.cfg.nblock for block_row in block_rows
+            ):
+                raise ValueError(
+                    "Elements in block_rows must be less than Mosaic number of blocks"
+                )
         if block_cols is not None:
             block_cols = (
                 block_cols
-                if (isinstance(block_cols, (list, np.ndarray)) or block_cols is None)
+                if (
+                    isinstance(block_cols, (list, np.ndarray))
+                    or block_cols is None
+                )
                 else [block_cols]
             )
-            if not all(isinstance(block_col, (int, np.integer)) for block_col in block_cols):
-                raise ValueError("block_cols must be an integer or list of integers.")
+            if not all(
+                isinstance(block_col, (int, np.integer))
+                for block_col in block_cols
+            ):
+                raise ValueError(
+                    "block_cols must be an integer or list of integers."
+                )
             # check all block_cols are less than the number of blocks on each side of mosaic
-            if not all(block_col < self.cfg.nblock for block_col in block_cols):
-                raise ValueError("Elements in block_cols must be less than Mosaic number of blocks.")
+            if not all(
+                block_col < self.cfg.nblock for block_col in block_cols
+            ):
+                raise ValueError(
+                    "Elements in block_cols must be less than Mosaic number of blocks."
+                )
         if block_rows is not None and block_cols is not None:
             if len(block_rows) != len(block_cols):
                 raise ValueError(
@@ -261,13 +300,26 @@ class MetaDetectRunner:
                 )
 
         if block_ids is not None:
-            block_ids = block_ids if isinstance(block_ids, (list, np.ndarray)) else [block_ids]
+            block_ids = (
+                block_ids
+                if isinstance(block_ids, (list, np.ndarray))
+                else [block_ids]
+            )
             # check all block_ids passed are integers
-            if not all(isinstance(block_id, (int, np.integer)) for block_id in block_ids):
-                raise ValueError("block_ids must be an integer or list of integers.")
+            if not all(
+                isinstance(block_id, (int, np.integer))
+                for block_id in block_ids
+            ):
+                raise ValueError(
+                    "block_ids must be an integer or list of integers."
+                )
             # check all block_ids are less than the total number of blocks in a mosaic
-            if not all(block_id < self.cfg.nblock**2 for block_id in block_ids):
-                raise ValueError("Elements in block_ids must be less than Mosaic number of blocks squared.")
+            if not all(
+                block_id < self.cfg.nblock**2 for block_id in block_ids
+            ):
+                raise ValueError(
+                    "Elements in block_ids must be less than Mosaic number of blocks squared."
+                )
 
             block_rows, block_cols = [], []
             for block_id in block_ids:
@@ -293,9 +345,15 @@ class MetaDetectRunner:
 
         parquet_writers = {}
         for shear_step in self.shear_steps:
-            output_file = output_path / f"metadetect_catalog_{shear_step}.parquet"
-            logger.debug(f"Opening parquet writer for {shear_step} at {output_file}")
-            parquet_writers[shear_step] = pq.ParquetWriter(output_file, schema=_schema)
+            output_file = (
+                output_path / f"metadetect_catalog_{shear_step}.parquet"
+            )
+            logger.debug(
+                f"Opening parquet writer for {shear_step} at {output_file}"
+            )
+            parquet_writers[shear_step] = pq.ParquetWriter(
+                output_file, schema=_schema
+            )
 
         for catalog, block_idx in zip(catalogs, blocks_ran):
             logger.info(f"Writing block {block_idx[0]:02d}_{block_idx[1]:02d}")
@@ -328,7 +386,9 @@ class MetaDetectRunner:
         # get what blocks within the mosaic to run
         block_to_run = self._get_block_pairs(block_indices)
         # Run blocks in parallel
-        with ProcessPoolExecutor(max_workers=self.driver_cfg["max_workers"]) as ex:
+        with ProcessPoolExecutor(
+            max_workers=self.driver_cfg["max_workers"]
+        ) as ex:
             return list(
                 ex.map(
                     self._run_block,
@@ -356,9 +416,13 @@ class MetaDetectRunner:
             args = [(ibx, iby) for ibx, iby in zip(block_cols, block_rows)]
             return args
         if block_cols is None:
-            block_cols = np.arange(self.cfg.nblock)  # the defaults to running all columns
+            block_cols = np.arange(
+                self.cfg.nblock
+            )  # the defaults to running all columns
         if block_rows is None:
-            block_rows = np.arange(self.cfg.nblock)  # the defaults to running all rows
+            block_rows = np.arange(
+                self.cfg.nblock
+            )  # the defaults to running all rows
         args = [(ibx, iby) for ibx in block_cols for iby in block_rows]
         return args
 
@@ -382,7 +446,9 @@ class MetaDetectRunner:
         ibx, iby = block_to_run
         # make multi-band list of blocks
         blocks = [mosaic.outimages[iby][ibx] for mosaic in self.coadds]
-        return self._make_cat_block(blocks)  # run metadetection and produce catalog
+        return self._make_cat_block(
+            blocks
+        )  # run metadetection and produce catalog
 
     def _make_cat_block(self, blocks):
         """
@@ -420,7 +486,9 @@ class MetaDetectRunner:
         mbobs : ngmix MultiBandObservation
         """
         mbobs = ngmix.MultiBandObsList()
-        for block in blocks if isinstance(blocks, list) else [blocks]:  # loop over blocks of different bands
+        for block in (
+            blocks if isinstance(blocks, list) else [blocks]
+        ):  # loop over blocks of different bands
             obslist = self.make_ngmix_obs(block)
             mbobs.append(obslist)
         return mbobs
@@ -446,7 +514,9 @@ class MetaDetectRunner:
 
         # ngmix Jacobians
         psf_jac = ngmix.Jacobian(row=psf_cen, col=psf_cen, wcs=img_jacobian)
-        img_jac = ngmix.Jacobian(row=img_cen[0], col=img_cen[1], wcs=img_jacobian)
+        img_jac = ngmix.Jacobian(
+            row=img_cen[0], col=img_cen[1], wcs=img_jacobian
+        )
 
         # Observations
         psf_obs = ngmix.Observation(image=psf_img, jacobian=psf_jac)
@@ -485,7 +555,9 @@ class MetaDetectRunner:
 
         # Build GalSim WCS and Jacobian
         w = galsim.AstropyWCS(wcs=self.get_wcs(block))
-        img_jacobian = w.jacobian(image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1]))
+        img_jacobian = w.jacobian(
+            image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1])
+        )
 
         # Estimate background RMS using SEP
         bkg = sep.Background(image.astype(image.dtype.newbyteorder("=")))
@@ -519,10 +591,14 @@ class MetaDetectRunner:
         shear_combs = None
         if det_bands is not None:
             # Select only detection and shear bands from bands in coadds provided.
-            det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
+            det_idx = np.arange(len(self.bands))[
+                np.isin(self.bands, det_bands)
+            ]
             det_combs = [det_idx]
         if shear_bands is not None:
-            shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
+            shear_idx = np.arange(len(self.bands))[
+                np.isin(self.bands, shear_bands)
+            ]
             shear_combs = [shear_idx]
 
         # Run metadetect
@@ -588,8 +664,10 @@ class MetaDetectRunner:
         ibx, iby = block.ibx, block.iby
         outwcs = wcs.WCS(naxis=2)
         outwcs.wcs.crpix = [
-            (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
-            (cfg.NsideP + 1) / 2.0 - cfg.Nside * (iby - (cfg.nblock - 1) / 2.0),
+            (cfg.NsideP + 1) / 2.0
+            - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
+            (cfg.NsideP + 1) / 2.0
+            - cfg.Nside * (iby - (cfg.nblock - 1) / 2.0),
         ]
         outwcs.wcs.cdelt = [-cfg.dtheta, cfg.dtheta]
         outwcs.wcs.ctype = ["RA---STG", "DEC--STG"]
@@ -628,7 +706,10 @@ class MetaDetectRunner:
             obsc = Settings.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
             # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
             # so we multiply by roman native pixel scale (0.11) to convert to arcsec
-            lam_over_diam = Settings.QFilterNative[cfg.use_filter] * MetaDetectRunner.NATIVE_PIX  # arcsec
+            lam_over_diam = (
+                Settings.QFilterNative[cfg.use_filter]
+                * MetaDetectRunner.NATIVE_PIX
+            )  # arcsec
             airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
             psf = galsim.Convolve([airy, psf])
 
@@ -684,9 +765,13 @@ class MetaDetectRunner:
         AB magnitude can be calculated using galsim.roman zeropoints
         """
         # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
-        oversample_pix = self.cfg.dtheta * (180.0 / np.pi) * 3600.0  # deg --> arcsec
+        oversample_pix = (
+            self.cfg.dtheta * (180.0 / np.pi) * 3600.0
+        )  # deg --> arcsec
         norm_fact = (
-            roman.exptime * roman.collecting_area * (MetaDetectRunner.NATIVE_PIX**2 / oversample_pix**2)
+            roman.exptime
+            * roman.collecting_area
+            * (MetaDetectRunner.NATIVE_PIX**2 / oversample_pix**2)
         )
         flux_converted = flux / norm_fact
         return flux_converted
@@ -736,7 +821,12 @@ class MetaDetectRunner:
         img_size = self.cfg.NsideP  # (ny, nx)
         x = res[shear_step]["sx_col"]
         y = res[shear_step]["sx_row"]
-        keep = (x > bound_size) & (x < img_size - bound_size) & (y > bound_size) & (y < img_size - bound_size)
+        keep = (
+            (x > bound_size)
+            & (x < img_size - bound_size)
+            & (y > bound_size)
+            & (y < img_size - bound_size)
+        )
         return keep
 
     # ----------------------------
@@ -761,7 +851,7 @@ class MetaDetectRunner:
             Catalog of detected objects.
 
         """
-        metadata = get_metadata()
+        metadata = _get_metadata()
         results = {}
         for shear_step in res.keys():
             # World coordinates
@@ -778,8 +868,7 @@ class MetaDetectRunner:
                 data = res[shear_step][name]
                 if "flux" in name:
                     # for flux columns, first convert units. See imcom_flux_conv for why we do this.
-                    flux = self.imcom_flux_conv(data)
-                    data = np.asarray(flux)
+                    data = self.imcom_flux_conv(data)
 
                     # if cf.ndim == 1:
                     #     cf = cf[:, None]  # make it (N, 1) instead of (N,)
@@ -819,6 +908,8 @@ class MetaDetectRunner:
             #         else:
             #             resultdict[key] = res[shear_step][key][keep_mask]
 
-            results[shear_step] = pa.Table.from_pydict(resultdict, metadata=metadata)
+            results[shear_step] = pa.Table.from_pydict(
+                resultdict, metadata=metadata
+            )
 
         return results
