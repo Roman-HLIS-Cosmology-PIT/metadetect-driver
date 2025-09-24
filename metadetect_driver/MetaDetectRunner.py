@@ -745,7 +745,7 @@ class MetaDetectRunner:
     def construct_table(self, blocks, res):
         """
         Convert metadetect results into a catalog pyarrow Table.
-        Keeps only columns requested in driver_cfg['keepcols'] and applies edge mask.
+        # Keeps only columns requested in driver_cfg['keepcols'] and applies edge mask.
         Also converts IMCOM fluxes to e-/cm^2/s, and computes RA/DEC for detections.
 
         Parameters
@@ -773,23 +773,51 @@ class MetaDetectRunner:
             keep_mask = self.get_bounded_region(res, shear_step)
 
             resultdict = {}
-            resultdict["ra_meta"] = ra_pos[keep_mask]
-            resultdict["dec_meta"] = dec_pos[keep_mask]
 
-            # Select requested columns; convert flux-like columns
-            for col in self.driver_cfg["keepcols"]:
-                key = f"{self.meta_cfg['model']}_{col}"
-                if "flux" in col:
+            for name in res[shear_step].dtype.names:
+                data = res[shear_step][name]
+                if "flux" in name:
                     # for flux columns, first convert units. See imcom_flux_conv for why we do this.
-                    flux = self.imcom_flux_conv(res[shear_step][key])
-                    cf = np.asarray(flux)
-                    if cf.ndim == 1:
-                        cf = cf[:, None]  # make it (N, 1) instead of (N,)
-                    for i, band in enumerate(self.bands):
-                        # flux is stored as a (N_det, N_band) array if more than one band
-                        resultdict[f"{self.meta_cfg['model']}_{band}_{col}"] = cf[:, i][keep_mask]
-                else:
-                    resultdict[key] = res[shear_step][key][keep_mask]
+                    flux = self.imcom_flux_conv(data)
+                    data = np.asarray(flux)
+
+                    # if cf.ndim == 1:
+                    #     cf = cf[:, None]  # make it (N, 1) instead of (N,)
+                    # for i, band in enumerate(self.bands):
+                    #     # flux is stored as a (N_det, N_band) array if more than one band
+                    #     resultdict[f"{model}_{band}_{col}"] = cf[:, i][keep_mask]
+
+                resultdict[name] = data[keep_mask].tolist()
+
+            resultdict["ra"] = ra_pos[keep_mask]
+            resultdict["dec"] = dec_pos[keep_mask]
+
+            # # Select requested columns; convert flux-like columns
+            # # for col in self.driver_cfg["keepcols"]:
+            # for col in res[shear_step].dtype.names:
+            #     models = []
+            #     if "fitters" in self.meta_cfg:
+            #         for fitter_config in self.meta_cfg["fitters"]:
+            #             # https://github.com/esheldon/metadetect/blob/master/metadetect/metadetect.py#L240
+            #             model = fitter_config.get("model", "wmom")
+            #             models.append(model)
+            #     else:
+            #         model = fitter_config.get("model", "wmom")
+            #         models.append(model)
+
+            #     for model in models:
+            #         key = f"{model}_{col}"
+            #         if "flux" in col:
+            #             # for flux columns, first convert units. See imcom_flux_conv for why we do this.
+            #             flux = self.imcom_flux_conv(res[shear_step][key])
+            #             cf = np.asarray(flux)
+            #             if cf.ndim == 1:
+            #                 cf = cf[:, None]  # make it (N, 1) instead of (N,)
+            #             for i, band in enumerate(self.bands):
+            #                 # flux is stored as a (N_det, N_band) array if more than one band
+            #                 resultdict[f"{model}_{band}_{col}"] = cf[:, i][keep_mask]
+            #         else:
+            #             resultdict[key] = res[shear_step][key][keep_mask]
 
             results[shear_step] = pa.Table.from_pydict(resultdict, metadata=metadata)
 
