@@ -92,10 +92,10 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
     cfg["shear_bands"] = _validate_bands(cfg.get("shear_bands"), "shear_bands")
     logger.debug(f"config shear_bands: {cfg['shear_bands']}")
 
-    # keepcols: always ensure list, fallback to default if None/empty
-    keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
-    cfg["keepcols"] = keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
-    logger.debug(f"config keepcols: {cfg['keepcols']}")
+    # # keepcols: always ensure list, fallback to default if None/empty
+    # keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
+    # cfg["keepcols"] = keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
+    # logger.debug(f"config keepcols: {cfg['keepcols']}")
 
     # ---- Validation ----
     # sizes
