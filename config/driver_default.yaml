@@ -13,4 +13,3 @@ shear_bands: null
 layer: SCI
 max_workers: null
 chunksize: 1
-outdir: ./output

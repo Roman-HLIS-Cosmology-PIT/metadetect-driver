@@ -131,10 +131,10 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
         raise ValueError("'layer' must be a string")
     logger.debug(f"config layer: {cfg['layer']}")
 
-    # outdir
-    if cfg["outdir"] is not None and not isinstance(cfg["outdir"], str):
-        raise ValueError("'outdir' must be a string")
-    logger.debug(f"config outdir: {cfg['outdir']}")
+    # # outdir
+    # if cfg["outdir"] is not None and not isinstance(cfg["outdir"], str):
+    #     raise ValueError("'outdir' must be a string")
+    # logger.debug(f"config outdir: {cfg['outdir']}")
 
     # executor params
     mw = cfg.get("max_workers")
