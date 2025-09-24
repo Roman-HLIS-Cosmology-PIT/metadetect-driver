@@ -29,6 +29,22 @@ logger = logging.getLogger(__name__)
 _DEFAULT_METADETECT_CONFIG = Path(__file__).parent.parent / "config" / "metadetect_default.yaml"
 
 
+def get_metadata():
+    return {
+        f"{__package__} version": importlib.metadata.version(__package__),
+        "python version": sys.version,
+        "asdf version": importlib.metadata.version("asdf"),
+        "astropy version": importlib.metadata.version("astropy"),
+        "galsim version": importlib.metadata.version("galsim"),
+        "metadetect version": importlib.metadata.version("metadetect"),
+        "ngmix version": importlib.metadata.version("ngmix"),
+        "numpy version": importlib.metadata.version("numpy"),
+        "pyimcom version": importlib.metadata.version("pyimcom"),
+        "sep version": importlib.metadata.version("sep"),
+        "pyarrow version": importlib.metadata.version("pyarrow"),
+    }
+
+
 def load_default_metadetect_config():
     with open(_DEFAULT_METADETECT_CONFIG, "r") as file:
         config = yaml.safe_load(file)
@@ -83,7 +99,12 @@ class MetaDetectRunner:
         self.bands = self.get_bands()
         _bands = " ".join(np.unique(self.bands))
 
+        self.shear_steps = self.get_shear_steps()
+
         logger.info(f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}")
+
+    def get_shear_steps(self):
+        return self.meta_cfg["metacal"].get("types", None)
 
     def _determine_input_type(self):
         """
@@ -256,54 +277,34 @@ class MetaDetectRunner:
 
         return block_rows, block_cols
 
-    def write_catalogs(self, outdir, catalogs, block_indices, save_blocks=True):
+    def write_catalogs(self, output_dir, catalogs, block_indices):
+        blocks_ran = self._get_block_pairs(block_indices)
+
         # _output_dir = self.driver_cfg["outdir"]
-        output_path = Path(outdir)
+        output_path = Path(output_dir)
 
         logger.info(f"Writing catalogs to {output_path}")
         output_path.mkdir(parents=True, exist_ok=True)
 
-        _schema = catalogs[0].schema
-        _schema = _schema.with_metadata(
-            {
-                "package": __package__,
-                "version": importlib.metadata.version(__package__),
-                "python_version": sys.version,
-                "astropy_version": importlib.metadata.version("astropy"),
-                "galsim_version": importlib.metadata.version("galsim"),
-                "metadetect_version": importlib.metadata.version("metadetect"),
-                "ngmix_version": importlib.metadata.version("ngmix"),
-                "numpy_version": importlib.metadata.version("numpy"),
-                "pyimcom_version": importlib.metadata.version("pyimcom"),
-                "sep_version": importlib.metadata.version("sep"),
-                "pyarrow_version": importlib.metadata.version("pyarrow"),
-            }
-        )
+        # output_file = output_path / "metadetect_catalog.parquet"
 
-        output_file = output_path / "metadetect_catalog.parquet"
+        # FIXME
+        _schema = catalogs[0]["noshear"].schema
 
-        with pq.ParquetWriter(output_file, schema=_schema) as pq_writer:
+        parquet_writers = {}
+        for shear_step in self.shear_steps:
+            output_file = output_path / f"metadetect_catalog_{shear_step}.parquet"
+            logger.debug(f"Opening parquet writer for {shear_step} at {output_file}")
+            parquet_writers[shear_step] = pq.ParquetWriter(output_file, schema=_schema)
 
-            if save_blocks:
-                blocks_ran = self._get_block_pairs(block_indices)
-                block_path = output_path / "blocks"
+        for catalog, block_idx in zip(catalogs, blocks_ran):
+            logger.info(f"Writing block {block_idx[0]:02d}_{block_idx[1]:02d}")
+            for shear_step in catalog.keys():
+                parquet_writers[shear_step].write(catalog[shear_step])
 
-                block_path.mkdir(parents=True, exist_ok=True)
-                logger.info(f"Writing blocks to {block_path}")
-
-            for catalog, block_idx in zip(catalogs, blocks_ran):
-                logger.info(f"Writing block {block_idx[0]:02d}_{block_idx[1]:02d}")
-                pq_writer.write_table(catalog)
-
-                if save_blocks:
-                    block_row_path = block_path / str(block_idx[1])
-                    block_row_path.mkdir(parents=True, exist_ok=True)
-
-                    block_file = (
-                        block_row_path / f"metadetect_catalog_{block_idx[0]:02d}_{block_idx[1]:02d}.parquet"
-                    )
-
-                    pq.write_table(catalog, block_file)
+        for shear_step, parquet_writer in parquet_writers.items():
+            logger.debug(f"Closing parquet writer for {shear_step}")
+            parquet_writer.close()
 
         logger.info("Writing finished")
 
@@ -760,7 +761,8 @@ class MetaDetectRunner:
             Catalog of detected objects.
 
         """
-        results = []
+        metadata = get_metadata()
+        results = {}
         for shear_step in res.keys():
             # World coordinates
             w = galsim.AstropyWCS(wcs=self.get_wcs(blocks[0]))
@@ -771,8 +773,6 @@ class MetaDetectRunner:
             keep_mask = self.get_bounded_region(res, shear_step)
 
             resultdict = {}
-            # TODO propagate shear_step structure to output?
-            resultdict["shear_step"] = [shear_step for _ in range(sum(keep_mask))]
             resultdict["ra_meta"] = ra_pos[keep_mask]
             resultdict["dec_meta"] = dec_pos[keep_mask]
 
@@ -791,6 +791,6 @@ class MetaDetectRunner:
                 else:
                     resultdict[key] = res[shear_step][key][keep_mask]
 
-            results.append(pa.Table.from_pydict(resultdict))
+            results[shear_step] = pa.Table.from_pydict(resultdict, metadata=metadata)
 
-        return pa.concat_tables(results)
+        return results
