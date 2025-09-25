@@ -34,22 +34,6 @@ _DEFAULT_METADETECT_CONFIG = (
 )
 
 
-def _get_metadata():
-    return {
-        f"{__package__} version": importlib.metadata.version(__package__),
-        "python version": sys.version,
-        "asdf version": importlib.metadata.version("asdf"),
-        "astropy version": importlib.metadata.version("astropy"),
-        "galsim version": importlib.metadata.version("galsim"),
-        "metadetect version": importlib.metadata.version("metadetect"),
-        "ngmix version": importlib.metadata.version("ngmix"),
-        "numpy version": importlib.metadata.version("numpy"),
-        "pyimcom version": importlib.metadata.version("pyimcom"),
-        "sep version": importlib.metadata.version("sep"),
-        "pyarrow version": importlib.metadata.version("pyarrow"),
-    }
-
-
 def _load_default_metadetect_config():
     with open(_DEFAULT_METADETECT_CONFIG, "r") as file:
         config = yaml.safe_load(file)
@@ -570,6 +554,32 @@ class MetaDetectRunner:
     # ----------------------------
     # Running metadetect
     # ----------------------------
+    def _get_det_combs(self):
+        det_bands = self.driver_cfg["det_bands"]
+        if det_bands is not None:
+            # Select only detection and shear bands from bands in coadds provided.
+            det_idx = np.arange(len(self.bands))[
+                np.isin(self.bands, det_bands)
+            ]
+            det_combs = [det_idx]
+        else:
+            det_combs = None
+
+        return det_combs
+
+    def _get_shear_combs(self):
+        shear_bands = self.driver_cfg["shear_bands"]
+
+        if shear_bands is not None:
+            shear_idx = np.arange(len(self.bands))[
+                np.isin(self.bands, shear_bands)
+            ]
+            shear_combs = [shear_idx]
+        else:
+            shear_combs = None
+
+        return shear_combs
+
     def run_metadetect(self, mbobs):
         """
         Run metadetect on the provided MultiBandObsList.
@@ -584,22 +594,8 @@ class MetaDetectRunner:
         res : dict
             Metadetect results.
         """
-        det_bands = self.driver_cfg["det_bands"]
-        shear_bands = self.driver_cfg["shear_bands"]
-
-        det_combs = None
-        shear_combs = None
-        if det_bands is not None:
-            # Select only detection and shear bands from bands in coadds provided.
-            det_idx = np.arange(len(self.bands))[
-                np.isin(self.bands, det_bands)
-            ]
-            det_combs = [det_idx]
-        if shear_bands is not None:
-            shear_idx = np.arange(len(self.bands))[
-                np.isin(self.bands, shear_bands)
-            ]
-            shear_combs = [shear_idx]
+        det_combs = self._get_det_combs()
+        shear_combs = self._get_shear_combs()
 
         # Run metadetect
         res = metadetect.do_metadetect(
@@ -832,6 +828,28 @@ class MetaDetectRunner:
     # ----------------------------
     # Results construction
     # ----------------------------
+    def _get_metadata(self):
+        _packages = {
+            f"{__package__} version": importlib.metadata.version(__package__),
+            "python version": sys.version,
+            "asdf version": importlib.metadata.version("asdf"),
+            "astropy version": importlib.metadata.version("astropy"),
+            "galsim version": importlib.metadata.version("galsim"),
+            "metadetect version": importlib.metadata.version("metadetect"),
+            "ngmix version": importlib.metadata.version("ngmix"),
+            "numpy version": importlib.metadata.version("numpy"),
+            "pyarrow version": importlib.metadata.version("pyarrow"),
+            "pyimcom version": importlib.metadata.version("pyimcom"),
+            "scipy version": importlib.metadata.version("scipy"),
+            "sep version": importlib.metadata.version("sep"),
+        }
+        _meta = {
+            "det_band_combs": self._get_det_combs() or "null",
+            "shear_band_combs": self._get_shear_combs() or "null",
+            "metacal_step": str(self.meta_cfg["metacal"].get("step", metadetect.shearpos.DEFAULT_STEP)),
+        }
+        return _packages | _meta
+
     def construct_table(self, blocks, res):
         """
         Convert metadetect results into a catalog pyarrow Table.
@@ -850,9 +868,11 @@ class MetaDetectRunner:
             Catalog of detected objects.
 
         """
-        metadata = _get_metadata()
         results = {}
         for shear_step in res.keys():
+            metadata = self._get_metadata()
+            metadata["shear_step"] = shear_step
+
             # World coordinates
             w = galsim.AstropyWCS(wcs=self.get_wcs(blocks[0]))
             x, y = res[shear_step]["sx_col"], res[shear_step]["sx_row"]
