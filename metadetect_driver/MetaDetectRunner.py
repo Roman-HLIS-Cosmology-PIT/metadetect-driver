@@ -835,7 +835,6 @@ class MetaDetectRunner:
     def construct_table(self, blocks, res):
         """
         Convert metadetect results into a catalog pyarrow Table.
-        # Keeps only columns requested in driver_cfg['keepcols'] and applies edge mask.
         Also converts IMCOM fluxes to e-/cm^2/s, and computes RA/DEC for detections.
 
         Parameters
@@ -874,12 +873,14 @@ class MetaDetectRunner:
                     #     cf = cf[:, None]  # make it (N, 1) instead of (N,)
                     # for i, band in enumerate(self.bands):
                     #     # flux is stored as a (N_det, N_band) array if more than one band
-                    #     resultdict[f"{model}_{band}_{col}"] = cf[:, i][keep_mask]
+                    #     resultdict[f"{model}_{band}_{col}"] = cf[:, i]
 
-                resultdict[name] = data[keep_mask].tolist()
+                resultdict[name] = data.tolist()
 
-            resultdict["ra"] = ra_pos[keep_mask]
-            resultdict["dec"] = dec_pos[keep_mask]
+            resultdict["ra"] = ra_pos
+            resultdict["dec"] = dec_pos
+
+            resultdict["is_primary"] = keep_mask.tolist()
 
             # # Select requested columns; convert flux-like columns
             # # for col in self.driver_cfg["keepcols"]:
