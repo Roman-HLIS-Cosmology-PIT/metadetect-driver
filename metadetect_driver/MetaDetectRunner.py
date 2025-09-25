@@ -758,7 +758,7 @@ class MetaDetectRunner:
         and correct for the coadd oversampling relative to native pixels.
         The (NATIVE_PIX**2/oversample_pix**2) takes into account that the
         coadds are oversampled and not in the native Roman pixel scale.
-        AB magnitude can be calculated using galsim.roman zeropoints
+        AB magnitude can be calculated using galsim.roman zeropoints.
         """
         # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
         oversample_pix = (
@@ -778,7 +778,7 @@ class MetaDetectRunner:
     def det_bound_from_padding(self):
         """
         Derive a suitable edge bound from the block's padding.
-        In this case it sets the bound size to exlude entire padding region.
+        In this case it sets the bound size to exclude entire padding region.
 
         Returns
         -------
@@ -852,8 +852,10 @@ class MetaDetectRunner:
 
     def construct_table(self, blocks, res):
         """
-        Convert metadetect results into a catalog pyarrow Table.
-        Also converts IMCOM fluxes to e-/cm^2/s, and computes RA/DEC for detections.
+        Convert metadetect results into pyarrow Tables.
+        Converts IMCOM fluxes to e-/cm^2/s,
+        computes RA/Dec for detections, and
+        checks whether detections are primary (in bounds) or not.
 
         Parameters
         ----------
@@ -864,8 +866,8 @@ class MetaDetectRunner:
 
         Returns
         -------
-        pyarrow Table
-            Catalog of detected objects.
+        dict
+            dict of pyarrow Tables for each Metadetect catalog
 
         """
         results = {}
@@ -881,11 +883,11 @@ class MetaDetectRunner:
             # get masked region. All detections outside the bounded region are excluded from catalog
             keep_mask = self.get_bounded_region(res, shear_step)
 
-            resultdict = {}
+            _results = {}
 
             for name in res[shear_step].dtype.names:
                 data = res[shear_step][name]
-                if "flux" in name:
+                if ("flux" in name) and ("flags" not in name):
                     # for flux columns, first convert units. See imcom_flux_conv for why we do this.
                     data = self.imcom_flux_conv(data)
 
@@ -893,44 +895,17 @@ class MetaDetectRunner:
                     #     cf = cf[:, None]  # make it (N, 1) instead of (N,)
                     # for i, band in enumerate(self.bands):
                     #     # flux is stored as a (N_det, N_band) array if more than one band
-                    #     resultdict[f"{model}_{band}_{col}"] = cf[:, i]
+                    #     _results[f"{model}_{band}_{col}"] = cf[:, i]
 
-                resultdict[name] = data.tolist()
+                _results[name] = data.tolist()
 
-            resultdict["ra"] = ra_pos
-            resultdict["dec"] = dec_pos
+            _results["ra"] = ra_pos.tolist()
+            _results["dec"] = dec_pos.tolist()
 
-            resultdict["is_primary"] = keep_mask.tolist()
-
-            # # Select requested columns; convert flux-like columns
-            # # for col in self.driver_cfg["keepcols"]:
-            # for col in res[shear_step].dtype.names:
-            #     models = []
-            #     if "fitters" in self.meta_cfg:
-            #         for fitter_config in self.meta_cfg["fitters"]:
-            #             # https://github.com/esheldon/metadetect/blob/master/metadetect/metadetect.py#L240
-            #             model = fitter_config.get("model", "wmom")
-            #             models.append(model)
-            #     else:
-            #         model = fitter_config.get("model", "wmom")
-            #         models.append(model)
-
-            #     for model in models:
-            #         key = f"{model}_{col}"
-            #         if "flux" in col:
-            #             # for flux columns, first convert units. See imcom_flux_conv for why we do this.
-            #             flux = self.imcom_flux_conv(res[shear_step][key])
-            #             cf = np.asarray(flux)
-            #             if cf.ndim == 1:
-            #                 cf = cf[:, None]  # make it (N, 1) instead of (N,)
-            #             for i, band in enumerate(self.bands):
-            #                 # flux is stored as a (N_det, N_band) array if more than one band
-            #                 resultdict[f"{model}_{band}_{col}"] = cf[:, i][keep_mask]
-            #         else:
-            #             resultdict[key] = res[shear_step][key][keep_mask]
+            _results["is_primary"] = keep_mask.tolist()
 
             results[shear_step] = pa.Table.from_pydict(
-                resultdict, metadata=metadata
+                _results, metadata=metadata
             )
 
         return results
