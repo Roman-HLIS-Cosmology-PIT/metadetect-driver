@@ -92,14 +92,43 @@ class MetaDetectRunner:
         self.bands = self.get_bands()
         _bands = " ".join(np.unique(self.bands))
 
-        self.shear_steps = self.get_shear_steps()
+        self.shear_types = self.get_shear_types()
 
         logger.info(
             f"Processing {len(self.coadds)} {self.input_type} coadds for {_bands}"
         )
 
-    def get_shear_steps(self):
-        return self.meta_cfg["metacal"].get("types", None)
+    def get_metacal_step(self):
+        return self.meta_cfg["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
+
+    def get_shear_types(self):
+        return self.meta_cfg["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
+
+    def get_shear(self, shear_type):
+        # We could use metadetect.shearpos.get_galsim_shear(shear_type, _step),
+        # but that fails for the "noshear" case. The code that actually applies
+        # the shear is inside of ngmix and not easily extractable
+        _step = self.get_metacal_step()
+        match shear_type:
+            case "noshear":
+                _shear = galsim.Shear(g1=0.0, g2=0.0)
+            case "1p":
+                _shear = galsim.Shear(g1=_step, g2=0)
+            case "1m":
+                _shear = galsim.Shear(g1=-_step, g2=0)
+            case "2p":
+                _shear = galsim.Shear(g1=0.0, g2=_step)
+            case "2m":
+                _shear = galsim.Shear(g1=0.0, g2=-_step)
+            case _:
+                raise ValueError(f"{shear_type} is an invalid shear type!")
+
+        return _shear
+
+    def get_jacobian(self, shear_type):
+        # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
+        _shear = self.get_shear(shear_type)
+        return _shear.getMatrix()
 
     def _determine_input_type(self):
         """
@@ -328,24 +357,24 @@ class MetaDetectRunner:
         _schema = catalogs[0]["noshear"].schema
 
         parquet_writers = {}
-        for shear_step in self.shear_steps:
+        for shear_type in self.shear_types:
             output_file = (
-                output_path / f"metadetect_catalog_{shear_step}.parquet"
+                output_path / f"metadetect_catalog_{shear_type}.parquet"
             )
             logger.debug(
-                f"Opening parquet writer for {shear_step} at {output_file}"
+                f"Opening parquet writer for {shear_type} at {output_file}"
             )
-            parquet_writers[shear_step] = pq.ParquetWriter(
+            parquet_writers[shear_type] = pq.ParquetWriter(
                 output_file, schema=_schema
             )
 
         for catalog, block_idx in zip(catalogs, blocks_ran):
             logger.info(f"Writing block {block_idx[0]:02d}_{block_idx[1]:02d}")
-            for shear_step in catalog.keys():
-                parquet_writers[shear_step].write(catalog[shear_step])
+            for shear_type in catalog.keys():
+                parquet_writers[shear_type].write(catalog[shear_type])
 
-        for shear_step, parquet_writer in parquet_writers.items():
-            logger.debug(f"Closing parquet writer for {shear_step}")
+        for shear_type, parquet_writer in parquet_writers.items():
+            logger.debug(f"Closing parquet writer for {shear_type}")
             parquet_writer.close()
 
         logger.info("Writing finished")
@@ -789,7 +818,7 @@ class MetaDetectRunner:
         npix_post_stamp = self.cfg.n2  # pixels per postage stamp
         return int(pad * npix_post_stamp)
 
-    def get_bounded_region(self, res, shear_step):
+    def get_bounded_region(self, res, shear_type):
         """
         Build a mask that excludes detections too close to image edges.
         Determine what detections from the image to exclude from catalog.
@@ -815,8 +844,8 @@ class MetaDetectRunner:
             bound_size = self.driver_cfg["bound_size"]
 
         img_size = self.cfg.NsideP  # (ny, nx)
-        x = res[shear_step]["sx_col"]
-        y = res[shear_step]["sx_row"]
+        x = res[shear_type]["sx_col"]
+        y = res[shear_type]["sx_row"]
         keep = (
             (x > bound_size)
             & (x < img_size - bound_size)
@@ -828,7 +857,7 @@ class MetaDetectRunner:
     # ----------------------------
     # Results construction
     # ----------------------------
-    def _get_metadata(self):
+    def _get_metadata(self, shear_type):
         _packages = {
             f"{__package__} version": importlib.metadata.version(__package__),
             "python version": sys.version,
@@ -846,7 +875,8 @@ class MetaDetectRunner:
         _meta = {
             "det_band_combs": self._get_det_combs() or "null",
             "shear_band_combs": self._get_shear_combs() or "null",
-            "metacal_step": str(self.meta_cfg["metacal"].get("step", metadetect.shearpos.DEFAULT_STEP)),
+            "metacal_step": str(self.get_metacal_step()),
+            "metacal_shear_type": shear_type,
         }
         return _packages | _meta
 
@@ -871,22 +901,24 @@ class MetaDetectRunner:
 
         """
         results = {}
-        for shear_step in res.keys():
-            metadata = self._get_metadata()
-            metadata["shear_step"] = shear_step
+        for shear_type in res.keys():
+            _jacobian = self.get_jacobian(shear_type)
+
+            _metadata = self._get_metadata(shear_type)
+            # _metadata["shear_type"] = shear_type
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=self.get_wcs(blocks[0]))
-            x, y = res[shear_step]["sx_col"], res[shear_step]["sx_row"]
+            x, y = res[shear_type]["sx_col"], res[shear_type]["sx_row"]
             ra_pos, dec_pos = w.toWorld(x, y, units="deg")
 
             # get masked region. All detections outside the bounded region are excluded from catalog
-            keep_mask = self.get_bounded_region(res, shear_step)
+            keep_mask = self.get_bounded_region(res, shear_type)
 
             _results = {}
 
-            for name in res[shear_step].dtype.names:
-                data = res[shear_step][name]
+            for name in res[shear_type].dtype.names:
+                data = res[shear_type][name]
                 if ("flux" in name) and ("flags" not in name):
                     # for flux columns, first convert units. See imcom_flux_conv for why we do this.
                     data = self.imcom_flux_conv(data)
@@ -904,8 +936,10 @@ class MetaDetectRunner:
 
             _results["is_primary"] = keep_mask.tolist()
 
-            results[shear_step] = pa.Table.from_pydict(
-                _results, metadata=metadata
+            _results["jacobian"] = [_jacobian.tolist() for _ in range(len(x))]
+
+            results[shear_type] = pa.Table.from_pydict(
+                _results, metadata=_metadata
             )
 
         return results
