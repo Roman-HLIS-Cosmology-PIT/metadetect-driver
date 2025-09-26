@@ -1,2 +1,3 @@
-from .config import *
-from .MetaDetectRunner import *
+__all__ = ["MetaDetectRunner"]
+
+from .driver import MetaDetectRunner

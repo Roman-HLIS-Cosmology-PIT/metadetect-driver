@@ -22,9 +22,7 @@ _ALLOWED_BANDS = [
 
 
 _DEFAULT_DRIVER_CONFIG = (
-    importlib.resources.files(__package__).parent
-    / "config"
-    / "driver_default.yaml"
+    importlib.resources.files(__package__).parent / "config" / "driver_default.yaml"
 )
 
 
@@ -62,9 +60,7 @@ def _coerce_list(val, elem_type, key_name):
                 f"'{key_name}' elements must be {elem_type.__name__}, got bool"
             )
         if not isinstance(x, elem_type):
-            raise TypeError(
-                f"'{key_name}' elements must be {elem_type.__name__}"
-            )
+            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}")
     return out
 
 
@@ -94,7 +90,7 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
       - Validate band names, numeric ranges, and types.
       - keepcols is always a list; if user passes None/empty, fallback to default.
     """
-    logger.info(f"Parsing metadetect driver config")
+    logger.info("Parsing metadetect driver config")
 
     cfg = _load_default_driver_config()
     if driver_cfg:
