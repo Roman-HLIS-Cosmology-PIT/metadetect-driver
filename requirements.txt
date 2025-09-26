@@ -2,8 +2,8 @@ numpy
 pyyaml
 astropy
 galsim
-ngmix
-metadetect
+git+https://github.com/esheldon/ngmix.git@master
+git+https://github.com/esheldon/metadetect.git@master
 sep
 numba
 scipy
