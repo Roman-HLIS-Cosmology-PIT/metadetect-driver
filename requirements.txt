@@ -1,11 +1,11 @@
 asdf
 astropy
 galsim
+metadetect
+ngmix
 numpy
 pyarrow
 pyyaml
 scipy
 sep
-git+https://github.com/esheldon/metadetect.git@master
-git+https://github.com/esheldon/ngmix.git@master
 git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git@main
