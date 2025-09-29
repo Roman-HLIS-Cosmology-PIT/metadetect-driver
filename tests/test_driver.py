@@ -9,7 +9,7 @@ from metadetect_driver import MetaDetectRunner
 
 
 def test_main():
-    image_path = str(Path(__file__).parent / "data" / "output_00_00.fits")
+    image_path = str(Path(__file__).parent / "data" / "H158" / "output_00_00.fits")
     outimage = OutImage(image_path)
 
     mdet_runner = MetaDetectRunner(outimage)
