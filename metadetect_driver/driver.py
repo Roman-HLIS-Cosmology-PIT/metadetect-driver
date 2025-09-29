@@ -3,8 +3,8 @@ import importlib.resources
 import logging
 import sys
 import warnings
-from copy import deepcopy
 from concurrent.futures import ProcessPoolExecutor
+from copy import deepcopy
 from pathlib import Path
 
 import galsim
@@ -17,12 +17,10 @@ import pyarrow.parquet as pq
 import sep
 import yaml
 from astropy import wcs
-
-from pyimcom.analysis import OutImage, Mosaic
+from pyimcom.analysis import Mosaic, OutImage
 from pyimcom.config import Settings
 
 from .config import parse_driver_config
-
 
 logger = logging.getLogger(__name__)
 

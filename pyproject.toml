@@ -13,7 +13,6 @@ authors = [
 ]
 requires-python = ">=3.10"
 
-
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
 
@@ -23,11 +22,3 @@ exclude = ["tests*", "docs*"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
-
-[tool.isort]
-profile = "black"
-line_length = 110
-
-[tool.black]
-line-length = 110
-target-version = ["py311"]

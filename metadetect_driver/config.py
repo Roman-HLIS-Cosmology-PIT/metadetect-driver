@@ -4,7 +4,6 @@ from typing import Iterable, Optional, Union
 
 import yaml
 
-
 logger = logging.getLogger(__name__)
 
 
