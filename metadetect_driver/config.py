@@ -101,12 +101,6 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
     cfg["shear_bands"] = _validate_bands(cfg.get("shear_bands"), "shear_bands")
     logger.debug(f"config shear_bands: {cfg['shear_bands']}")
 
-    # # keepcols: always ensure list, fallback to default if None/empty
-    # keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
-    # cfg["keepcols"] = keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
-    # logger.debug(f"config keepcols: {cfg['keepcols']}")
-
-    # ---- Validation ----
     # sizes
     if not (isinstance(cfg["psf_img_size"], int) and cfg["psf_img_size"] > 0):
         raise ValueError("'psf_img_size' must be a positive int")
@@ -125,22 +119,5 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
     if cfg["layer"] is not None and not isinstance(cfg["layer"], str):
         raise ValueError("'layer' must be a string")
     logger.debug(f"config layer: {cfg['layer']}")
-
-    # # outdir
-    # if cfg["outdir"] is not None and not isinstance(cfg["outdir"], str):
-    #     raise ValueError("'outdir' must be a string")
-    # logger.debug(f"config outdir: {cfg['outdir']}")
-
-    # executor params
-    mw = cfg.get("max_workers")
-    if mw is not None:
-        if not (isinstance(mw, int) and mw >= 1):
-            raise ValueError("'max_workers' must be None or an int >= 1")
-    logger.debug(f"config max_workers: {cfg['max_workers']}")
-
-    ch = cfg.get("chunksize")
-    if not (isinstance(ch, int) and ch >= 1):
-        raise ValueError("'chunksize' must be an int >= 1")
-    logger.debug(f"config chunksize: {cfg['chunksize']}")
 
     return cfg

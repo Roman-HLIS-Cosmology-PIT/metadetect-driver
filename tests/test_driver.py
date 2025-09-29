@@ -15,12 +15,11 @@ def test_main():
     outimages = [OutImage(image_path) for image_path in image_paths]
 
     mdet_runner = MetaDetectRunner(outimages)
-    catalogs, block_indices = mdet_runner.make_catalogs()
+    catalogs = mdet_runner.make_catalogs()
 
     output_path = Path(__file__).parent / "output"
 
-    for shear_type in mdet_runner.shear_types:
-        _result = pa.concat_tables([cat[shear_type] for cat in catalogs])
+    for shear_type, _result in catalogs.items():
         _expected = pq.read_table(
             output_path / f"metadetect_catalog_{shear_type}.parquet"
         )

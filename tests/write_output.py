@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from metadetect_driver import MetaDetectRunner
@@ -5,6 +6,8 @@ from pyimcom.analysis import OutImage
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     image_paths = [
         str(Path(__file__).parent / "data" / "H158" / "output_00_00.fits"),
         str(Path(__file__).parent / "data" / "J129" / "output_00_00.fits"),
@@ -14,11 +17,11 @@ def main():
 
     print(f"Running metadetect")
     mdet_runner = MetaDetectRunner(outimages)
-    catalogs, block_indices = mdet_runner.make_catalogs()
+    catalogs = mdet_runner.make_catalogs()
 
     output_path = Path(__file__).parent / "output"
     print(f"Writing catalogs to {output_path}")
-    mdet_runner.write_catalogs(output_path, catalogs, block_indices)
+    mdet_runner.write_catalogs(output_path, catalogs)
 
     print("Done")
 

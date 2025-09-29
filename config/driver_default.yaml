@@ -11,5 +11,3 @@ mdet_seed: 42
 det_bands: null
 shear_bands: null
 layer: SCI
-max_workers: null
-chunksize: 1
