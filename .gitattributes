@@ -3,7 +3,11 @@ tests/output/metadetect_catalog_1m.parquet filter=lfs diff=lfs merge=lfs -text
 tests/output/metadetect_catalog_1p.parquet filter=lfs diff=lfs merge=lfs -text
 tests/output/metadetect_catalog_2m.parquet filter=lfs diff=lfs merge=lfs -text
 tests/output/metadetect_catalog_2p.parquet filter=lfs diff=lfs merge=lfs -text
-tests/data/output_00_00.fits filter=lfs diff=lfs merge=lfs -text
-tests/data/output_00_01.fits filter=lfs diff=lfs merge=lfs -text
-tests/data/output_01_00.fits filter=lfs diff=lfs merge=lfs -text
-tests/data/output_01_01.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/H158/output_00_00.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/H158/output_00_01.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/H158/output_01_00.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/H158/output_01_01.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/J129/output_00_00.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/J129/output_00_01.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/J129/output_01_00.fits filter=lfs diff=lfs merge=lfs -text
+tests/data/J129/output_01_01.fits filter=lfs diff=lfs merge=lfs -text
