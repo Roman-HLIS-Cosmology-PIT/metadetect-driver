@@ -495,7 +495,7 @@ class MetaDetectRunner:
             & (y < img_size - bound_size)
         )
 
-    def _get_metadata(self, shear_type):
+    def _get_metadata(self):
         _packages = {
             f"{__package__} version": importlib.metadata.version(__package__),
             "python version": sys.version,
@@ -514,7 +514,6 @@ class MetaDetectRunner:
             "det_band_combs": self.det_combs or "null",
             "shear_band_combs": self.shear_combs or "null",
             "metacal_step": str(self.get_metacal_step()),
-            "metacal_shear_type": shear_type,
         }
         return _packages | _meta
 
@@ -539,9 +538,9 @@ class MetaDetectRunner:
             dict of pyarrow Tables for each Metadetect catalog
 
         """
+        _metadata = self._get_metadata()
         results = {}
         for shear_type in res.keys():
-            _metadata = self._get_metadata(shear_type)
             _jacobian = self.get_jacobian(shear_type)
 
             # World coordinates
