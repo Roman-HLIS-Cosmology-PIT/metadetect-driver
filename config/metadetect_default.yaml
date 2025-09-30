@@ -1,16 +1,16 @@
 model: wmom
 weight:
-  fwhm: 6
+  fwhm: 1.2
 # fitters:
 #   - model: pgauss
 #     weight:
-#       fwhm: 6.0
+#       fwhm: 2.0
 #   - model: gauss
 #     weight:
-#       fwhm: 6.0
+#       fwhm: 2.0
 #   - model: wmom
 #     weight:
-#       fwhm: 6.0
+#       fwhm: 1.2
 metacal:
   psf: fitgauss
   types:
