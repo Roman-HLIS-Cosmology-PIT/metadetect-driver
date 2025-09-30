@@ -379,7 +379,12 @@ class MetaDetectRunner:
         cfg = block.cfg
 
         # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
-        fwhm = cfg.sigmatarget * MetaDetectRunner.NATIVE_PIX * 2 * math.sqrt(2 * math.log(2))
+        fwhm = (
+            cfg.sigmatarget
+            * MetaDetectRunner.NATIVE_PIX
+            * 2
+            * math.sqrt(2 * math.log(2))
+        )
         psf = galsim.Gaussian(fwhm=fwhm)
 
         # Optional Airy with/without obscuration, then convolve with Gaussian.
