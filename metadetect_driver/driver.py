@@ -44,13 +44,13 @@ class MetaDetectRunner:
 
     NATIVE_PIX = 0.11  # arcsec/pixel (Roman native pixel scale)
 
-    def __init__(self, coadds, meta_cfg=None, driver_cfg=None):
+    def __init__(self, blocks, meta_cfg=None, driver_cfg=None):
         """
         Initialize the MetaDetectRunner.
 
         Parameters
         ----------
-        coadds : list of OutImage
+        blocks : list of OutImage
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
         meta_cfg : dict, optional
@@ -62,7 +62,7 @@ class MetaDetectRunner:
         logger.debug(f"MetaDetect config: {meta_cfg}")
         logger.debug(f"Driver config: {driver_cfg}")
 
-        self.coadds = coadds
+        self.blocks = blocks
 
         _default_config = _load_default_metadetect_config()
         self.meta_cfg = deepcopy(meta_cfg) if meta_cfg is not None else _default_config
@@ -70,7 +70,7 @@ class MetaDetectRunner:
         # Set the PyIMCOM config used to make images. The config will vary between bands, but some
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.cfg = self.coadds[0].cfg
+        self.cfg = self.blocks[0].cfg
         self.bands = self.get_bands()
         self.shear_types = self.get_shear_types()
         self.det_combs = self.get_det_combs()
@@ -96,8 +96,8 @@ class MetaDetectRunner:
             Band labels matching each block in `blocks`.
         """
         band_list = []
-        for coadd in self.coadds:
-            band = Settings.RomanFilters[coadd.cfg.use_filter]
+        for block in self.blocks:
+            band = Settings.RomanFilters[block.cfg.use_filter]
             band_list.append(band)
         return band_list
 
@@ -122,7 +122,7 @@ class MetaDetectRunner:
     def get_det_combs(self):
         det_bands = self.driver_cfg["det_bands"]
         if det_bands is not None:
-            # Select only detection and shear bands from bands in coadds provided.
+            # Select only detection and shear bands from bands in blocks provided.
             det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
             det_combs = [det_idx]
         else:
@@ -159,12 +159,12 @@ class MetaDetectRunner:
             The final combined catalog from all processed blocks for each
             shear type
         """
-        mbobs = self.make_mbobs(self.coadds)
+        mbobs = self.make_mbobs()
         res = self.run_metadetect(mbobs)
         wcs = None
 
         # Ensure that all blocks have the same WCS
-        for block in self.coadds:
+        for block in self.blocks:
             if wcs is None:
                 wcs = self.get_wcs(block)
             else:
@@ -206,7 +206,7 @@ class MetaDetectRunner:
 
         logger.info("Writing finished")
 
-    def make_mbobs(self, blocks):
+    def make_mbobs(self):
         """
         Build an ngmix MultiBandObsList from a list of blocks (each a different band).
 
@@ -219,9 +219,7 @@ class MetaDetectRunner:
         mbobs : ngmix MultiBandObservation
         """
         mbobs = ngmix.MultiBandObsList()
-        for block in (
-            blocks if isinstance(blocks, list) else [blocks]
-        ):  # loop over blocks of different bands
+        for block in self.blocks:
             obslist = self.make_ngmix_obs(block)
             mbobs.append(obslist)
         return mbobs
