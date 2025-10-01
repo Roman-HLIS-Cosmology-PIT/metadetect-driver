@@ -73,13 +73,13 @@ def write_catalogs(catalogs, base_dir):
     logger.info("Writing finished")
 
 
-def run_metadetect(blocks, meta_cfg=None, driver_cfg=None):
+def run_metadetect(outimages, meta_cfg=None, driver_cfg=None):
     """
     Run metadetect on multi-band coadd images.
 
     Parameters
     ----------
-    blocks : list of OutImage
+    outimages : list of OutImage
         PyIMCOM output objects to process. Each element corresponds to the
         coadd of the same block in different bands
     meta_cfg : dict, optional
@@ -92,7 +92,7 @@ def run_metadetect(blocks, meta_cfg=None, driver_cfg=None):
     dict of pyarrow Table
         metadetect catalogs for each shear type
     """
-    runner = MetadetectRunner(blocks, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
+    runner = MetadetectRunner(outimages, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
     return runner.run()
 
 
@@ -105,13 +105,13 @@ class MetadetectRunner:
 
     NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
 
-    def __init__(self, blocks, meta_cfg=None, driver_cfg=None):
+    def __init__(self, outimages, meta_cfg=None, driver_cfg=None):
         """
         Initialize the MetadetectRunner.
 
         Parameters
         ----------
-        blocks : list of OutImage
+        outimages : list of OutImage
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
         meta_cfg : dict, optional
@@ -123,7 +123,25 @@ class MetadetectRunner:
         logger.debug(f"Metadetect config: {meta_cfg}")
         logger.debug(f"Driver config: {driver_cfg}")
 
-        self.blocks = blocks
+        # Ensure each outimage corresponds to the same block
+        _block_ids = set(
+            (outimage.ibx, outimage.iby)
+            for outimage in outimages
+        )
+        block_idx, block_idy = _block_ids.pop()
+        assert len(_block_ids) == 0
+
+        # Ensure that each outimage corresponds to a different filter
+        _filters = set(
+            outimage.cfg.use_filter
+            for outimage in outimages
+        )
+        assert len(_filters) == len(outimages)
+
+        self.block_idx = block_idx
+        self.block_idy = block_idy
+
+        self.outimages = outimages
 
         self.meta_cfg = (
             deepcopy(meta_cfg)
@@ -133,8 +151,8 @@ class MetadetectRunner:
         self.driver_cfg = parse_driver_config(driver_cfg)
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.cfg = self.blocks[0].cfg
-        self.bands = MetadetectRunner.get_bands(self.blocks)
+        self.cfg = self.outimages[0].cfg
+        self.bands = MetadetectRunner.get_bands(self.outimages)
         self.shear_types = self.get_shear_types()
         self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
@@ -149,7 +167,7 @@ class MetadetectRunner:
         )
 
     @staticmethod
-    def get_bands(blocks):
+    def get_bands(outimages):
         """
         Get band names for provided blocks.
         PyIMCOM has a certain ordering of the filters (e.g. filter 2 is H158).
@@ -161,8 +179,8 @@ class MetadetectRunner:
             Band labels matching each block in `blocks`.
         """
         band_list = []
-        for block in blocks:
-            band = Settings.RomanFilters[block.cfg.use_filter]
+        for outimage in outimages:
+            band = Settings.RomanFilters[outimage.cfg.use_filter]
             band_list.append(band)
         return band_list
 
@@ -230,11 +248,11 @@ class MetadetectRunner:
 
         wcs = None
         # Ensure that all blocks have the same WCS
-        for block in self.blocks:
+        for outimage in self.outimages:
             if wcs is None:
-                wcs = self.get_wcs(block)
+                wcs = self.get_wcs(outimage)
             else:
-                _wcs = self.get_wcs(block)
+                _wcs = self.get_wcs(outimage)
                 # TODO is there a better way to check for WCS consistency?
                 assert wcs.wcs == _wcs.wcs
         logger.debug(f"WCS is {wcs}")
@@ -243,36 +261,36 @@ class MetadetectRunner:
 
     def make_mbobs(self):
         """
-        Build an ngmix MultiBandObsList from a list of blocks (each a different band).
+        Build an ngmix MultiBandObsList from a list of outimages.
 
         Parameters
         ----------
-        blocks : list of OutImage objects
+        outimages : list of OutImage objects
 
         Returns
         -------
         mbobs : ngmix MultiBandObservation
         """
         mbobs = ngmix.MultiBandObsList()
-        for block in self.blocks:
-            obslist = self.make_ngmix_obs(block)
+        for outimage in self.outimages:
+            obslist = self.make_ngmix_obs(outimage)
             mbobs.append(obslist)
         return mbobs
 
-    def make_ngmix_obs(self, block):
+    def make_ngmix_obs(self, outimage):
         """
-        Create an ngmix ObsList for a single block image.
+        Create an ngmix ObsList for a single outimage.
 
         Parameters
         ----------
-        block : OutImage
-            PyIMCOM block
+        outimage : OutImage
+            PyIMCOM outimage
 
         Returns
         -------
         obslist : ngmix Observation
         """
-        img, img_jacobian, psf_img, noise_sigma = self._get_ngmix_data(block)
+        img, img_jacobian, psf_img, noise_sigma = self._get_ngmix_data(outimage)
 
         # Centers
         psf_cen = (psf_img.shape[0] - 1) / 2.0
@@ -296,13 +314,13 @@ class MetadetectRunner:
         obslist.append(obs)
         return obslist
 
-    def _get_ngmix_data(self, block):
+    def _get_ngmix_data(self, outimage):
         """
-        Generate inputs needed to make ngmix Observation for a single block.
+        Generate inputs needed to make ngmix Observation for a single outimage.
 
          Parameters
         ----------
-        block : OutImage object representing a single block (one band).
+        outimage : OutImage object representing a single outimage in one band.
 
         Returns
         -------
@@ -315,10 +333,10 @@ class MetadetectRunner:
         noise_sigma : float
             Global RMS of the image background.
         """
-        image = block.get_coadded_layer(self.driver_cfg.get("layer", "SCI"))
+        image = outimage.get_coadded_layer(self.driver_cfg.get("layer", "SCI"))
 
         # Build GalSim WCS and Jacobian
-        w = galsim.AstropyWCS(wcs=self.get_wcs(block))
+        w = galsim.AstropyWCS(wcs=self.get_wcs(outimage))
         img_jacobian = w.jacobian(
             image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1])
         )
@@ -328,7 +346,7 @@ class MetadetectRunner:
         noise_sigma = bkg.globalrms
 
         # Draw PSF image
-        psf_img = self.get_psf(block, w)
+        psf_img = self.get_psf(outimage, w)
         return image, img_jacobian, psf_img, noise_sigma
 
     def _run_metadetect(self, mbobs):
@@ -357,14 +375,14 @@ class MetadetectRunner:
         )
 
     @staticmethod
-    def get_wcs(block):
+    def get_wcs(outimage):
         """
-        Construct WCS for a block from its configuration.
+        Construct WCS for a outimage from its configuration.
 
         Parameters
         ----------
-        block : OutImage
-            PyIMCOM block
+        outimage : OutImage
+            PyIMCOM outimage
 
         Returns
         -------
@@ -376,8 +394,8 @@ class MetadetectRunner:
         Code mirrors:
         https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom/blob/main/coadd.py
         """
-        cfg = block.cfg
-        ibx, iby = block.ibx, block.iby
+        cfg = outimage.cfg
+        ibx, iby = outimage.ibx, outimage.iby
         outwcs = wcs.WCS(naxis=2)
         outwcs.wcs.crpix = [
             (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
@@ -390,14 +408,13 @@ class MetadetectRunner:
         return outwcs
 
     @staticmethod
-    def get_psf_obj(block):
+    def get_psf_obj(cfg):
         """
-        Build a GalSim PSF from the block configuration.
+        Build a GalSim PSF from the outimage configuration.
 
         Parameters
         ----------
-        block : OutImage
-            PyIMCOM block
+        cfg : PyIMCOM Config
 
         Returns
         -------
@@ -409,8 +426,6 @@ class MetadetectRunner:
         - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
         - The AIRY kernels are also be convolved with a Gaussian.
         """
-        cfg = block.cfg
-
         # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
         fwhm = (
             cfg.sigmatarget
@@ -433,14 +448,14 @@ class MetadetectRunner:
 
         return psf
 
-    def get_psf(self, block, wcs):
+    def get_psf(self, outimage, wcs):
         """
-        Draw a PSF image for a block given.
+        Draw a PSF image for a given outimage.
 
         Parameters
         ----------
-        block : OutImage
-            PyIMCOM block.
+        outimage: OutImage
+            PyIMCOM outimageblock.
         wcs : galsim.BaseWCS
             GalSim WCS instance.
 
@@ -449,7 +464,7 @@ class MetadetectRunner:
         psf_img: np.ndarray
             PSF image array with shape (psf_img_size, psf_img_size).
         """
-        psf = MetadetectRunner.get_psf_obj(block)
+        psf = MetadetectRunner.get_psf_obj(outimage.cfg)
         return psf.drawImage(
             nx=self.driver_cfg["psf_img_size"],
             ny=self.driver_cfg["psf_img_size"],
