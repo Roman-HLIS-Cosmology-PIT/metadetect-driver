@@ -27,9 +27,7 @@ def test_main():
         # NOTE this does _not_ require that the metadata be equal, so this will
         # not raise an error even if there is a version mismatch between
         # packages recorded in the metadata
-        assert _result.schema == _expected.schema, (
-            f"Schema for shear_type {shear_type} differ"
-        )
+        assert _result.schema == _expected.schema
 
         # NOTE we use pandas to check equality because of nan handling.
         # This is not ideal.
