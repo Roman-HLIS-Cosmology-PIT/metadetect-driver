@@ -132,9 +132,15 @@ class MetadetectRunner:
         _filters = set(outimage.cfg.use_filter for outimage in outimages)
         assert len(_filters) == len(outimages)
 
-        self.block_id = (_block_idx, _block_idy)
+        # TODO ensure that the configs are consistent
+        self.cfg = outimages[0].cfg
 
         self.outimages = outimages
+
+        self.block_id = (_block_idx, _block_idy)
+        self.block_ra = self.cfg.ra
+        self.block_dec = self.cfg.dec
+        self.block_lonpole = self.cfg.lonpole
 
         self.meta_cfg = (
             deepcopy(meta_cfg)
@@ -144,7 +150,6 @@ class MetadetectRunner:
         self.driver_cfg = parse_driver_config(driver_cfg)
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.cfg = self.outimages[0].cfg
         self.bands = MetadetectRunner.get_bands(self.outimages)
         self.shear_types = self.get_shear_types()
         self.metacal_step = self.get_metacal_step()
@@ -218,7 +223,7 @@ class MetadetectRunner:
         return shear_combs
 
     @staticmethod
-    def get_jacobian(shear_type, metacal_step):
+    def get_shear_jacobian(shear_type, metacal_step):
         # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
         _shear = MetadetectRunner.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
@@ -579,7 +584,9 @@ class MetadetectRunner:
         _metadata = self._get_metadata()
         results = {}
         for shear_type, catalog in res.items():
-            _jacobian = MetadetectRunner.get_jacobian(shear_type, self.metacal_step)
+            _shear_jacobian = MetadetectRunner.get_shear_jacobian(
+                shear_type, self.metacal_step
+            )
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
@@ -602,8 +609,15 @@ class MetadetectRunner:
                 _results[name] = data.tolist()
 
             _results["block_id"] = [self.block_id for _ in range(len(x))]
+            _results["projection_center_ra"] = [self.block_ra for _ in range(len(x))]
+            _results["projection_center_dec"] = [self.block_dec for _ in range(len(x))]
+            _results["projection_center_lonpole"] = [
+                self.block_lonpole for _ in range(len(x))
+            ]
+            _results["shear_jacobian"] = [
+                _shear_jacobian.tolist() for _ in range(len(x))
+            ]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
-            _results["jacobian"] = [_jacobian.tolist() for _ in range(len(x))]
 
             results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
 
