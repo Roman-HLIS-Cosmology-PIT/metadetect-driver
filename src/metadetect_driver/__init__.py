@@ -1,3 +1,3 @@
-__all__ = ["MetaDetectRunner", "run_metadetect"]
+__all__ = ["MetadetectRunner", "run_metadetect"]
 
-from .driver import MetaDetectRunner, run_metadetect
+from .driver import MetadetectRunner, run_metadetect

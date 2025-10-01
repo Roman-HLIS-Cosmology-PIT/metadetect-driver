@@ -83,7 +83,7 @@ def run_metadetect(blocks, meta_cfg=None, driver_cfg=None):
         PyIMCOM output objects to process. Each element corresponds to the
         coadd of the same block in different bands
     meta_cfg : dict, optional
-        MetaDetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+        Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
     driver_cfg : dict, optional
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
 
@@ -92,14 +92,14 @@ def run_metadetect(blocks, meta_cfg=None, driver_cfg=None):
     dict of pyarrow Table
         metadetect catalogs for each shear type
     """
-    runner = MetaDetectRunner(blocks, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
+    runner = MetadetectRunner(blocks, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
     return runner.run()
 
 
-class MetaDetectRunner:
+class MetadetectRunner:
     """
-    Class to run MetaDetection on PyIMCOM coadds (OutImage objects).
-    Stores the input coadds, MetaDetection config, and driver config, and provides
+    Class to run Metadetection on PyIMCOM coadds (OutImage objects).
+    Stores the input coadds, Metadetection config, and driver config, and provides
     methods to build catalogs from the multi-band imaging.
     """
 
@@ -107,7 +107,7 @@ class MetaDetectRunner:
 
     def __init__(self, blocks, meta_cfg=None, driver_cfg=None):
         """
-        Initialize the MetaDetectRunner.
+        Initialize the MetadetectRunner.
 
         Parameters
         ----------
@@ -115,12 +115,12 @@ class MetaDetectRunner:
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
         meta_cfg : dict, optional
-            MetaDetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+            Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
         driver_cfg : dict, optional
             Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
         """
-        logger.info("Instantiating MetaDetectRunner")
-        logger.debug(f"MetaDetect config: {meta_cfg}")
+        logger.info("Instantiating MetadetectRunner")
+        logger.debug(f"Metadetect config: {meta_cfg}")
         logger.debug(f"Driver config: {driver_cfg}")
 
         self.blocks = blocks
@@ -134,7 +134,7 @@ class MetaDetectRunner:
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
         self.cfg = self.blocks[0].cfg
-        self.bands = MetaDetectRunner.get_bands(self.blocks)
+        self.bands = MetadetectRunner.get_bands(self.blocks)
         self.shear_types = self.get_shear_types()
         self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
@@ -209,12 +209,12 @@ class MetaDetectRunner:
     @staticmethod
     def get_jacobian(shear_type, metacal_step):
         # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
-        _shear = MetaDetectRunner.get_shear(shear_type, metacal_step)
+        _shear = MetadetectRunner.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
 
     def run(self):
         """
-        Main driver to run MetaDetection and produce a catalog.
+        Main driver to run Metadetection and produce a catalog.
 
         Parameters
         ----------
@@ -414,7 +414,7 @@ class MetaDetectRunner:
         # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
         fwhm = (
             cfg.sigmatarget
-            * MetaDetectRunner.NATIVE_PIX
+            * MetadetectRunner.NATIVE_PIX
             * 2
             * math.sqrt(2 * math.log(2))
         )
@@ -426,7 +426,7 @@ class MetaDetectRunner:
             # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
             # so we multiply by roman native pixel scale (0.11) to convert to arcsec
             lam_over_diam = (
-                Settings.QFilterNative[cfg.use_filter] * MetaDetectRunner.NATIVE_PIX
+                Settings.QFilterNative[cfg.use_filter] * MetadetectRunner.NATIVE_PIX
             )  # arcsec
             airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
             psf = galsim.Convolve([airy, psf])
@@ -449,7 +449,7 @@ class MetaDetectRunner:
         psf_img: np.ndarray
             PSF image array with shape (psf_img_size, psf_img_size).
         """
-        psf = MetaDetectRunner.get_psf_obj(block)
+        psf = MetadetectRunner.get_psf_obj(block)
         return psf.drawImage(
             nx=self.driver_cfg["psf_img_size"],
             ny=self.driver_cfg["psf_img_size"],
@@ -484,7 +484,7 @@ class MetaDetectRunner:
         norm = (
             roman.exptime
             * roman.collecting_area
-            * (MetaDetectRunner.NATIVE_PIX**2 / oversample_pix**2)
+            * (MetadetectRunner.NATIVE_PIX**2 / oversample_pix**2)
         )
         return flux / norm
 
@@ -521,7 +521,7 @@ class MetaDetectRunner:
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
         if self.driver_cfg["bound_size"] is None:
-            bound_size = MetaDetectRunner.det_bound_from_padding(self.cfg)
+            bound_size = MetadetectRunner.det_bound_from_padding(self.cfg)
         else:
             bound_size = self.driver_cfg["bound_size"]
 
@@ -571,7 +571,7 @@ class MetaDetectRunner:
         _metadata = self._get_metadata()
         results = {}
         for shear_type, catalog in res.items():
-            _jacobian = MetaDetectRunner.get_jacobian(shear_type, self.metacal_step)
+            _jacobian = MetadetectRunner.get_jacobian(shear_type, self.metacal_step)
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
@@ -589,7 +589,7 @@ class MetaDetectRunner:
             for name in res[shear_type].dtype.names:
                 data = catalog[name]
                 if ("flux" in name) and ("flags" not in name):
-                    data = MetaDetectRunner.imcom_flux_conv(data, self.cfg.dtheta)
+                    data = MetadetectRunner.imcom_flux_conv(data, self.cfg.dtheta)
 
                 _results[name] = data.tolist()
 
