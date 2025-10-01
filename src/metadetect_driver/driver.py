@@ -128,7 +128,7 @@ class MetadetectRunner:
             (outimage.ibx, outimage.iby)
             for outimage in outimages
         )
-        block_idx, block_idy = _block_ids.pop()
+        _block_idx, _block_idy = _block_ids.pop()
         assert len(_block_ids) == 0
 
         # Ensure that each outimage corresponds to a different filter
@@ -138,8 +138,7 @@ class MetadetectRunner:
         )
         assert len(_filters) == len(outimages)
 
-        self.block_idx = block_idx
-        self.block_idy = block_idy
+        self.block_id = (_block_idx, _block_idy)
 
         self.outimages = outimages
 
@@ -608,6 +607,7 @@ class MetadetectRunner:
 
                 _results[name] = data.tolist()
 
+            _results["block_id"] = [self.block_id for _ in range(len(x))]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
             _results["jacobian"] = [_jacobian.tolist() for _ in range(len(x))]
 
