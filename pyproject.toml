@@ -7,10 +7,10 @@ license = { text = "MIT" }
 authors = [
   { name = "Roman-HLIS-Cosmology-PIT" },
   { name = "Federico Berlfein", email = "fberlfei@andrew.cmu.edu" },
-  { name = "Yuedong Fang", email = "yuedong.fang@duke.edu" }
-  { name = "Axel Guinot", email = "axel.guinot.astro@gmail.com" }
+  { name = "Yuedong Fang", email = "yuedong.fang@duke.edu" },
+  { name = "Axel Guinot", email = "axel.guinot.astro@gmail.com" },
   { name = "Arun Kannawadi", email = "kj.arun.kj@gmail.com" },
-  { name = "Sidney Mau", email = "sidney.mau@duke.edu" }
+  { name = "Sidney Mau", email = "sidney.mau@duke.edu" },
 ]
 requires-python = ">=3.10"
 
