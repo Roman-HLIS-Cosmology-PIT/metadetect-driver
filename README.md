@@ -22,7 +22,10 @@ pip install -e .
 
 The primary dependencies of the code are the `metadetect` "stack" (i.e., `metadetect`, `ngmix`, `meds`, etc.) and `pyimcom`.
 The former is best-installed via conda, and the latter can be installed from GitHub via pip.
-See `.github/workflows/test.yaml` for an example of creating an environment.
+An example file for conda requirements is provided to facilitate building an environment:
+```bash
+conda install --file requirements-conda.txt
+```
 
 ## Use
 
