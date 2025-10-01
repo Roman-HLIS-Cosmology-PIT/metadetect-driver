@@ -1,12 +1,5 @@
-import pytest
 import metadetect_driver
-
-
-def test_default():
-    _default_driver_config = metadetect_driver.config._load_default_driver_config()
-    parsed_driver_cfg = metadetect_driver.config.parse_driver_config(None)
-
-    assert parsed_driver_cfg == _default_driver_config
+import pytest
 
 
 def test_validate():

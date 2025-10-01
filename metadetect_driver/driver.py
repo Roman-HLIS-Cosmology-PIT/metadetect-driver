@@ -1,5 +1,4 @@
 import importlib.metadata
-import importlib.resources
 import logging
 import math
 import sys
@@ -14,25 +13,13 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 import sep
-import yaml
 from astropy import wcs
 from pyimcom.config import Settings
 
 from .config import parse_driver_config
+from .defaults import METADETECT_DEFAULTS
 
 logger = logging.getLogger(__name__)
-
-
-_DEFAULT_METADETECT_CONFIG = (
-    importlib.resources.files(__package__).parent / "config" / "metadetect_default.yaml"
-)
-
-
-def _load_default_metadetect_config():
-    with open(_DEFAULT_METADETECT_CONFIG, "r") as file:
-        config = yaml.safe_load(file)
-
-    return config
 
 
 def _get_package_metadata():
@@ -84,7 +71,7 @@ class MetaDetectRunner:
         self.meta_cfg = (
             deepcopy(meta_cfg)
             if meta_cfg is not None
-            else _load_default_metadetect_config()
+            else deepcopy(METADETECT_DEFAULTS)
         )
         self.driver_cfg = parse_driver_config(driver_cfg)
         # parameters (e.g.location center, number of blocks) will be the same.

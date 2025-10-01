@@ -1,8 +1,8 @@
-import importlib.resources
 import logging
+from copy import deepcopy
 from typing import Iterable, Optional, Union
 
-import yaml
+from .defaults import DRIVER_DEFAULTS
 
 logger = logging.getLogger(__name__)
 
@@ -18,18 +18,6 @@ _ALLOWED_BANDS = [
     "K213",
     "W146",
 ]
-
-
-_DEFAULT_DRIVER_CONFIG = (
-    importlib.resources.files(__package__).parent / "config" / "driver_default.yaml"
-)
-
-
-def _load_default_driver_config():
-    with open(_DEFAULT_DRIVER_CONFIG, "r") as file:
-        config = yaml.safe_load(file)
-
-    return config
 
 
 # ---- Helpers ----
@@ -91,7 +79,7 @@ def parse_driver_config(driver_cfg: Optional[dict]) -> dict:
     """
     logger.info("Parsing metadetect driver config")
 
-    cfg = _load_default_driver_config()
+    cfg = deepcopy(DRIVER_DEFAULTS)
     if driver_cfg:
         cfg.update(driver_cfg)
 
