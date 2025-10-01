@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "metadetect_driver"
 version = "0.1"
@@ -15,10 +11,6 @@ requires-python = ">=3.10"
 
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
-
-[tool.setuptools.packages.find]
-where = ["."]
-exclude = ["tests*", "docs*"]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
