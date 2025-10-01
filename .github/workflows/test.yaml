@@ -33,16 +33,13 @@ jobs:
         shell: bash -l {0}
         run: |
           conda config --set always_yes yes
-          conda install --quiet --yes --file requirements.txt
-          conda install --quiet --yes --file requirements-dev.txt
-          python -m pip install -r requirements-pip.txt
-          python -m pip install -e .
+          conda install --quiet --yes --file requirements-conda.txt
+          python -m pip install -e .[dev]
 
       # - name: Install
       #   run: |
       #     pip install -r requirements.txt
-      #     pip install -r requirements-dev.txt
-      #     pip install .
+      #     pip install .[dev]
 
       - name: Run pytest
         shell: bash -l {0}

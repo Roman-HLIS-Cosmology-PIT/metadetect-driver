@@ -5,6 +5,6 @@ metadetect
 ngmix
 numpy
 pyarrow
-pyyaml
+pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git@main
 scipy
 sep

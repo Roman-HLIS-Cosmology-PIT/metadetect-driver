@@ -13,9 +13,12 @@ authors = [
   { name = "Sidney Mau", email = "sidney.mau@duke.edu" },
 ]
 requires-python = ">=3.10"
+dynamic = ["dependencies", "optional-dependencies"]
 
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
+Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
