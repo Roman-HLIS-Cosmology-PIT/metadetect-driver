@@ -42,7 +42,7 @@ class MetaDetectRunner:
     methods to build catalogs from the multi-band imaging.
     """
 
-    NATIVE_PIX = 0.11  # arcsec/pixel (Roman native pixel scale)
+    NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
 
     def __init__(self, blocks, meta_cfg=None, driver_cfg=None):
         """
