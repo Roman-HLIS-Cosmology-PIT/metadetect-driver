@@ -60,4 +60,3 @@ def test_valid():
         outimages = [OutImage(image_path) for image_path in image_paths]
 
         metadetect_driver.run_metadetect(outimages)
-

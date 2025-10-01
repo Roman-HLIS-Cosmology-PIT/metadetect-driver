@@ -124,18 +124,12 @@ class MetadetectRunner:
         logger.debug(f"Driver config: {driver_cfg}")
 
         # Ensure each outimage corresponds to the same block
-        _block_ids = set(
-            (outimage.ibx, outimage.iby)
-            for outimage in outimages
-        )
+        _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
         _block_idx, _block_idy = _block_ids.pop()
         assert len(_block_ids) == 0
 
         # Ensure that each outimage corresponds to a different filter
-        _filters = set(
-            outimage.cfg.use_filter
-            for outimage in outimages
-        )
+        _filters = set(outimage.cfg.use_filter for outimage in outimages)
         assert len(_filters) == len(outimages)
 
         self.block_id = (_block_idx, _block_idy)
