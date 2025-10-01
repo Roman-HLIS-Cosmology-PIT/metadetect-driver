@@ -28,7 +28,7 @@ See `.github/workflows/test.yaml` for an example of creating an environment.
 
 The `MetaDetectRunner` class provides an interface for running metadetect on IMCOM `OutImage`s.
 For a list of `OutImage`s corresponding to the same field in different bands, the interface is simply
-```
+```python
 results = metadetect_driver.run_metadetect(outimages)
 metadetect_driver.write_catalogs(catalogs, output_dir)
 ```
