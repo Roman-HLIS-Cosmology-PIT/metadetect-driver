@@ -15,13 +15,12 @@ def main():
     print(f"Reading images from {image_paths}")
     outimages = [OutImage(image_path) for image_path in image_paths]
 
-    print(f"Running metadetect")
-    mdet_runner = metadetect_driver.MetaDetectRunner(outimages)
-    catalogs = mdet_runner.run_metadetect()
+    print("Running metadetect")
+    results = metadetect_driver.run_metadetect(outimages)
 
     output_path = Path(__file__).parent / "output"
     print(f"Writing catalogs to {output_path}")
-    metadetect_driver.write_catalogs(catalogs, output_path)
+    metadetect_driver.write_catalogs(results, output_path)
 
     print("Done")
 

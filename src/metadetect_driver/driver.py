@@ -73,6 +73,29 @@ def write_catalogs(catalogs, base_dir):
     logger.info("Writing finished")
 
 
+def run_metadetect(blocks, meta_cfg=None, driver_cfg=None):
+    """
+    Run metadetect on multi-band coadd images.
+
+    Parameters
+    ----------
+    blocks : list of OutImage
+        PyIMCOM output objects to process. Each element corresponds to the
+        coadd of the same block in different bands
+    meta_cfg : dict, optional
+        MetaDetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+    driver_cfg : dict, optional
+        Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
+
+    Returns
+    -------
+    dict of pyarrow Table
+        metadetect catalogs for each shear type
+    """
+    runner = MetaDetectRunner(blocks, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
+    return runner.run()
+
+
 class MetaDetectRunner:
     """
     Class to run MetaDetection on PyIMCOM coadds (OutImage objects).
@@ -189,7 +212,7 @@ class MetaDetectRunner:
         _shear = MetaDetectRunner.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
 
-    def run_metadetect(self):
+    def run(self):
         """
         Main driver to run MetaDetection and produce a catalog.
 
