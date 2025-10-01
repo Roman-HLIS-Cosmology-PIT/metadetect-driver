@@ -1,8 +1,8 @@
 from pathlib import Path
 
+import metadetect_driver
 import pyarrow as pa
 import pyarrow.parquet as pq
-from metadetect_driver import MetaDetectRunner
 from pandas.testing import assert_frame_equal
 from pyimcom.analysis import OutImage
 
@@ -14,8 +14,8 @@ def test_main():
     ]
     outimages = [OutImage(image_path) for image_path in image_paths]
 
-    mdet_runner = MetaDetectRunner(outimages)
-    catalogs = mdet_runner.make_catalogs()
+    mdet_runner = metadetect_driver.MetaDetectRunner(outimages)
+    catalogs = mdet_runner.run_metadetect()
 
     output_path = Path(__file__).parent / "output"
 

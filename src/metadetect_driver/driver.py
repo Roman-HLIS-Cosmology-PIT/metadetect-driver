@@ -39,6 +39,40 @@ def _get_package_metadata():
     }
 
 
+def write_catalogs(catalogs, base_dir):
+    output_path = Path(base_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Writing catalogs to {output_path}")
+
+    # Ensure that all catalogs have the same schema
+    schema = None
+    for shear_type, catalog in catalogs.items():
+        if schema is None:
+            schema = catalog.schema
+        else:
+            _schema = catalog.schema
+            assert schema == _schema
+    logger.debug(f"Catalog schema is {schema}")
+
+    # TODO update output file naming
+    shear_types = catalogs.keys()
+    parquet_writers = {}
+    for shear_type in shear_types:
+        output_file = output_path / f"metadetect_catalog_{shear_type}.parquet"
+        logger.debug(f"Opening parquet writer for {shear_type} at {output_file}")
+        parquet_writers[shear_type] = pq.ParquetWriter(output_file, schema=_schema)
+
+    for shear_type in shear_types:
+        logger.info(f"Writing {shear_type} catalog")
+        parquet_writers[shear_type].write(catalogs[shear_type])
+
+    for shear_type in shear_types:
+        logger.debug(f"Closing parquet writer for {shear_type}")
+        parquet_writers[shear_type].close()
+
+    logger.info("Writing finished")
+
+
 class MetaDetectRunner:
     """
     Class to run MetaDetection on PyIMCOM coadds (OutImage objects).
@@ -155,7 +189,7 @@ class MetaDetectRunner:
         _shear = MetaDetectRunner.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
 
-    def make_catalogs(self):
+    def run_metadetect(self):
         """
         Main driver to run MetaDetection and produce a catalog.
 
@@ -169,7 +203,7 @@ class MetaDetectRunner:
             shear type
         """
         mbobs = self.make_mbobs()
-        res = self.run_metadetect(mbobs)
+        res = self._run_metadetect(mbobs)
 
         wcs = None
         # Ensure that all blocks have the same WCS
@@ -183,38 +217,6 @@ class MetaDetectRunner:
         logger.debug(f"WCS is {wcs}")
 
         return self.construct_table(wcs, res)
-
-    def write_catalogs(self, output_dir, catalogs):
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Writing catalogs to {output_path}")
-
-        # Ensure that all catalogs have the same schema
-        schema = None
-        for shear_type, catalog in catalogs.items():
-            if schema is None:
-                schema = catalog.schema
-            else:
-                _schema = catalog.schema
-                assert schema == _schema
-        logger.debug(f"Catalog schema is {schema}")
-
-        # TODO update output file naming
-        parquet_writers = {}
-        for shear_type in self.shear_types:
-            output_file = output_path / f"metadetect_catalog_{shear_type}.parquet"
-            logger.debug(f"Opening parquet writer for {shear_type} at {output_file}")
-            parquet_writers[shear_type] = pq.ParquetWriter(output_file, schema=_schema)
-
-        for shear_type, catalog in catalogs.items():
-            logger.info(f"Writing {shear_type} catalog")
-            parquet_writers[shear_type].write(catalog)
-
-        for shear_type, parquet_writer in parquet_writers.items():
-            logger.debug(f"Closing parquet writer for {shear_type}")
-            parquet_writer.close()
-
-        logger.info("Writing finished")
 
     def make_mbobs(self):
         """
@@ -306,7 +308,7 @@ class MetaDetectRunner:
         psf_img = self.get_psf(block, w)
         return image, img_jacobian, psf_img, noise_sigma
 
-    def run_metadetect(self, mbobs):
+    def _run_metadetect(self, mbobs):
         """
         Run metadetect on the provided MultiBandObsList.
 
@@ -545,12 +547,12 @@ class MetaDetectRunner:
         """
         _metadata = self._get_metadata()
         results = {}
-        for shear_type in res.keys():
+        for shear_type, catalog in res.items():
             _jacobian = MetaDetectRunner.get_jacobian(shear_type, self.metacal_step)
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
-            x, y = res[shear_type]["sx_col"], res[shear_type]["sx_row"]
+            x, y = catalog["sx_col"], catalog["sx_row"]
             ra_pos, dec_pos = w.toWorld(x, y, units="deg")
 
             is_primary = self.get_bounded_region(res, shear_type)
@@ -562,7 +564,7 @@ class MetaDetectRunner:
             _results["dec"] = dec_pos.tolist()
 
             for name in res[shear_type].dtype.names:
-                data = res[shear_type][name]
+                data = catalog[name]
                 if ("flux" in name) and ("flags" not in name):
                     data = MetaDetectRunner.imcom_flux_conv(data, self.cfg.dtheta)
 

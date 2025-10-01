@@ -24,3 +24,12 @@ The primary dependencies of the code are the `metadetect` "stack" (i.e., `metade
 The former is best-installed via conda, and the latter can be installed from GitHub via pip.
 See `.github/workflows/test.yaml` for an example of creating an environment.
 
+## Use
+
+The `MetaDetectRunner` class provides an interface for running metadetect on IMCOM `OutImage`s.
+For a set of `OutImage`s corresponding to the same field in different bands, the interface is simply
+```
+mdet_runner = metadetect_driver.MetaDetectRunner(outimages)
+catalogs = mdet_runner.run_metadetect()
+metadetect_driver.write_catalogs(catalogs, output_dir)
+```
