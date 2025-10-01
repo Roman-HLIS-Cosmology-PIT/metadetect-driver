@@ -35,6 +35,23 @@ def _load_default_metadetect_config():
     return config
 
 
+def _get_package_metadata():
+    return {
+        f"{__package__} version": importlib.metadata.version(__package__),
+        "python version": sys.version,
+        "asdf version": importlib.metadata.version("asdf"),
+        "astropy version": importlib.metadata.version("astropy"),
+        "galsim version": importlib.metadata.version("galsim"),
+        "metadetect version": importlib.metadata.version("metadetect"),
+        "ngmix version": importlib.metadata.version("ngmix"),
+        "numpy version": importlib.metadata.version("numpy"),
+        "pyarrow version": importlib.metadata.version("pyarrow"),
+        "pyimcom version": importlib.metadata.version("pyimcom"),
+        "scipy version": importlib.metadata.version("scipy"),
+        "sep version": importlib.metadata.version("sep"),
+    }
+
+
 class MetaDetectRunner:
     """
     Class to run MetaDetection on PyIMCOM coadds (OutImage objects).
@@ -64,15 +81,18 @@ class MetaDetectRunner:
 
         self.blocks = blocks
 
-        _default_config = _load_default_metadetect_config()
-        self.meta_cfg = deepcopy(meta_cfg) if meta_cfg is not None else _default_config
+        self.meta_cfg = (
+            deepcopy(meta_cfg)
+            if meta_cfg is not None
+            else _load_default_metadetect_config()
+        )
         self.driver_cfg = parse_driver_config(driver_cfg)
-        # Set the PyIMCOM config used to make images. The config will vary between bands, but some
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
         self.cfg = self.blocks[0].cfg
-        self.bands = self.get_bands()
+        self.bands = MetaDetectRunner.get_bands(self.blocks)
         self.shear_types = self.get_shear_types()
+        self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
         self.shear_combs = self.get_shear_combs()
 
@@ -84,7 +104,8 @@ class MetaDetectRunner:
             "types", ngmix.metacal.METACAL_MINIMAL_TYPES
         )
 
-    def get_bands(self):
+    @staticmethod
+    def get_bands(blocks):
         """
         Get band names for provided blocks.
         PyIMCOM has a certain ordering of the filters (e.g. filter 2 is H158).
@@ -96,24 +117,24 @@ class MetaDetectRunner:
             Band labels matching each block in `blocks`.
         """
         band_list = []
-        for block in self.blocks:
+        for block in blocks:
             band = Settings.RomanFilters[block.cfg.use_filter]
             band_list.append(band)
         return band_list
 
-    def get_shear(self, shear_type):
-        _step = self.get_metacal_step()
+    @staticmethod
+    def get_shear(shear_type, metacal_step):
         match shear_type:
             case "noshear":
                 _shear = galsim.Shear(g1=0.0, g2=0.0)
             case "1p":
-                _shear = galsim.Shear(g1=_step, g2=0)
+                _shear = galsim.Shear(g1=metacal_step, g2=0)
             case "1m":
-                _shear = galsim.Shear(g1=-_step, g2=0)
+                _shear = galsim.Shear(g1=-metacal_step, g2=0)
             case "2p":
-                _shear = galsim.Shear(g1=0.0, g2=_step)
+                _shear = galsim.Shear(g1=0.0, g2=metacal_step)
             case "2m":
-                _shear = galsim.Shear(g1=0.0, g2=-_step)
+                _shear = galsim.Shear(g1=0.0, g2=-metacal_step)
             case _:
                 raise ValueError(f"{shear_type} is an invalid shear type!")
 
@@ -141,9 +162,10 @@ class MetaDetectRunner:
 
         return shear_combs
 
-    def get_jacobian(self, shear_type):
+    @staticmethod
+    def get_jacobian(shear_type, metacal_step):
         # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
-        _shear = self.get_shear(shear_type)
+        _shear = MetaDetectRunner.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
 
     def make_catalogs(self):
@@ -161,8 +183,8 @@ class MetaDetectRunner:
         """
         mbobs = self.make_mbobs()
         res = self.run_metadetect(mbobs)
-        wcs = None
 
+        wcs = None
         # Ensure that all blocks have the same WCS
         for block in self.blocks:
             if wcs is None:
@@ -190,6 +212,7 @@ class MetaDetectRunner:
                 assert schema == _schema
         logger.debug(f"Catalog schema is {schema}")
 
+        # TODO update output file naming
         parquet_writers = {}
         for shear_type in self.shear_types:
             output_file = output_path / f"metadetect_catalog_{shear_type}.parquet"
@@ -414,14 +437,15 @@ class MetaDetectRunner:
         psf_img: np.ndarray
             PSF image array with shape (psf_img_size, psf_img_size).
         """
-        psf = self.get_psf_obj(block)
+        psf = MetaDetectRunner.get_psf_obj(block)
         return psf.drawImage(
             nx=self.driver_cfg["psf_img_size"],
             ny=self.driver_cfg["psf_img_size"],
             wcs=wcs,
         ).array
 
-    def imcom_flux_conv(self, flux):
+    @staticmethod
+    def imcom_flux_conv(flux, dtheta):
         """
         Convert IMCOM flux units to e-/cm^2/s.
 
@@ -444,7 +468,7 @@ class MetaDetectRunner:
         AB magnitude can be calculated using galsim.roman zeropoints.
         """
         # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
-        oversample_pix = self.cfg.dtheta * (180.0 / math.pi) * 3600.0  # deg --> arcsec
+        oversample_pix = dtheta * (180.0 / math.pi) * 3600.0  # deg --> arcsec
         norm = (
             roman.exptime
             * roman.collecting_area
@@ -452,7 +476,8 @@ class MetaDetectRunner:
         )
         return flux / norm
 
-    def det_bound_from_padding(self):
+    @staticmethod
+    def det_bound_from_padding(cfg):
         """
         Derive a suitable edge bound from the block's padding.
         In this case it sets the bound size to exclude entire padding region.
@@ -462,8 +487,8 @@ class MetaDetectRunner:
         int
             Bound size in pixels.
         """
-        pad = self.cfg.postage_pad  # number of postage stamps of padding
-        npix_post_stamp = self.cfg.n2  # pixels per postage stamp
+        pad = cfg.postage_pad  # number of postage stamps of padding
+        npix_post_stamp = cfg.n2  # pixels per postage stamp
         return int(pad * npix_post_stamp)
 
     def get_bounded_region(self, res, shear_type):
@@ -484,7 +509,7 @@ class MetaDetectRunner:
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
         if self.driver_cfg["bound_size"] is None:
-            bound_size = self.det_bound_from_padding()
+            bound_size = MetaDetectRunner.det_bound_from_padding(self.cfg)
         else:
             bound_size = self.driver_cfg["bound_size"]
 
@@ -499,20 +524,10 @@ class MetaDetectRunner:
         )
 
     def _get_metadata(self):
-        _packages = {
-            f"{__package__} version": importlib.metadata.version(__package__),
-            "python version": sys.version,
-            "asdf version": importlib.metadata.version("asdf"),
-            "astropy version": importlib.metadata.version("astropy"),
-            "galsim version": importlib.metadata.version("galsim"),
-            "metadetect version": importlib.metadata.version("metadetect"),
-            "ngmix version": importlib.metadata.version("ngmix"),
-            "numpy version": importlib.metadata.version("numpy"),
-            "pyarrow version": importlib.metadata.version("pyarrow"),
-            "pyimcom version": importlib.metadata.version("pyimcom"),
-            "scipy version": importlib.metadata.version("scipy"),
-            "sep version": importlib.metadata.version("sep"),
-        }
+        _packages = _get_package_metadata()
+        # TODO it might be confusing to have `metacal_step` in the metadata
+        # if we try to read in the entire catalog through one interface
+        # (e.g., via a pyarrow Dataset)
         _meta = {
             "det_band_combs": self.det_combs or "null",
             "shear_band_combs": self.shear_combs or "null",
@@ -544,7 +559,7 @@ class MetaDetectRunner:
         _metadata = self._get_metadata()
         results = {}
         for shear_type in res.keys():
-            _jacobian = self.get_jacobian(shear_type)
+            _jacobian = MetaDetectRunner.get_jacobian(shear_type, self.metacal_step)
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
@@ -562,10 +577,11 @@ class MetaDetectRunner:
             for name in res[shear_type].dtype.names:
                 data = res[shear_type][name]
                 if ("flux" in name) and ("flags" not in name):
-                    data = self.imcom_flux_conv(data)
+                    data = MetaDetectRunner.imcom_flux_conv(data, self.cfg.dtheta)
 
                 _results[name] = data.tolist()
 
+            _results["shear_type"] = [shear_type for _ in range(len(x))]
             _results["jacobian"] = [_jacobian.tolist() for _ in range(len(x))]
 
             results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
