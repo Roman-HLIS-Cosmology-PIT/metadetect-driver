@@ -1,3 +1,8 @@
+__all__ = [
+    "DRIVER_DEFAULTS",
+    "METADETECT_DEFAULTS,"
+]
+
 DRIVER_DEFAULTS = {
     "psf_img_size": 151,
     "bound_size": 100,

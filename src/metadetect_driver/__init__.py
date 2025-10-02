@@ -1,3 +1,4 @@
-__all__ = ["MetadetectRunner", "run_metadetect", "write_catalogs"]
+__all__ = ["MetadetectRunner", "run_metadetect"]
 
-from .driver import MetadetectRunner, run_metadetect, write_catalogs
+from . import defaults
+from .driver import MetadetectRunner, run_metadetect
