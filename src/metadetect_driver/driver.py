@@ -3,7 +3,6 @@ import logging
 import math
 import sys
 from copy import deepcopy
-from pathlib import Path
 
 import galsim
 import galsim.roman as roman
