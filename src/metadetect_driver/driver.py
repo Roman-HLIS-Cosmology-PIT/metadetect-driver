@@ -63,7 +63,9 @@ def from_imcom_flux(flux, dtheta):
     AB magnitude can be calculated using galsim.roman zeropoints.
     """
     # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
-    oversample_pix = dtheta * (180.0 / math.pi) * 3600.0  # deg --> arcsec
+    # FIXME why is there a radian conversion here?
+    # oversample_pix = dtheta * 3600.0  # deg --> arcsec
+    oversample_pix = dtheta / Settings.arcsec
     norm = roman.exptime * roman.collecting_area * (_NATIVE_PIX**2 / oversample_pix**2)
     return flux / norm
 
@@ -119,9 +121,9 @@ def get_imcom_psf(cfg):
     - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
     - The AIRY kernels are also be convolved with a Gaussian.
     """
-    # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
-    fwhm = cfg.sigmatarget * _NATIVE_PIX * 2 * math.sqrt(2 * math.log(2))
-    psf = galsim.Gaussian(fwhm=fwhm)
+    # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec
+    sigma = cfg.sigmatarget * _NATIVE_PIX
+    psf = galsim.Gaussian(sigma=sigma)
 
     # Optional Airy with/without obscuration, then convolve with Gaussian.
     if cfg.outpsf in ("AIRYOBSC", "AIRYUNOBSC"):
@@ -351,25 +353,25 @@ class MetadetectRunner:
         -------
         obslist : ngmix Observation
         """
-        img, img_jacobian, psf_img, noise_sigma = self._get_ngmix_data(outimage)
+        image, jacobian, psf_image, noise_sigma = self._get_ngmix_data(outimage)
 
         # Centers
-        psf_cen = (psf_img.shape[0] - 1) / 2.0
-        img_cen = (np.array([img.shape[0], img.shape[1]]) - 1) / 2.0
+        psf_image_center = (psf_image.shape[0] - 1) / 2.0
+        image_center = (np.array([image.shape[0], image.shape[1]]) - 1) / 2.0
 
         # ngmix Jacobians
-        psf_jac = ngmix.Jacobian(row=psf_cen, col=psf_cen, wcs=img_jacobian)
-        img_jac = ngmix.Jacobian(row=img_cen[0], col=img_cen[1], wcs=img_jacobian)
+        psf_image_jacobian = ngmix.Jacobian(row=psf_image_center, col=psf_image_center, wcs=jacobian)
+        image_jacobian = ngmix.Jacobian(row=image_center[0], col=image_center[1], wcs=jacobian)
 
         # Observations
-        psf_obs = ngmix.Observation(image=psf_img, jacobian=psf_jac)
+        psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
-            image=img,
-            jacobian=img_jac,
-            weight=np.full(img.shape, 1 / noise_sigma**2, dtype=float),
+            image=image,
+            jacobian=image_jacobian,
+            weight=np.full(image.shape, 1 / noise_sigma**2, dtype=float),
             psf=psf_obs,
-            ormask=np.zeros(img.shape, dtype=np.int32),
-            bmask=np.zeros(img.shape, dtype=np.int32),
+            ormask=np.zeros(image.shape, dtype=np.int32),
+            bmask=np.zeros(image.shape, dtype=np.int32),
         )
         obslist = ngmix.ObsList()
         obslist.append(obs)
@@ -387,9 +389,9 @@ class MetadetectRunner:
         -------
         image : np.ndarray
             Coadded image for the requested layer.
-        img_jacobian : ngmix.Jacobian
+        jacobian : ngmix.Jacobian
             Image-plane Jacobian derived from WCS at the reference pixel.
-        psf_img : np.ndarray
+        psf_image : np.ndarray
             PSF image.
         noise_sigma : float
             Global RMS of the image background.
@@ -397,9 +399,10 @@ class MetadetectRunner:
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
         # Build GalSim WCS and Jacobian
-        w = galsim.AstropyWCS(wcs=get_imcom_wcs(outimage))
-        img_jacobian = w.jacobian(
-            image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1])
+        _wcs = get_imcom_wcs(outimage)
+        wcs = galsim.AstropyWCS(wcs=_wcs)
+        jacobian = wcs.jacobian(
+            image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
         )
 
         # Estimate background RMS using SEP
@@ -407,8 +410,9 @@ class MetadetectRunner:
         noise_sigma = bkg.globalrms
 
         # Draw PSF image
-        psf_img = self.get_psf(outimage, w)
-        return image, img_jacobian, psf_img, noise_sigma
+        psf_image = self.get_psf(outimage, wcs)
+
+        return image, jacobian, psf_image, noise_sigma
 
     def _run_metadetect(self, mbobs):
         """
@@ -448,13 +452,13 @@ class MetadetectRunner:
 
         Returns
         -------
-        psf_img: np.ndarray
-            PSF image array with shape (psf_img_size, psf_img_size).
+        psf_image: np.ndarray
+            PSF image array with shape (psf_image_size, psf_image_size).
         """
         psf = get_imcom_psf(outimage.cfg)
         return psf.drawImage(
-            nx=self.driver_config["psf_img_size"],
-            ny=self.driver_config["psf_img_size"],
+            nx=self.driver_config["psf_image_size"],
+            ny=self.driver_config["psf_image_size"],
             wcs=wcs,
         ).array
 
@@ -495,14 +499,14 @@ class MetadetectRunner:
         else:
             bound_size = self.driver_config["bound_size"]
 
-        img_size = self.imcom_config.NsideP  # (ny, nx)
+        image_size = self.imcom_config.NsideP  # (ny, nx)
         x = res[shear_type]["sx_col"]
         y = res[shear_type]["sx_row"]
         return (
             (x > bound_size)
-            & (x < img_size - bound_size)
+            & (x < image_size - bound_size)
             & (y > bound_size)
-            & (y < img_size - bound_size)
+            & (y < image_size - bound_size)
         )
 
     def _get_metadata(self):

@@ -4,7 +4,7 @@ __all__ = [
 ]
 
 DRIVER_DEFAULTS = {
-    "psf_img_size": 151,
+    "psf_image_size": 151,
     "bound_size": 100,
     "mdet_seed": 42,
     "det_bands": None,
@@ -43,8 +43,25 @@ _SX_DEFAULTS = {
 }
 
 METADETECT_DEFAULTS = {
-    "model": "wmom",
-    "weight": {"fwhm": 1.2},
+    # "model": "wmom",
+    # "weight": {"fwhm": 1.2},
+    "fitters": [
+        {
+            "model": "wmom",
+            "weight": {"fwhm": 1.2},
+        },
+        # {
+        #     "model": "pgauss",
+        #     "weight": {"fwhm": 2.0},
+        #     "symmetrize": False,
+        # },
+        # {
+        #     "model": "gauss",
+        #     "weight": {"fwhm": 2.0},
+        #     "symmetrize": False,
+        #     "coadd": False,
+        # },
+    ],
     "metacal": _METACAL_DEFAULTS,
     "meds": _MEDS_DEFAULTS,
     "sx": _SX_DEFAULTS,

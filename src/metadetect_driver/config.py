@@ -91,9 +91,9 @@ def _parse_driver_config(config: Optional[dict]) -> dict:
     logger.debug(f"config shear_bands: {_config['shear_bands']}")
 
     # sizes
-    if not (isinstance(_config["psf_img_size"], int) and _config["psf_img_size"] > 0):
-        raise ValueError("'psf_img_size' must be a positive int")
-    logger.debug(f"config psf_img_size: {_config['psf_img_size']}")
+    if not (isinstance(_config["psf_image_size"], int) and _config["psf_image_size"] > 0):
+        raise ValueError("'psf_image_size' must be a positive int")
+    logger.debug(f"config psf_image_size: {_config['psf_image_size']}")
 
     if not (isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0):
         raise ValueError("'bound_size' must be a non-negative int")
