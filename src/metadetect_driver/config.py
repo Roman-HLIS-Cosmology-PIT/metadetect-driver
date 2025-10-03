@@ -68,8 +68,7 @@ def _validate_bands(
     return bands
 
 
-# ---- Main parser ----
-def parse_driver_config(config: Optional[dict]) -> dict:
+def _parse_driver_config(config: Optional[dict]) -> dict:
     """
     Parse/validate a config dict:
       - Fill defaults for missing keys from _DEFAULT_DRIVER_CONFIG.
@@ -79,9 +78,11 @@ def parse_driver_config(config: Optional[dict]) -> dict:
     """
     logger.info("Parsing metadetect driver config")
 
-    _config = deepcopy(DRIVER_DEFAULTS)
-    if config is not None:
-        _config.update(config)
+    _config = (
+        deepcopy(config)
+        if config is not None
+        else deepcopy(DRIVER_DEFAULTS)
+    )
 
     # Coerce list-like keys (only when provided)
     _config["det_bands"] = _validate_bands(_config.get("det_bands"), "det_bands")

@@ -1,4 +1,17 @@
-__all__ = ["defaults", "MetadetectRunner", "run_metadetect"]
+__all__ = [
+    "defaults",
+    "from_imcom_flux",
+    "get_imcom_psf",
+    "get_imcom_wcs",
+    "MetadetectRunner",
+    "run_metadetect",
+]
 
 from . import defaults
-from .driver import MetadetectRunner, run_metadetect
+from .driver import (
+    from_imcom_flux,
+    get_imcom_psf,
+    get_imcom_wcs,
+    MetadetectRunner,
+    run_metadetect,
+)

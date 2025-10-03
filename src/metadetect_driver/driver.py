@@ -14,10 +14,13 @@ import sep
 from astropy import wcs
 from pyimcom.config import Settings
 
-from .config import parse_driver_config
+from .config import _parse_driver_config
 from .defaults import METADETECT_DEFAULTS
 
 logger = logging.getLogger(__name__)
+
+
+_NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
 
 
 def _get_package_metadata():
@@ -37,7 +40,102 @@ def _get_package_metadata():
     }
 
 
-def run_metadetect(outimages, config=None, metadetect_config=None):
+def from_imcom_flux(flux, dtheta):
+    """
+    Convert IMCOM flux units to e-/cm^2/s.
+
+    Parameters
+    ----------
+    flux : np.array
+        Array of fluxes
+
+    Returns
+    -------
+    flux_converted: np.array
+
+    Notes
+    -----
+    IMCOM flux unit is e- / (0.11 arcsec)^2 / exposure.
+    We convert to e-/cm^2/s using Roman collecting area and exposure,
+    and correct for the coadd oversampling relative to native pixels.
+    The (_NATIVE_PIX**2/oversample_pix**2) takes into account that the
+    coadds are oversampled and not in the native Roman pixel scale.
+    AB magnitude can be calculated using galsim.roman zeropoints.
+    """
+    # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
+    oversample_pix = dtheta * (180.0 / math.pi) * 3600.0  # deg --> arcsec
+    norm = roman.exptime * roman.collecting_area * (_NATIVE_PIX**2 / oversample_pix**2)
+    return flux / norm
+
+
+def get_imcom_wcs(outimage):
+    """
+    Construct WCS for a outimage from its configuration.
+
+    Parameters
+    ----------
+    outimage : OutImage
+        PyIMCOM outimage
+
+    Returns
+    -------
+    outwcs : astropy.WCS object
+        Output WCS from coadded image
+
+    Notes
+    -----
+    Code mirrors:
+    https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom/blob/main/coadd.py
+    """
+    cfg = outimage.cfg
+    ibx, iby = outimage.ibx, outimage.iby
+    outwcs = wcs.WCS(naxis=2)
+    outwcs.wcs.crpix = [
+        (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
+        (cfg.NsideP + 1) / 2.0 - cfg.Nside * (iby - (cfg.nblock - 1) / 2.0),
+    ]
+    outwcs.wcs.cdelt = [-cfg.dtheta, cfg.dtheta]
+    outwcs.wcs.ctype = ["RA---STG", "DEC--STG"]
+    outwcs.wcs.crval = [cfg.ra, cfg.dec]
+    outwcs.wcs.lonpole = cfg.lonpole
+    return outwcs
+
+
+def get_imcom_psf(cfg):
+    """
+    Build a GalSim PSF from the outimage configuration.
+
+    Parameters
+    ----------
+    cfg : PyIMCOM Config
+
+    Returns
+    -------
+    psf : galsim object
+        Output PSF object
+
+    Notes
+    -----
+    - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
+    - The AIRY kernels are also be convolved with a Gaussian.
+    """
+    # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
+    fwhm = cfg.sigmatarget * _NATIVE_PIX * 2 * math.sqrt(2 * math.log(2))
+    psf = galsim.Gaussian(fwhm=fwhm)
+
+    # Optional Airy with/without obscuration, then convolve with Gaussian.
+    if cfg.outpsf in ("AIRYOBSC", "AIRYUNOBSC"):
+        obsc = Settings.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
+        # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
+        # so we multiply by roman native pixel scale (0.11) to convert to arcsec
+        lam_over_diam = Settings.QFilterNative[cfg.use_filter] * _NATIVE_PIX  # arcsec
+        airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
+        psf = galsim.Convolve([airy, psf])
+
+    return psf
+
+
+def run_metadetect(outimages, driver_config=None, metadetect_config=None):
     """
     Run metadetect on multi-band coadd images.
 
@@ -46,7 +144,7 @@ def run_metadetect(outimages, config=None, metadetect_config=None):
     outimages : list of OutImage
         PyIMCOM output objects to process. Each element corresponds to the
         coadd of the same block in different bands
-    config : dict, optional
+    driver_config : dict, optional
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
     metadetect_config : dict, optional
         Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
@@ -56,7 +154,9 @@ def run_metadetect(outimages, config=None, metadetect_config=None):
     dict of pyarrow Table
         metadetect catalogs for each shear type
     """
-    runner = MetadetectRunner(outimages, metadetect_config=metadetect_config, config=config)
+    runner = MetadetectRunner(
+        outimages, driver_config=driver_config, metadetect_config=metadetect_config,
+    )
     return runner.run()
 
 
@@ -67,9 +167,7 @@ class MetadetectRunner:
     methods to build catalogs from the multi-band imaging.
     """
 
-    NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
-
-    def __init__(self, outimages, config=None, metadetect_config=None):
+    def __init__(self, outimages, driver_config=None, metadetect_config=None):
         """
         Initialize the MetadetectRunner.
 
@@ -78,16 +176,16 @@ class MetadetectRunner:
         outimages : list of OutImage
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
-        config : dict, optional
-            Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
+        driver_config : dict, optional
+            Driver configuration dictionary. If None, uses DRIVER_DEFAULTS. [default : None]
         metadetect_config : dict, optional
-            Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+            Metadetection configuration dictionary. If None, uses METADETECT_DEFAULTS. [default : None]
         """
         logger.info("Instantiating MetadetectRunner")
-        logger.debug(f"Driver config: {config}")
+        logger.debug(f"Driver config: {driver_config}")
         logger.debug(f"Metadetect config: {metadetect_config}")
 
-        self.config = parse_driver_config(config)
+        self.driver_config = _parse_driver_config(driver_config)
         self.metadetect_config = (
             deepcopy(metadetect_config)
             if metadetect_config is not None
@@ -166,7 +264,7 @@ class MetadetectRunner:
         return _shear
 
     def get_det_combs(self):
-        det_bands = self.config["det_bands"]
+        det_bands = self.driver_config["det_bands"]
         if det_bands is not None:
             # Select only detection and shear bands from bands in blocks provided.
             det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
@@ -177,7 +275,7 @@ class MetadetectRunner:
         return det_combs
 
     def get_shear_combs(self):
-        shear_bands = self.config["shear_bands"]
+        shear_bands = self.driver_config["shear_bands"]
 
         if shear_bands is not None:
             shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
@@ -213,9 +311,9 @@ class MetadetectRunner:
         # Ensure that all blocks have the same WCS
         for outimage in self.outimages:
             if wcs is None:
-                wcs = self.get_wcs(outimage)
+                wcs = get_imcom_wcs(outimage)
             else:
-                _wcs = self.get_wcs(outimage)
+                _wcs = get_imcom_wcs(outimage)
                 # TODO is there a better way to check for WCS consistency?
                 assert wcs.wcs == _wcs.wcs
         logger.debug(f"WCS is {wcs}")
@@ -296,10 +394,10 @@ class MetadetectRunner:
         noise_sigma : float
             Global RMS of the image background.
         """
-        image = outimage.get_coadded_layer(self.config.get("layer", "SCI"))
+        image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
         # Build GalSim WCS and Jacobian
-        w = galsim.AstropyWCS(wcs=self.get_wcs(outimage))
+        w = galsim.AstropyWCS(wcs=get_imcom_wcs(outimage))
         img_jacobian = w.jacobian(
             image_pos=galsim.PositionD(w.wcs.wcs.crpix[0], w.wcs.wcs.crpix[1])
         )
@@ -327,7 +425,7 @@ class MetadetectRunner:
             Metadetect results.
         """
         _metadetect_config = deepcopy(self.metadetect_config)
-        _rng = np.random.RandomState(seed=self.config.get("mdet_seed"))
+        _rng = np.random.RandomState(seed=self.driver_config.get("mdet_seed"))
 
         return metadetect.do_metadetect(
             _metadetect_config,
@@ -336,80 +434,6 @@ class MetadetectRunner:
             det_band_combs=self.det_combs,
             shear_band_combs=self.shear_combs,
         )
-
-    @staticmethod
-    def get_wcs(outimage):
-        """
-        Construct WCS for a outimage from its configuration.
-
-        Parameters
-        ----------
-        outimage : OutImage
-            PyIMCOM outimage
-
-        Returns
-        -------
-        outwcs : astropy.WCS object
-            Output WCS from coadded image
-
-        Notes
-        -----
-        Code mirrors:
-        https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom/blob/main/coadd.py
-        """
-        cfg = outimage.cfg
-        ibx, iby = outimage.ibx, outimage.iby
-        outwcs = wcs.WCS(naxis=2)
-        outwcs.wcs.crpix = [
-            (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
-            (cfg.NsideP + 1) / 2.0 - cfg.Nside * (iby - (cfg.nblock - 1) / 2.0),
-        ]
-        outwcs.wcs.cdelt = [-cfg.dtheta, cfg.dtheta]
-        outwcs.wcs.ctype = ["RA---STG", "DEC--STG"]
-        outwcs.wcs.crval = [cfg.ra, cfg.dec]
-        outwcs.wcs.lonpole = cfg.lonpole
-        return outwcs
-
-    @staticmethod
-    def get_psf_obj(cfg):
-        """
-        Build a GalSim PSF from the outimage configuration.
-
-        Parameters
-        ----------
-        cfg : PyIMCOM Config
-
-        Returns
-        -------
-        psf : galsim object
-            Output PSF object
-
-        Notes
-        -----
-        - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
-        - The AIRY kernels are also be convolved with a Gaussian.
-        """
-        # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec then to FWHM.
-        fwhm = (
-            cfg.sigmatarget
-            * MetadetectRunner.NATIVE_PIX
-            * 2
-            * math.sqrt(2 * math.log(2))
-        )
-        psf = galsim.Gaussian(fwhm=fwhm)
-
-        # Optional Airy with/without obscuration, then convolve with Gaussian.
-        if cfg.outpsf in ("AIRYOBSC", "AIRYUNOBSC"):
-            obsc = Settings.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
-            # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
-            # so we multiply by roman native pixel scale (0.11) to convert to arcsec
-            lam_over_diam = (
-                Settings.QFilterNative[cfg.use_filter] * MetadetectRunner.NATIVE_PIX
-            )  # arcsec
-            airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
-            psf = galsim.Convolve([airy, psf])
-
-        return psf
 
     def get_psf(self, outimage, wcs):
         """
@@ -427,44 +451,12 @@ class MetadetectRunner:
         psf_img: np.ndarray
             PSF image array with shape (psf_img_size, psf_img_size).
         """
-        psf = MetadetectRunner.get_psf_obj(outimage.cfg)
+        psf = get_imcom_psf(outimage.cfg)
         return psf.drawImage(
-            nx=self.config["psf_img_size"],
-            ny=self.config["psf_img_size"],
+            nx=self.driver_config["psf_img_size"],
+            ny=self.driver_config["psf_img_size"],
             wcs=wcs,
         ).array
-
-    @staticmethod
-    def imcom_flux_conv(flux, dtheta):
-        """
-        Convert IMCOM flux units to e-/cm^2/s.
-
-        Parameters
-        ----------
-        flux : np.array
-            Array of fluxes
-
-        Returns
-        -------
-        flux_converted: np.array
-
-        Notes
-        -----
-        IMCOM flux unit is e- / (0.11 arcsec)^2 / exposure.
-        We convert to e-/cm^2/s using Roman collecting area and exposure,
-        and correct for the coadd oversampling relative to native pixels.
-        The (NATIVE_PIX**2/oversample_pix**2) takes into account that the
-        coadds are oversampled and not in the native Roman pixel scale.
-        AB magnitude can be calculated using galsim.roman zeropoints.
-        """
-        # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
-        oversample_pix = dtheta * (180.0 / math.pi) * 3600.0  # deg --> arcsec
-        norm = (
-            roman.exptime
-            * roman.collecting_area
-            * (MetadetectRunner.NATIVE_PIX**2 / oversample_pix**2)
-        )
-        return flux / norm
 
     @staticmethod
     def det_bound_from_padding(cfg):
@@ -498,10 +490,10 @@ class MetadetectRunner:
         # 'bound_size' sets the maximum distance (in pixels) a detection can be
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
-        if self.config["bound_size"] is None:
+        if self.driver_config["bound_size"] is None:
             bound_size = MetadetectRunner.det_bound_from_padding(self.imcom_config)
         else:
-            bound_size = self.config["bound_size"]
+            bound_size = self.driver_config["bound_size"]
 
         img_size = self.imcom_config.NsideP  # (ny, nx)
         x = res[shear_type]["sx_col"]
@@ -569,7 +561,7 @@ class MetadetectRunner:
             for name in res[shear_type].dtype.names:
                 data = catalog[name]
                 if ("flux" in name) and ("flags" not in name):
-                    data = MetadetectRunner.imcom_flux_conv(data, self.imcom_config.dtheta)
+                    data = from_imcom_flux(data, self.imcom_config.dtheta)
 
                 _results[name] = data.tolist()
 
