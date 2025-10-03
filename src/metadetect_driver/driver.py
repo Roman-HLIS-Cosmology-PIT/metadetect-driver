@@ -37,7 +37,7 @@ def _get_package_metadata():
     }
 
 
-def run_metadetect(outimages, meta_cfg=None, driver_cfg=None):
+def run_metadetect(outimages, config=None, metadetect_config=None):
     """
     Run metadetect on multi-band coadd images.
 
@@ -46,17 +46,17 @@ def run_metadetect(outimages, meta_cfg=None, driver_cfg=None):
     outimages : list of OutImage
         PyIMCOM output objects to process. Each element corresponds to the
         coadd of the same block in different bands
-    meta_cfg : dict, optional
-        Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
-    driver_cfg : dict, optional
+    config : dict, optional
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
+    metadetect_config : dict, optional
+        Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
 
     Returns
     -------
     dict of pyarrow Table
         metadetect catalogs for each shear type
     """
-    runner = MetadetectRunner(outimages, meta_cfg=meta_cfg, driver_cfg=driver_cfg)
+    runner = MetadetectRunner(outimages, metadetect_config=metadetect_config, config=config)
     return runner.run()
 
 
@@ -69,7 +69,7 @@ class MetadetectRunner:
 
     NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
 
-    def __init__(self, outimages, meta_cfg=None, driver_cfg=None):
+    def __init__(self, outimages, config=None, metadetect_config=None):
         """
         Initialize the MetadetectRunner.
 
@@ -78,14 +78,21 @@ class MetadetectRunner:
         outimages : list of OutImage
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
-        meta_cfg : dict, optional
-            Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
-        driver_cfg : dict, optional
+        config : dict, optional
             Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
+        metadetect_config : dict, optional
+            Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
         """
         logger.info("Instantiating MetadetectRunner")
-        logger.debug(f"Metadetect config: {meta_cfg}")
-        logger.debug(f"Driver config: {driver_cfg}")
+        logger.debug(f"Driver config: {config}")
+        logger.debug(f"Metadetect config: {metadetect_config}")
+
+        self.config = parse_driver_config(config)
+        self.metadetect_config = (
+            deepcopy(metadetect_config)
+            if metadetect_config is not None
+            else deepcopy(METADETECT_DEFAULTS)
+        )
 
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
@@ -97,21 +104,15 @@ class MetadetectRunner:
         assert len(_filters) == len(outimages)
 
         # TODO ensure that the configs are consistent
-        self.cfg = outimages[0].cfg
+        self.imcom_config = outimages[0].cfg
 
         self.outimages = outimages
 
         self.block_id = (_block_idx, _block_idy)
-        self.block_ra = self.cfg.ra
-        self.block_dec = self.cfg.dec
-        self.block_lonpole = self.cfg.lonpole
+        self.block_ra = self.imcom_config.ra
+        self.block_dec = self.imcom_config.dec
+        self.block_lonpole = self.imcom_config.lonpole
 
-        self.meta_cfg = (
-            deepcopy(meta_cfg)
-            if meta_cfg is not None
-            else deepcopy(METADETECT_DEFAULTS)
-        )
-        self.driver_cfg = parse_driver_config(driver_cfg)
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
         self.bands = MetadetectRunner.get_bands(self.outimages)
@@ -121,10 +122,10 @@ class MetadetectRunner:
         self.shear_combs = self.get_shear_combs()
 
     def get_metacal_step(self):
-        return self.meta_cfg["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
+        return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
 
     def get_shear_types(self):
-        return self.meta_cfg["metacal"].get(
+        return self.metadetect_config["metacal"].get(
             "types", ngmix.metacal.METACAL_MINIMAL_TYPES
         )
 
@@ -165,7 +166,7 @@ class MetadetectRunner:
         return _shear
 
     def get_det_combs(self):
-        det_bands = self.driver_cfg["det_bands"]
+        det_bands = self.config["det_bands"]
         if det_bands is not None:
             # Select only detection and shear bands from bands in blocks provided.
             det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
@@ -176,7 +177,7 @@ class MetadetectRunner:
         return det_combs
 
     def get_shear_combs(self):
-        shear_bands = self.driver_cfg["shear_bands"]
+        shear_bands = self.config["shear_bands"]
 
         if shear_bands is not None:
             shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
@@ -295,7 +296,7 @@ class MetadetectRunner:
         noise_sigma : float
             Global RMS of the image background.
         """
-        image = outimage.get_coadded_layer(self.driver_cfg.get("layer", "SCI"))
+        image = outimage.get_coadded_layer(self.config.get("layer", "SCI"))
 
         # Build GalSim WCS and Jacobian
         w = galsim.AstropyWCS(wcs=self.get_wcs(outimage))
@@ -325,8 +326,8 @@ class MetadetectRunner:
         res : dict
             Metadetect results.
         """
-        _metadetect_config = deepcopy(self.meta_cfg)
-        _rng = np.random.RandomState(seed=self.driver_cfg.get("mdet_seed"))
+        _metadetect_config = deepcopy(self.metadetect_config)
+        _rng = np.random.RandomState(seed=self.config.get("mdet_seed"))
 
         return metadetect.do_metadetect(
             _metadetect_config,
@@ -428,8 +429,8 @@ class MetadetectRunner:
         """
         psf = MetadetectRunner.get_psf_obj(outimage.cfg)
         return psf.drawImage(
-            nx=self.driver_cfg["psf_img_size"],
-            ny=self.driver_cfg["psf_img_size"],
+            nx=self.config["psf_img_size"],
+            ny=self.config["psf_img_size"],
             wcs=wcs,
         ).array
 
@@ -497,12 +498,12 @@ class MetadetectRunner:
         # 'bound_size' sets the maximum distance (in pixels) a detection can be
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
-        if self.driver_cfg["bound_size"] is None:
-            bound_size = MetadetectRunner.det_bound_from_padding(self.cfg)
+        if self.config["bound_size"] is None:
+            bound_size = MetadetectRunner.det_bound_from_padding(self.imcom_config)
         else:
-            bound_size = self.driver_cfg["bound_size"]
+            bound_size = self.config["bound_size"]
 
-        img_size = self.cfg.NsideP  # (ny, nx)
+        img_size = self.imcom_config.NsideP  # (ny, nx)
         x = res[shear_type]["sx_col"]
         y = res[shear_type]["sx_row"]
         return (
@@ -568,7 +569,7 @@ class MetadetectRunner:
             for name in res[shear_type].dtype.names:
                 data = catalog[name]
                 if ("flux" in name) and ("flags" not in name):
-                    data = MetadetectRunner.imcom_flux_conv(data, self.cfg.dtheta)
+                    data = MetadetectRunner.imcom_flux_conv(data, self.imcom_config.dtheta)
 
                 _results[name] = data.tolist()
 
