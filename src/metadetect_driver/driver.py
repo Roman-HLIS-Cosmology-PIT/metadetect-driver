@@ -353,7 +353,7 @@ class MetadetectRunner:
         -------
         obslist : ngmix Observation
         """
-        image, jacobian, psf_image, noise_sigma = self._get_ngmix_data(outimage)
+        image, jacobian, psf_image, noise_image, noise_sigma = self._get_ngmix_data(outimage)
 
         # Centers
         psf_image_center = (psf_image.shape[0] - 1) / 2.0
@@ -367,6 +367,7 @@ class MetadetectRunner:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
+            noise=noise_image,
             jacobian=image_jacobian,
             weight=np.full(image.shape, 1 / noise_sigma**2, dtype=float),
             psf=psf_obs,
@@ -393,10 +394,14 @@ class MetadetectRunner:
             Image-plane Jacobian derived from WCS at the reference pixel.
         psf_image : np.ndarray
             PSF image.
+        noise_image : np.ndarray
+            Coadded image for the noise layer.
         noise_sigma : float
             Global RMS of the image background.
         """
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
+        # noise_image = outimage.get_coadded_layer(self.driver_config.get("noise_layer", "whitenoise10"))  # FIXME renormalize
+        noise_image = None
 
         # Build GalSim WCS and Jacobian
         _wcs = get_imcom_wcs(outimage)
@@ -412,7 +417,7 @@ class MetadetectRunner:
         # Draw PSF image
         psf_image = self.get_psf(outimage, wcs)
 
-        return image, jacobian, psf_image, noise_sigma
+        return image, jacobian, psf_image, noise_image, noise_sigma
 
     def _run_metadetect(self, mbobs):
         """

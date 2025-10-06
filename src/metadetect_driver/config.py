@@ -95,7 +95,7 @@ def _parse_driver_config(config: Optional[dict]) -> dict:
         raise ValueError("'psf_image_size' must be a positive int")
     logger.debug(f"config psf_image_size: {_config['psf_image_size']}")
 
-    if not (isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0):
+    if _config["bound_size"] is not None and not (isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0):
         raise ValueError("'bound_size' must be a non-negative int")
     logger.debug(f"config bound_size: {_config['bound_size']}")
 
@@ -108,5 +108,10 @@ def _parse_driver_config(config: Optional[dict]) -> dict:
     if _config["layer"] is not None and not isinstance(_config["layer"], str):
         raise ValueError("'layer' must be a string")
     logger.debug(f"config layer: {_config['layer']}")
+
+    # layer
+    if _config["noise_layer"] is not None and not isinstance(_config["noise_layer"], str):
+        raise ValueError("'noise_layer' must be a string")
+    logger.debug(f"config noise_layer: {_config['noise_layer']}")
 
     return _config

@@ -5,11 +5,12 @@ __all__ = [
 
 DRIVER_DEFAULTS = {
     "psf_image_size": 151,
-    "bound_size": 100,
+    "bound_size": None,  # TODO should this _ever_ be not-None?
     "mdet_seed": 42,
     "det_bands": None,
     "shear_bands": None,
     "layer": "SCI",
+    "noise_layer": None,  # "whitenoise10"
 }
 
 _METACAL_DEFAULTS = {
