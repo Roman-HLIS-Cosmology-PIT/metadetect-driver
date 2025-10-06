@@ -1,6 +1,5 @@
 import importlib.metadata
 import logging
-import math
 import sys
 from copy import deepcopy
 
