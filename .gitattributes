@@ -10,7 +10,7 @@
 # *.gz filter=lfs diff=lfs merge=lfs -text
 #
 # apache parquet files
-# *.parq	filter=lfs diff=lfs merge=lfs -text
+# *.parquet	filter=lfs diff=lfs merge=lfs -text
 #
 # sqlite files
 # *.sqlite3	filter=lfs diff=lfs merge=lfs -text
