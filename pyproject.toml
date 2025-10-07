@@ -1,10 +1,14 @@
-
 [project]
 name = "metadetect-driver"
 license = {file = "LICENSE"}
 readme = "README.md"
 authors = [
-    { name = "Roman-HLIS-Cosmology-PIT", email = "fberlfei@andrew.cmu.edu" }
+  { name = "Roman-HLIS-Cosmology-PIT" },
+  { name = "Federico Berlfein", email = "fberlfei@andrew.cmu.edu" },
+  { name = "Yuedong Fang", email = "yuedong.fang@duke.edu" },
+  { name = "Axel Guinot", email = "axel.guinot.astro@gmail.com" },
+  { name = "Arun Kannawadi", email = "kj.arun.kj@gmail.com" },
+  { name = "Sidney Mau", email = "sidney.mau@duke.edu" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -15,21 +19,14 @@ classifiers = [
 ]
 dynamic = ["version"]
 requires-python = ">=3.11"
-dependencies = [
-]
 
 [project.urls]
-"Source Code" = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
+Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
+Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
 
-# On a mac, install optional dependencies with `pip install '.[dev]'` (include the single quotes)
-[project.optional-dependencies]
-dev = [
-    "jupyter", # Clears output from Jupyter notebooks
-    "pre-commit", # Used to run checks before finalizing a git commit
-    "pytest",
-    "pytest-cov", # Used to report total code coverage
-    "ruff", # Used for static linting of files
-]
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
 [build-system]
 requires = [

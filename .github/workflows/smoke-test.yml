@@ -46,6 +46,8 @@ jobs:
       run: |
         conda config --set always_yes yes
         conda install --quiet --yes --file requirements-conda.txt
+        python -m pip install -r requirements.txt
+        python -m pip install -r requirements-dev.txt
         python -m pip install .[dev]
     - name: List dependencies
       run: |

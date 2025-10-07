@@ -1,3 +1,7 @@
+jupyter
+pandas
+pre-commit
 pytest
 pytest-cov
 pytest-xdist
+ruff
