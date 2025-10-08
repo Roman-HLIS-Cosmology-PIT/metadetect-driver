@@ -1,6 +1,7 @@
 import importlib.metadata
 import logging
 import sys
+import time
 from copy import deepcopy
 
 import galsim
@@ -435,13 +436,17 @@ class MetadetectRunner:
         _metadetect_config = deepcopy(self.metadetect_config)
         _rng = np.random.RandomState(seed=self.driver_config.get("mdet_seed"))
 
-        return metadetect.do_metadetect(
+        _start = time.time()
+        res = metadetect.do_metadetect(
             _metadetect_config,
             mbobs=mbobs,
             rng=_rng,
             det_band_combs=self.det_combs,
             shear_band_combs=self.shear_combs,
         )
+        _stop = time.time()
+        logger.info(f"Metadetection took {_stop - _start} seconds")
+        return res
 
     def get_psf(self, outimage, wcs):
         """
