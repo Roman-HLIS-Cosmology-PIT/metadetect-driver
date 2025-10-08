@@ -11,7 +11,7 @@ band = "H158"
 row_ind = 0
 
 driver = IMCOMDriver(
-    "/hpc/home/yf194/Work/projects/metadetect-driver/config/config_imcom_sci.yaml"
+    "config/imcom_sci.yaml"
 )
 
 # Setup the filesystem
