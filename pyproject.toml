@@ -1,33 +1,96 @@
-[build-system]
-requires = ["setuptools>=61", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "metadetect_driver"
-version = "0.1"
-description = "Driver package to run metadetecion"
+name = "metadetect-driver"
+license = {file = "LICENSE"}
 readme = "README.md"
-license = { text = "MIT" }
 authors = [
-  { name = "Your Name", email = "you@example.com"  }
+  { name = "Roman-HLIS-Cosmology-PIT" },
+  { name = "Federico Berlfein", email = "fberlfei@andrew.cmu.edu" },
+  { name = "Yuedong Fang", email = "yuedong.fang@duke.edu" },
+  { name = "Axel Guinot", email = "axel.guinot.astro@gmail.com" },
+  { name = "Arun Kannawadi", email = "kj.arun.kj@gmail.com" },
+  { name = "Sidney Mau", email = "sidney.mau@duke.edu" },
 ]
-requires-python = ">=3.10"
-
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+]
+dynamic = ["version"]
+requires-python = ">=3.11"
 
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
-
-[tool.setuptools.packages.find]
-where = ["."]
-exclude = ["tests*", "docs*"]
+Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
-[tool.isort]
-profile = "black"
-line_length = 110
+[build-system]
+requires = [
+    "setuptools>=62", # Used to build and package the Python project
+    "setuptools_scm>=6.2", # Gets release version from git. Makes it available programmatically
+]
+build-backend = "setuptools.build_meta"
 
-[tool.black]
+[tool.setuptools_scm]
+write_to = "src/metadetect_driver/_version.py"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+    "src",
+    "docs",
+]
+addopts = "--doctest-modules --doctest-glob=*.rst"
+
+[tool.ruff]
 line-length = 110
-target-version = ["py311"]
+target-version = "py39"
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    "W",
+    # Pyflakes
+    "F",
+    # pep8-naming
+    "N",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # docstrings
+    "D101",
+    "D102",
+    "D103",
+    "D106",
+    "D206",
+    "D207",
+    "D208",
+    "D300",
+    "D417",
+    "D419",
+    # Numpy v2.0 compatibility
+    "NPY201",
+]
+ignore = [
+    "UP006", # Allow non standard library generics in type hints
+    "UP007", # Allow Union in type hints
+    "SIM114", # Allow if with same arms
+    "B028", # Allow default warning level
+    "SIM117", # Allow nested with
+    "UP015", # Allow redundant open parameters
+    "UP028", # Allow yield in for loop
+    "F403", # Allow * imports
+]
+
+
+[tool.coverage.run]
+omit=["src/metadetect_driver/_version.py"]
