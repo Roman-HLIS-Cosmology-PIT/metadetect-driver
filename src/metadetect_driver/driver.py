@@ -91,7 +91,7 @@ def get_imcom_wcs(outimage):
     """
     cfg = outimage.cfg
     ibx, iby = outimage.ibx, outimage.iby
-    outwcs = wcs.WCS(naxis=2)
+    outwcs = wcs.WCS(header={"NAXIS1": cfg.NsideP, "NAXIS2": cfg.NsideP}, naxis=2)
     outwcs.wcs.crpix = [
         (cfg.NsideP + 1) / 2.0 - cfg.Nside * (ibx - (cfg.nblock - 1) / 2.0),
         (cfg.NsideP + 1) / 2.0 - cfg.Nside * (iby - (cfg.nblock - 1) / 2.0),
