@@ -156,13 +156,13 @@ def run_metadetect(outimages, driver_config=None, metadetect_config=None):
     dict of pyarrow Table
         metadetect catalogs for each shear type
     """
-    runner = MetadetectRunner(
+    runner = MetadetectDriver(
         outimages, driver_config=driver_config, metadetect_config=metadetect_config,
     )
     return runner.run()
 
 
-class MetadetectRunner:
+class MetadetectDriver:
     """
     Class to run Metadetection on PyIMCOM coadds (OutImage objects).
     Stores the input coadds, Metadetection config, and driver config, and provides
@@ -171,7 +171,7 @@ class MetadetectRunner:
 
     def __init__(self, outimages, driver_config=None, metadetect_config=None):
         """
-        Initialize the MetadetectRunner.
+        Initialize the MetadetectDriver.
 
         Parameters
         ----------
@@ -183,7 +183,7 @@ class MetadetectRunner:
         metadetect_config : dict, optional
             Metadetection configuration dictionary. If None, uses METADETECT_DEFAULTS. [default : None]
         """
-        logger.info("Instantiating MetadetectRunner")
+        logger.info("Instantiating MetadetectDriver")
         logger.debug(f"Driver config: {driver_config}")
         logger.debug(f"Metadetect config: {metadetect_config}")
 
@@ -215,7 +215,7 @@ class MetadetectRunner:
 
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.bands = MetadetectRunner.get_bands(self.outimages)
+        self.bands = MetadetectDriver.get_bands(self.outimages)
         self.shear_types = self.get_shear_types()
         self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
@@ -290,7 +290,7 @@ class MetadetectRunner:
     @staticmethod
     def get_shear_jacobian(shear_type, metacal_step):
         # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
-        _shear = MetadetectRunner.get_shear(shear_type, metacal_step)
+        _shear = MetadetectDriver.get_shear(shear_type, metacal_step)
         return _shear.getMatrix()
 
     def run(self):
@@ -504,7 +504,7 @@ class MetadetectRunner:
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
         if self.driver_config["bound_size"] is None:
-            bound_size = MetadetectRunner.det_bound_from_padding(self.imcom_config)
+            bound_size = MetadetectDriver.det_bound_from_padding(self.imcom_config)
         else:
             bound_size = self.driver_config["bound_size"]
 
@@ -554,7 +554,7 @@ class MetadetectRunner:
         _metadata = self._get_metadata()
         results = {}
         for shear_type, catalog in res.items():
-            _shear_jacobian = MetadetectRunner.get_shear_jacobian(
+            _shear_jacobian = MetadetectDriver.get_shear_jacobian(
                 shear_type, self.metacal_step
             )
 

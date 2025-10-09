@@ -3,7 +3,7 @@ __all__ = [
     "from_imcom_flux",
     "get_imcom_psf",
     "get_imcom_wcs",
-    "MetadetectRunner",
+    "MetadetectDriver",
     "run_metadetect",
 ]
 
@@ -12,6 +12,6 @@ from .driver import (
     from_imcom_flux,
     get_imcom_psf,
     get_imcom_wcs,
-    MetadetectRunner,
+    MetadetectDriver,
     run_metadetect,
 )
