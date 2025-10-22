@@ -20,7 +20,7 @@ from .defaults import METADETECT_DEFAULTS
 logger = logging.getLogger(__name__)
 
 
-_NATIVE_PIX = Settings.pixscale_native / Settings.arcsec
+_NATIVE_SCALE = Settings.pixscale_native / Settings.arcsec
 
 
 def _get_package_metadata():
@@ -38,6 +38,10 @@ def _get_package_metadata():
         "scipy version": importlib.metadata.version("scipy"),
         "sep version": importlib.metadata.version("sep"),
     }
+
+
+def _get_output_scale(dtheta):
+    return dtheta * Settings.degree / Settings.arcsec  # arcsec
 
 
 def from_imcom_flux(flux, dtheta):
@@ -58,15 +62,19 @@ def from_imcom_flux(flux, dtheta):
     IMCOM flux unit is e- / (0.11 arcsec)^2 / exposure.
     We convert to e-/cm^2/s using Roman collecting area and exposure,
     and correct for the coadd oversampling relative to native pixels.
-    The (_NATIVE_PIX**2/oversample_pix**2) takes into account that the
+    The (_NATIVE_SCALE**2/oversample_pix**2) takes into account that the
     coadds are oversampled and not in the native Roman pixel scale.
     AB magnitude can be calculated using galsim.roman zeropoints.
     """
     # coadd pixel scale in arcsec (PyIMCOM stores in degrees)
     # FIXME why is there a radian conversion here?
-    # oversample_pix = dtheta * 3600.0  # deg --> arcsec
-    oversample_pix = dtheta / Settings.arcsec
-    norm = roman.exptime * roman.collecting_area * (_NATIVE_PIX**2 / oversample_pix**2)
+    # oversample_pix = dtheta * Settings.degree / Settings.arcsec
+    # oversample_pix = dtheta / Settings.arcsec
+    # norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / oversample_pix**2)
+
+    output_scale = _get_output_scale(dtheta)
+    norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2)
+
     return flux / norm
 
 
@@ -121,8 +129,10 @@ def get_imcom_psf(cfg):
     - PyIMCOM output PSF can be GAUSSIAN, AIRY (obscured/unobscured).
     - The AIRY kernels are also be convolved with a Gaussian.
     """
-    # Base Gaussian width: cfg.sigmatarget is in native pixels; convert to arcsec
-    sigma = cfg.sigmatarget * _NATIVE_PIX
+    # output_scale = _get_output_scale(cfg.dtheta)
+    # sigma = cfg.sigmatarget * _NATIVE_SCALE / output_scale
+    sigma = cfg.sigmatarget * _NATIVE_SCALE
+    logger.info(f"Using target PSF with sigma={sigma}")
     psf = galsim.Gaussian(sigma=sigma)
 
     # Optional Airy with/without obscuration, then convolve with Gaussian.
@@ -130,7 +140,7 @@ def get_imcom_psf(cfg):
         obsc = Settings.obsc if cfg.outpsf == "AIRYOBSC" else 0.0
         # PyIMCOM settings stores the lambda over diameter factor for every band in units of native pixel,
         # so we multiply by roman native pixel scale (0.11) to convert to arcsec
-        lam_over_diam = Settings.QFilterNative[cfg.use_filter] * _NATIVE_PIX  # arcsec
+        lam_over_diam = Settings.QFilterNative[cfg.use_filter] * _NATIVE_SCALE  # arcsec
         airy = galsim.Airy(lam_over_diam=lam_over_diam, obscuration=obsc)
         psf = galsim.Convolve([airy, psf])
 
@@ -169,6 +179,9 @@ class MetadetectDriver:
     methods to build catalogs from the multi-band imaging.
     """
 
+    input_scale = _NATIVE_SCALE
+    output_scale = None
+
     def __init__(self, outimages, driver_config=None, metadetect_config=None):
         """
         Initialize the MetadetectDriver.
@@ -205,6 +218,8 @@ class MetadetectDriver:
 
         # TODO ensure that the configs are consistent
         self.imcom_config = outimages[0].cfg
+
+        self.output_scale = _get_output_scale(self.imcom_config.dtheta)
 
         self.outimages = outimages
 
@@ -353,7 +368,33 @@ class MetadetectDriver:
         -------
         obslist : ngmix Observation
         """
-        image, jacobian, psf_image, noise_image, noise_sigma = self._get_ngmix_data(outimage)
+        image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
+
+        _noise_layer = self.driver_config.get("noise_layer")
+        if _noise_layer is not None:
+            logger.info(f"Using {_noise_layer} as noise image")
+            noise_image = outimage.get_coadded_layer(_noise_layer)
+        else:
+            logger.info("No noise image found")
+            noise_image = None
+
+
+        sigma_map = outimage.get_output_map("SIGMA")
+        fidelity_map = outimage.get_output_map("FIDELITY")
+
+        # Build GalSim WCS and Jacobian
+        _wcs = get_imcom_wcs(outimage)
+        wcs = galsim.AstropyWCS(wcs=_wcs)
+        jacobian = wcs.jacobian(
+            image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
+        )
+
+        # # Estimate background RMS using SEP
+        # bkg = sep.Background(image.astype(image.dtype.newbyteorder("=")))
+        # noise_sigma = bkg.globalrms
+
+        # Draw PSF image
+        psf_image = self.get_psf(outimage, wcs)
 
         # Centers
         psf_image_center = (psf_image.shape[0] - 1) / 2.0
@@ -367,57 +408,19 @@ class MetadetectDriver:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
+            # weight=None,
+            weight=sigma_map,
+            # weight=np.full(image.shape, 1 / noise_sigma**2, dtype=float),
+            bmask=np.zeros(image.shape, dtype=np.int32),
+            ormask=np.zeros(image.shape, dtype=np.int32),
             noise=noise_image,
             jacobian=image_jacobian,
-            weight=np.full(image.shape, 1 / noise_sigma**2, dtype=float),
             psf=psf_obs,
-            ormask=np.zeros(image.shape, dtype=np.int32),
-            bmask=np.zeros(image.shape, dtype=np.int32),
+            # mfrac=fidelity_map,
         )
         obslist = ngmix.ObsList()
         obslist.append(obs)
         return obslist
-
-    def _get_ngmix_data(self, outimage):
-        """
-        Generate inputs needed to make ngmix Observation for a single outimage.
-
-         Parameters
-        ----------
-        outimage : OutImage object representing a single outimage in one band.
-
-        Returns
-        -------
-        image : np.ndarray
-            Coadded image for the requested layer.
-        jacobian : ngmix.Jacobian
-            Image-plane Jacobian derived from WCS at the reference pixel.
-        psf_image : np.ndarray
-            PSF image.
-        noise_image : np.ndarray
-            Coadded image for the noise layer.
-        noise_sigma : float
-            Global RMS of the image background.
-        """
-        image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
-        # noise_image = outimage.get_coadded_layer(self.driver_config.get("noise_layer", "whitenoise10"))  # FIXME renormalize
-        noise_image = None
-
-        # Build GalSim WCS and Jacobian
-        _wcs = get_imcom_wcs(outimage)
-        wcs = galsim.AstropyWCS(wcs=_wcs)
-        jacobian = wcs.jacobian(
-            image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
-        )
-
-        # Estimate background RMS using SEP
-        bkg = sep.Background(image.astype(image.dtype.newbyteorder("=")))
-        noise_sigma = bkg.globalrms
-
-        # Draw PSF image
-        psf_image = self.get_psf(outimage, wcs)
-
-        return image, jacobian, psf_image, noise_image, noise_sigma
 
     def _run_metadetect(self, mbobs):
         """
@@ -445,7 +448,7 @@ class MetadetectDriver:
             shear_band_combs=self.shear_combs,
         )
         _stop = time.time()
-        logger.info(f"Metadetection took {_stop - _start} seconds")
+        logger.info(f"metadetection took {_stop - _start} seconds")
         return res
 
     def get_psf(self, outimage, wcs):
@@ -469,6 +472,7 @@ class MetadetectDriver:
             nx=self.driver_config["psf_image_size"],
             ny=self.driver_config["psf_image_size"],
             wcs=wcs,
+            method="no_pixel",
         ).array
 
     @staticmethod

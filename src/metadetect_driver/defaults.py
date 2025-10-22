@@ -4,13 +4,13 @@ __all__ = [
 ]
 
 DRIVER_DEFAULTS = {
-    "psf_image_size": 151,
+    "psf_image_size": 73,  # 151 -- big PSF causes OOM
     "bound_size": None,  # TODO should this _ever_ be not-None?
     "mdet_seed": 42,
     "det_bands": None,
     "shear_bands": None,
     "layer": "SCI",
-    "noise_layer": None,  # "whitenoise10"
+    "noise_layer": None,
 }
 
 _METACAL_DEFAULTS = {
@@ -20,7 +20,7 @@ _METACAL_DEFAULTS = {
 
 _MEDS_DEFAULTS = {
     "min_box_size": 32,
-    "max_box_size": 600,
+    "max_box_size": 32,
     "box_type": "iso_radius",
     "rad_min": 4,
     "rad_fac": 2,
