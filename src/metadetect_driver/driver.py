@@ -381,6 +381,7 @@ class MetadetectDriver:
 
         sigma_map = outimage.get_output_map("SIGMA")
         fidelity_map = outimage.get_output_map("FIDELITY")
+        # weight_map = outimage.get_output_map("INWTSUM")
 
         # Build GalSim WCS and Jacobian
         _wcs = get_imcom_wcs(outimage)
@@ -388,10 +389,6 @@ class MetadetectDriver:
         jacobian = wcs.jacobian(
             image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
         )
-
-        # # Estimate background RMS using SEP
-        # bkg = sep.Background(image.astype(image.dtype.newbyteorder("=")))
-        # noise_sigma = bkg.globalrms
 
         # Draw PSF image
         psf_image = self.get_psf(outimage, wcs)
@@ -408,15 +405,13 @@ class MetadetectDriver:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
-            # weight=None,
-            weight=sigma_map,
-            # weight=np.full(image.shape, 1 / noise_sigma**2, dtype=float),
+            weight=1 / sigma_map,
             bmask=np.zeros(image.shape, dtype=np.int32),
             ormask=np.zeros(image.shape, dtype=np.int32),
             noise=noise_image,
             jacobian=image_jacobian,
             psf=psf_obs,
-            # mfrac=fidelity_map,
+            mfrac=fidelity_map,
         )
         obslist = ngmix.ObsList()
         obslist.append(obs)
