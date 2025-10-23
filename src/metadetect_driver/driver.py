@@ -73,7 +73,8 @@ def from_imcom_flux(flux, dtheta):
     # norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / oversample_pix**2)
 
     output_scale = _get_output_scale(dtheta)
-    norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2)
+    # norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2)
+    norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2) * 0.004906087669824225  # from C. H.
 
     return flux / norm
 
@@ -370,18 +371,20 @@ class MetadetectDriver:
         """
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
+        sigma_map = outimage.get_output_map("SIGMA")
+        fidelity_map = outimage.get_output_map("FIDELITY")
+        # weight_map = outimage.get_output_map("INWTSUM")
+
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:
             logger.info(f"Using {_noise_layer} as noise image")
             noise_image = outimage.get_coadded_layer(_noise_layer)
         else:
-            logger.info("No noise image found")
-            noise_image = None
-
-
-        sigma_map = outimage.get_output_map("SIGMA")
-        fidelity_map = outimage.get_output_map("FIDELITY")
-        # weight_map = outimage.get_output_map("INWTSUM")
+            logger.info("No noise image found; estimating via sep")
+            _rng = np.random.default_rng(42)  # TODO
+            _background = sep.Background(image.astype(image.dtype.newbyteorder("=")))
+            _noise_sigma = _background.globalrms
+            noise_image = _rng.normal(scale=_noise_sigma, size=sigma_map.shape)
 
         # Build GalSim WCS and Jacobian
         _wcs = get_imcom_wcs(outimage)
