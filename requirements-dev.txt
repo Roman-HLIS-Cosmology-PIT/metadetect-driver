@@ -1,3 +1,5 @@
+black
+isort
 jupyter
 pandas
 pre-commit
@@ -5,3 +7,4 @@ pytest
 pytest-cov
 pytest-xdist
 ruff
+s3fs

@@ -20,14 +20,6 @@ classifiers = [
 dynamic = ["version"]
 requires-python = ">=3.11"
 
-[project.optional-dependencies]
-dev = [
-    "black>=25.9.0",
-    "flake8>=7.3.0",
-    "isort>=7.0.0",
-    "ruff>=0.14.2",
-]
-
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
 Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
