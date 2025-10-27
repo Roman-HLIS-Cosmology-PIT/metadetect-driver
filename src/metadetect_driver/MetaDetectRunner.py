@@ -18,7 +18,7 @@ from pyimcom.config import Settings as Stn
 from .config import parse_driver_cfg
 
 # load default metadetect config file
-with open("../config/metadetect_default.yaml", "r") as file:
+with open("config/metadetect_default.yaml", "r") as file:  # TODO: Make this robust.
     METADETECT_CONFIG = yaml.safe_load(file)
 
 

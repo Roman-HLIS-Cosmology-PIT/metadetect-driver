@@ -7,7 +7,7 @@ import yaml
 # ---- Allowed values ----
 ALLOWED_BANDS = ["R062", "Z087", "Y106", "J129", "H158", "F184", "K213", "W146"]
 
-with open("../config/driver_default.yaml", "r") as file:
+with open("config/driver_default.yaml", "r") as file:  # TODO: Make this robust.
     DEFAULT_DRIVER_CFG = yaml.safe_load(file)
 
 
