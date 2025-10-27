@@ -72,3 +72,4 @@ METADETECT_CONFIG:
     bmask_flags: 2**30
 
     nodet_flags: 2**0
+

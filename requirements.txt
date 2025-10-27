@@ -8,3 +8,12 @@ pyarrow
 pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git@main
 scipy
 sep
+numba
+scipy
+gwcs
+filelock
+fitsio
+asdf
+healpy
+jupyter
+jupyterlab
