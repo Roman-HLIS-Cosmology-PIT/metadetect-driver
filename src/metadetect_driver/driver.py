@@ -231,7 +231,7 @@ class MetadetectDriver:
 
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.bands = MetadetectDriver.get_bands(self.outimages)
+        self.bands = self.get_bands()
         self.shear_types = self.get_shear_types()
         self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
@@ -245,8 +245,11 @@ class MetadetectDriver:
             "types", ngmix.metacal.METACAL_MINIMAL_TYPES
         )
 
+    def get_bands(self):
+        return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
+
     @staticmethod
-    def get_bands(outimages):
+    def get_band(outimage):
         """
         Get band names for provided blocks.
         PyIMCOM has a certain ordering of the filters (e.g. filter 2 is H158).
@@ -257,11 +260,7 @@ class MetadetectDriver:
         list[str]
             Band labels matching each block in `blocks`.
         """
-        band_list = []
-        for outimage in outimages:
-            band = Settings.RomanFilters[outimage.cfg.use_filter]
-            band_list.append(band)
-        return band_list
+        return Settings.RomanFilters[outimage.cfg.use_filter]
 
     @staticmethod
     def get_shear(shear_type, metacal_step):
