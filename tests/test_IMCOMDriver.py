@@ -1,10 +1,11 @@
 import os
-import s3fs
-import numpy as np
-import matplotlib.pyplot as plt
-from astropy.visualization import ZScaleInterval, ImageNormalize
 
+import matplotlib.pyplot as plt
 import ngmix
+import numpy as np
+import s3fs
+from astropy.visualization import ImageNormalize, ZScaleInterval
+
 from metadetect_driver import IMCOMDriver
 
 band = "H158"
