@@ -14,10 +14,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.13"
 
       - name: Install
-        run: pip install flake8==7.3.0 flake8-github-annotations
+        run: |
+          pip install flake8==7.3.0 flake8-github-annotations
+          pip install ruff
 
       - name: Run linter
-        run: flake8 --format github
+        run: ruff check src

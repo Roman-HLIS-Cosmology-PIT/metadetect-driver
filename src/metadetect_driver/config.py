@@ -1,14 +1,23 @@
-from collections.abc import Iterable
+import logging
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Iterable, Optional, Union
 
-import yaml
+from .defaults import DRIVER_DEFAULTS
+
+logger = logging.getLogger(__name__)
+
 
 # ---- Allowed values ----
-ALLOWED_BANDS = ["R062", "Z087", "Y106", "J129", "H158", "F184", "K213", "W146"]
-
-with open("config/driver_default.yaml", "r") as file:  # TODO: Make this robust.
-    DEFAULT_DRIVER_CFG = yaml.safe_load(file)
+_ALLOWED_BANDS = [
+    "R062",
+    "Z087",
+    "Y106",
+    "J129",
+    "H158",
+    "F184",
+    "K213",
+    "W146",
+]
 
 
 # ---- Helpers ----
@@ -51,65 +60,53 @@ def _validate_bands(
     if val is None:
         return None
     bands = _coerce_list(val, str, key_name)
-    bad = [b for b in bands if b not in ALLOWED_BANDS]
+    bad = [b for b in bands if b not in _ALLOWED_BANDS]
     if bad:
         raise ValueError(
-            f"Invalid entries in '{key_name}': {bad}. Allowed: {ALLOWED_BANDS}"
+            f"Invalid entries in '{key_name}': {bad}. Allowed: {_ALLOWED_BANDS}"
         )
     return bands
 
 
-# ---- Main parser ----
-def parse_driver_cfg(driver_cfg: Optional[dict]) -> dict:
+def _parse_driver_config(config: Optional[dict]) -> dict:
     """
-    Parse/validate an driver_cfg dict:
-      - Fill defaults for missing keys from DEFAULT_DRIVER_CFG.
+    Parse/validate a config dict:
+      - Fill defaults for missing keys from _DEFAULT_DRIVER_CONFIG.
       - Coerce scalars to lists for det_bands, shear_bands (only if provided).
       - Validate band names, numeric ranges, and types.
-      - keepcols is always a list; if user passes None/empty, fallback to
-        default.
-    Returns a NEW dict.
+      - keepcols is always a list; if user passes None/empty, fallback to default.
     """
-    cfg = deepcopy(DEFAULT_DRIVER_CFG)
-    if driver_cfg:
-        cfg.update(driver_cfg)
+    logger.info("Parsing metadetect driver config")
 
-    # Coerce list-like keys (only when provided)
-    cfg["det_bands"] = _validate_bands(cfg.get("det_bands"), "det_bands")
-    cfg["shear_bands"] = _validate_bands(cfg.get("shear_bands"), "shear_bands")
-
-    # keepcols: always ensure list, fallback to default if None/empty
-    keep = _coerce_list(cfg.get("keepcols"), str, "keepcols")
-    cfg["keepcols"] = (
-        keep if (keep and len(keep) > 0) else list(DEFAULT_DRIVER_CFG["keepcols"])
+    _config = (
+        deepcopy(config)
+        if config is not None
+        else deepcopy(DRIVER_DEFAULTS)
     )
 
-    # ---- Validation ----
-    # sizes
-    if not (isinstance(cfg["psf_img_size"], int) and cfg["psf_img_size"] > 0):
-        raise ValueError("'psf_img_size' must be a positive int")
-    if not (isinstance(cfg["bound_size"], int) and cfg["bound_size"] >= 0):
-        raise ValueError("'bound_size' must be a non-negative int")
+    # Coerce list-like keys (only when provided)
+    _config["det_bands"] = _validate_bands(_config.get("det_bands"), "det_bands")
+    logger.debug(f"config det_bands: {_config['det_bands']}")
+    _config["shear_bands"] = _validate_bands(_config.get("shear_bands"), "shear_bands")
+    logger.debug(f"config shear_bands: {_config['shear_bands']}")
 
-    # seed
-    if not isinstance(cfg["mdet_seed"], int):
-        raise ValueError("'mdet_seed' must be an int")
+    # sizes
+    if not (isinstance(_config["psf_image_size"], int) and _config["psf_image_size"] > 0):
+        raise ValueError("'psf_image_size' must be a positive int")
+    logger.debug(f"config psf_image_size: {_config['psf_image_size']}")
+
+    if _config["bound_size"] is not None and not (isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0):
+        raise ValueError("'bound_size' must be a non-negative int")
+    logger.debug(f"config bound_size: {_config['bound_size']}")
 
     # layer
-    if cfg["layer"] is not None and not isinstance(cfg["layer"], str):
+    if _config["layer"] is not None and not isinstance(_config["layer"], str):
         raise ValueError("'layer' must be a string")
-    # outdir
-    if cfg["outdir"] is not None and not isinstance(cfg["outdir"], str):
-        raise ValueError("'outdir' must be a string")
+    logger.debug(f"config layer: {_config['layer']}")
 
-    # executor params
-    mw = cfg.get("max_workers")
-    if mw is not None:
-        if not (isinstance(mw, int) and mw >= 1):
-            raise ValueError("'max_workers' must be None or an int >= 1")
+    # layer
+    if _config["noise_layer"] is not None and not isinstance(_config["noise_layer"], str):
+        raise ValueError("'noise_layer' must be a string")
+    logger.debug(f"config noise_layer: {_config['noise_layer']}")
 
-    ch = cfg.get("chunksize")
-    if not (isinstance(ch, int) and ch >= 1):
-        raise ValueError("'chunksize' must be an int >= 1")
-
-    return cfg
+    return _config
