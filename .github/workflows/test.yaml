@@ -1,0 +1,46 @@
+name: test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: null
+
+jobs:
+  tests:
+    name: tests
+
+    strategy:
+      matrix:
+        pyver: ["3.11", "3.12", "3.13"]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          lfs: true
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ matrix.pyver }}
+          channels: conda-forge
+          channel-priority: strict
+          show-channel-urls: true
+          miniforge-version: latest
+
+      - name: configure conda and install code
+        shell: bash -l {0}
+        run: |
+          conda config --set always_yes yes
+          conda install --quiet --yes --file requirements-conda.txt
+          python -m pip install -e .[dev]
+
+      # - name: Install
+      #   run: |
+      #     pip install -r requirements.txt
+      #     pip install .[dev]
+
+      - name: Run pytest
+        shell: bash -l {0}
+        run: pytest --log-cli-level=INFO tests/
