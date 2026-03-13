@@ -20,8 +20,6 @@ pip install -e .
 
 ## Dependencies
 
-PyIMCOM is now pip installable, but it is not included in the `requirements.txt` because you can't install it with conda, so you must install it separately for now. See  [PyIMCOM](https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom/tree/main?tab=readme-ov-file) for installation instructions.
-
 The primary dependencies of the code are the `metadetect` "stack" (i.e., `metadetect`, `ngmix`, `meds`, etc.) and `pyimcom`.
 The former is best-installed via conda, and the latter can be installed from GitHub via pip.
 An example file for conda requirements is provided to facilitate building an environment:
