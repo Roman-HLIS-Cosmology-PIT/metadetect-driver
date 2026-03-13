@@ -37,23 +37,17 @@ def _coerce_list(val, elem_type, key_name):
     elif isinstance(val, Iterable) and not isinstance(val, (str, bytes)):
         out = list(val)
     else:
-        raise TypeError(
-            f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}"
-        )
+        raise TypeError(f"'{key_name}' must be {elem_type.__name__} or an iterable of {elem_type.__name__}")
     # element-wise checks
     for x in out:
         if isinstance(x, bool) and elem_type is int:
-            raise TypeError(
-                f"'{key_name}' elements must be {elem_type.__name__}, got bool"
-            )
+            raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}, got bool")
         if not isinstance(x, elem_type):
             raise TypeError(f"'{key_name}' elements must be {elem_type.__name__}")
     return out
 
 
-def _validate_bands(
-    val: Optional[Union[str, Iterable[str]]], key_name: str
-) -> Optional[list[str]]:
+def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> Optional[list[str]]:
     """
     Coerce to list[str] (if provided) and validate against ALLOWED_BANDS.
     """
@@ -62,9 +56,7 @@ def _validate_bands(
     bands = _coerce_list(val, str, key_name)
     bad = [b for b in bands if b not in _ALLOWED_BANDS]
     if bad:
-        raise ValueError(
-            f"Invalid entries in '{key_name}': {bad}. Allowed: {_ALLOWED_BANDS}"
-        )
+        raise ValueError(f"Invalid entries in '{key_name}': {bad}. Allowed: {_ALLOWED_BANDS}")
     return bands
 
 
@@ -78,11 +70,7 @@ def _parse_driver_config(config: Optional[dict]) -> dict:
     """
     logger.info("Parsing metadetect driver config")
 
-    _config = (
-        deepcopy(config)
-        if config is not None
-        else deepcopy(DRIVER_DEFAULTS)
-    )
+    _config = deepcopy(config) if config is not None else deepcopy(DRIVER_DEFAULTS)
 
     # Coerce list-like keys (only when provided)
     _config["det_bands"] = _validate_bands(_config.get("det_bands"), "det_bands")
@@ -95,7 +83,9 @@ def _parse_driver_config(config: Optional[dict]) -> dict:
         raise ValueError("'psf_image_size' must be a positive int")
     logger.debug(f"config psf_image_size: {_config['psf_image_size']}")
 
-    if _config["bound_size"] is not None and not (isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0):
+    if _config["bound_size"] is not None and not (
+        isinstance(_config["bound_size"], int) and _config["bound_size"] >= 0
+    ):
         raise ValueError("'bound_size' must be a non-negative int")
     logger.debug(f"config bound_size: {_config['bound_size']}")
 

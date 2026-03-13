@@ -19,9 +19,7 @@ def test_reproducability():
     output_path = Path(__file__).parent / "output"
 
     for shear_type, result in results.items():
-        expected = pq.read_table(
-            output_path / f"metadetect_catalog_{shear_type}.parquet"
-        )
+        expected = pq.read_table(output_path / f"metadetect_catalog_{shear_type}.parquet")
 
         # NOTE this does _not_ require that the metadata be equal, so this will
         # not raise an error even if there is a version mismatch between

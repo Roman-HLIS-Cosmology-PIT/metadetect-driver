@@ -74,7 +74,9 @@ def from_imcom_flux(flux, dtheta):
 
     output_scale = _get_output_scale(dtheta)
     # norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2)
-    norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2) * 0.004906087669824225  # from C. H.
+    norm = (
+        roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2) * 0.004906087669824225
+    )  # from C. H.
 
     return flux / norm
 
@@ -168,7 +170,9 @@ def run_metadetect(outimages, driver_config=None, metadetect_config=None, seed=N
         metadetect catalogs for each shear type
     """
     runner = MetadetectDriver(
-        outimages, driver_config=driver_config, metadetect_config=metadetect_config,
+        outimages,
+        driver_config=driver_config,
+        metadetect_config=metadetect_config,
     )
     return runner.run(seed=seed)
 
@@ -208,9 +212,7 @@ class MetadetectDriver:
         #     else deepcopy(DRIVER_DEFAULTS)
         # )
         self.metadetect_config = (
-            deepcopy(metadetect_config)
-            if metadetect_config is not None
-            else deepcopy(METADETECT_DEFAULTS)
+            deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
         )
 
         # Ensure each outimage corresponds to the same block
@@ -246,9 +248,7 @@ class MetadetectDriver:
         return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
 
     def get_shear_types(self):
-        return self.metadetect_config["metacal"].get(
-            "types", ngmix.metacal.METACAL_MINIMAL_TYPES
-        )
+        return self.metadetect_config["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
 
     def get_bands(self):
         return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
@@ -393,9 +393,7 @@ class MetadetectDriver:
         # Build GalSim WCS and Jacobian
         _wcs = get_imcom_wcs(outimage)
         wcs = galsim.AstropyWCS(wcs=_wcs)
-        jacobian = wcs.jacobian(
-            image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
-        )
+        jacobian = wcs.jacobian(image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1]))
 
         # Draw PSF image
         psf_image = self.get_psf(outimage, wcs)
@@ -561,9 +559,7 @@ class MetadetectDriver:
         _metadata = self._get_metadata()
         results = {}
         for shear_type, catalog in res.items():
-            _shear_jacobian = MetadetectDriver.get_shear_jacobian(
-                shear_type, self.metacal_step
-            )
+            _shear_jacobian = MetadetectDriver.get_shear_jacobian(shear_type, self.metacal_step)
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
@@ -588,12 +584,8 @@ class MetadetectDriver:
             _results["block_id"] = [self.block_id for _ in range(len(x))]
             _results["projection_center_ra"] = [self.block_ra for _ in range(len(x))]
             _results["projection_center_dec"] = [self.block_dec for _ in range(len(x))]
-            _results["projection_center_lonpole"] = [
-                self.block_lonpole for _ in range(len(x))
-            ]
-            _results["shear_jacobian"] = [
-                _shear_jacobian.tolist() for _ in range(len(x))
-            ]
+            _results["projection_center_lonpole"] = [self.block_lonpole for _ in range(len(x))]
+            _results["shear_jacobian"] = [_shear_jacobian.tolist() for _ in range(len(x))]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
 
             results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
