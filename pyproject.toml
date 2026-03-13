@@ -82,3 +82,6 @@ ignore = [
     "UP028", # Allow yield in for loop
     "F403", # Allow * imports
 ]
+
+[project.scripts]
+run-metadetect = "metadetect_driver.main:main"
