@@ -15,5 +15,3 @@ filelock
 fitsio
 asdf
 healpy
-jupyter
-jupyterlab

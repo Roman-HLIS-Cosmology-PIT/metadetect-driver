@@ -1,9 +1,0 @@
-asdf
-astropy
-galsim
-metadetect
-ngmix
-numpy
-pyarrow
-scipy
-sep

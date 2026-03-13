@@ -24,7 +24,7 @@ The primary dependencies of the code are the `metadetect` "stack" (i.e., `metade
 The former is best-installed via conda, and the latter can be installed from GitHub via pip.
 An example file for conda requirements is provided to facilitate building an environment:
 ```bash
-conda install --file requirements-conda.txt
+conda create -f conda.yaml
 ```
 
 ## Use
