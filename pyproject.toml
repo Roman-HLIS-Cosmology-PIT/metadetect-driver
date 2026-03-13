@@ -30,13 +30,10 @@ optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
 [build-system]
 requires = [
-    "setuptools>=62", # Used to build and package the Python project
-    "setuptools_scm>=6.2", # Gets release version from git. Makes it available programmatically
+    "setuptools>=80",
+    "setuptools_scm[simple]>=8",
 ]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools_scm]
-write_to = "src/metadetect_driver/_version.py"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --doctest-glob=*.rst"
@@ -85,7 +82,3 @@ ignore = [
     "UP028", # Allow yield in for loop
     "F403", # Allow * imports
 ]
-
-
-[tool.coverage.run]
-omit=["src/metadetect_driver/_version.py"]
