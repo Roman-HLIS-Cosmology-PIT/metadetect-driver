@@ -1,15 +1,44 @@
 import argparse
 import time
+import json
+import multiprocessing
+import concurrent.futures
 from pathlib import Path
 import logging
 
 from pyimcom.analysis import OutImage
+from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
 
 from . import (
     config,
     driver,
 )
+
+
+def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, metadetect_config=None, seed=None):
+    input_images = [
+        Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+        for band in coadd_bands
+    ]
+
+    start_time = time.time()
+
+    outimages = [OutImage(input_image) for input_image in input_images]
+    results = driver.run_metadetect(
+        outimages,
+        driver_config=driver_config,
+        metadetect_config=metadetect_config,
+        seed=seed,
+    )
+
+    end_time = time.time()
+
+    print(f"Finished block {block} in {end_time - start_time} seconds")
+
+    _write_catalogs(results, output_dir, mosaic, block, coadd_bands)
+
+    return 0
 
 
 def get_args():
@@ -35,6 +64,13 @@ def get_args():
         required=False,
         default=2,
         help="logging level [int; 2]",
+    )
+    parser.add_argument(
+        "--njobs",
+        type=int,
+        required=False,
+        default=None,
+        help="Number of parallel jobs [int; None]",
     )
     return parser.parse_args()
 
@@ -78,9 +114,12 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
 def main():
     args = get_args()
 
+    mp_context = multiprocessing.get_context("forkserver")
+
     logging.basicConfig()
 
     seed = args.seed
+    njobs = args.njobs
 
     # input_images = args.input
 
@@ -88,30 +127,47 @@ def main():
     output_dir = "/work/sdm135/Dec25-sims-mdet/"
 
     mosaic = "1"  # TODO command line arg
-    block = "12_12"  # TODO command line arg and/or iterate?
+
+    _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
+    config = ""
+    with ReadFile(_input_file) as f:
+        for g in f["CONFIG"].data["text"].tolist():
+            config += g + " "
+        configStruct = json.loads(config)
+
+    nblock = configStruct["BLOCK"]  # NB assume this is always square
+    blocks = []
+    for i in range(nblock):
+        for j in range(nblock):
+            _block = f"{i:02d}_{j:02d}"
+            blocks.append(_block)
+
     coadd_bands = ["Y", "J", "H"]
-
-    input_images = [
-        Path(input_dir) / f"{band}{mosaic}_coadds/im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
-        for band in coadd_bands
-    ]
-
-    print(f"Running metadetect on {input_images}")
 
     start_time = time.time()
 
-    outimages = [OutImage(input_image) for input_image in input_images]
-    results = driver.run_metadetect(
-        outimages,
-        driver_config=None,
-        metadetect_config=None,
-        seed=seed,
-    )
+    with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
+        futures = []
+        for block in blocks:
+            print(f"Running metadetect on block {block}")
+            _future = executor.submit(
+                task,
+                input_dir,
+                output_dir,
+                coadd_bands,
+                mosaic,
+                block,
+                driver_config=None,
+                metadetect_config=None,
+                seed=seed,
+            )
+            futures.append(_future)
+
+    for future in futures:
+        print(f"future {id(future)} exited with status {future.result()}")
 
     end_time = time.time()
 
-    print(f"Finished in {end_time - start_time} seconds")
+    print(f"Finished running all blocks {block} in {end_time - start_time} seconds")
 
-    print(f"metadetect_stage writing to {output_dir}")
 
-    _write_catalogs(results, output_dir, mosaic, block, coadd_bands)
