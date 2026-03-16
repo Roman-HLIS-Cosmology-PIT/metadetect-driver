@@ -43,8 +43,18 @@ def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, 
 
 def get_args():
     parser = argparse.ArgumentParser()
-    # parser.add_argument("input", type=str, help="input directory")
-    # parser.add_argument("output", type=str, help="output directory")
+    parser.add_argument(
+        "--input-dir",
+        type=str,
+        required=True,
+        help="Input directory [str]",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        required=True,
+        help="Output directory [str]",
+    )
     parser.add_argument(
         "--mosaic",
         type=str,
@@ -124,14 +134,11 @@ def main():
 
     logging.basicConfig()
 
+    input_dir = args.input_dir
+    output_dir = args.output_dir
     mosaic = args.mosaic
     seed = args.seed
     njobs = args.njobs
-
-    # input_images = args.input
-
-    input_dir = "/hpc/group/cosmology/Roman_HLIS_Cosmology_PIT/Dec25-sims/"
-    output_dir = "/work/sdm135/Dec25-sims-mdet/"
 
     _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
