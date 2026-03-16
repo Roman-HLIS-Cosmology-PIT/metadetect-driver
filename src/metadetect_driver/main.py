@@ -46,6 +46,12 @@ def get_args():
     # parser.add_argument("input", type=str, help="input directory")
     # parser.add_argument("output", type=str, help="output directory")
     parser.add_argument(
+        "--mosaic",
+        type=str,
+        required=True,
+        help="IMCOM mosaic [str]",
+    )
+    parser.add_argument(
         "--config",
         type=str,
         required=False,
@@ -118,6 +124,7 @@ def main():
 
     logging.basicConfig()
 
+    mosaic = args.mosaic
     seed = args.seed
     njobs = args.njobs
 
@@ -125,8 +132,6 @@ def main():
 
     input_dir = "/hpc/group/cosmology/Roman_HLIS_Cosmology_PIT/Dec25-sims/"
     output_dir = "/work/sdm135/Dec25-sims-mdet/"
-
-    mosaic = "1"  # TODO command line arg
 
     _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
