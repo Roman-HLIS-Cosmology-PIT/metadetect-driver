@@ -9,6 +9,7 @@ import logging
 from pyimcom.analysis import OutImage
 from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
+import yaml
 
 from . import (
     config,
@@ -17,6 +18,7 @@ from . import (
 
 
 def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, metadetect_config=None, seed=None):
+
     input_images = [
         Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
         for band in coadd_bands
@@ -41,6 +43,47 @@ def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, 
     return 0
 
 
+def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
+
+    coadd_tag = "".join(coadd_bands)
+
+    shear_types = catalogs.keys()
+
+    output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_catalogs"
+    output_path.mkdir(parents=True, exist_ok=True)
+    print(f"Writing catalogs to {output_path}")
+
+    for shear_type in shear_types:
+        _output_path = output_path / shear_type
+        _output_path.mkdir(parents=True, exist_ok=True)
+
+    # Ensure that all catalogs have the same schema
+    schema = None
+    for shear_type, catalog in catalogs.items():
+        if schema is None:
+            schema = catalog.schema
+        else:
+            _schema = catalog.schema
+            assert schema == _schema
+
+    # TODO update output file naming
+    parquet_writers = {}
+    for shear_type in shear_types:
+        output_file = output_path / shear_type / f"block_{block}.parquet"
+        print(f"Opening parquet writer to {output_file}")
+        parquet_writers[shear_type] = pq.ParquetWriter(output_file, schema=_schema)
+
+    for shear_type in shear_types:
+        print(f"Writing {shear_type} catalog")
+        parquet_writers[shear_type].write(catalogs[shear_type])
+
+    for shear_type in shear_types:
+        print(f"Closing parquet writer to {output_file}")
+        parquet_writers[shear_type].close()
+
+    print("Writing finished")
+
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -62,10 +105,16 @@ def get_args():
         help="IMCOM mosaic [str]",
     )
     parser.add_argument(
-        "--config",
+        "--driver-config",
         type=str,
         required=False,
-        help="configuration file [yaml]",
+        help="Driver configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--metadetect-config",
+        type=str,
+        required=False,
+        help="Metadetect configuration file [yaml]",
     )
     parser.add_argument(
         "--seed",
@@ -91,42 +140,6 @@ def get_args():
     return parser.parse_args()
 
 
-def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
-
-    coadd_tag = "".join(coadd_bands)
-
-    output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_{block}"
-    output_path.mkdir(parents=True, exist_ok=True)
-    print(f"Writing catalogs to {output_path}")
-
-    # Ensure that all catalogs have the same schema
-    schema = None
-    for shear_type, catalog in catalogs.items():
-        if schema is None:
-            schema = catalog.schema
-        else:
-            _schema = catalog.schema
-            assert schema == _schema
-
-    # TODO update output file naming
-    shear_types = catalogs.keys()
-    parquet_writers = {}
-    for shear_type in shear_types:
-        output_file = output_path / f"catalog_{shear_type}.parquet"
-        print(f"Opening parquet writer to {output_file}")
-        parquet_writers[shear_type] = pq.ParquetWriter(output_file, schema=_schema)
-
-    for shear_type in shear_types:
-        print(f"Writing {shear_type} catalog")
-        parquet_writers[shear_type].write(catalogs[shear_type])
-
-    for shear_type in shear_types:
-        print(f"Closing parquet writer to {output_file}")
-        parquet_writers[shear_type].close()
-
-    print("Writing finished")
-
-
 def main():
     args = get_args()
 
@@ -134,11 +147,27 @@ def main():
 
     logging.basicConfig()
 
+    metadetect_config_file = args.metadetect_config
+    driver_config_file = args.driver_config
     input_dir = args.input_dir
     output_dir = args.output_dir
     mosaic = args.mosaic
     seed = args.seed
     njobs = args.njobs
+
+    if driver_config_file is not None:
+        print(f"Loading driver config from {driver_config_file}")
+        with open(driver_config_file) as fp:
+            driver_config = yaml.safe_load(driver_config_file)
+    else:
+        driver_config = None
+
+    if metadetect_config_file is not None:
+        print(f"Loading metadetect config from {metadetect_config_file}")
+        with open(metadetect_config_file) as fp:
+            metadetect_config = yaml.safe_load(metadetect_config_file)
+    else:
+        metadetect_config = None
 
     _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
@@ -161,7 +190,6 @@ def main():
     with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
         futures = []
         for block in blocks:
-            print(f"Running metadetect on block {block}")
             _future = executor.submit(
                 task,
                 input_dir,
@@ -169,8 +197,8 @@ def main():
                 coadd_bands,
                 mosaic,
                 block,
-                driver_config=None,
-                metadetect_config=None,
+                driver_config=driver_config,
+                metadetect_config=metadetect_config,
                 seed=seed,
             )
             futures.append(_future)
