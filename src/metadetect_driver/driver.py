@@ -378,9 +378,7 @@ class MetadetectDriver:
         """
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
-        sigma_map = outimage.get_output_map("SIGMA")
-        # fidelity_map = outimage.get_output_map("FIDELITY")
-        # weight_map = outimage.get_output_map("INWTSUM")
+        # sigma_map = outimage.get_output_map("SIGMA")
 
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:
@@ -413,7 +411,8 @@ class MetadetectDriver:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
-            weight=1 / sigma_map,
+            # weight=1 / sigma_map,
+            weight=None,
             bmask=np.zeros(image.shape, dtype=np.int32),
             ormask=np.zeros(image.shape, dtype=np.int32),
             noise=noise_image,

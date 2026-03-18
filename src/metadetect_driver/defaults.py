@@ -44,13 +44,11 @@ _SX_DEFAULTS = {
 }
 
 METADETECT_DEFAULTS = {
-    # "model": "wmom",
-    # "weight": {"fwhm": 1.2},
     "fitters": [
-        # {
-        #     "model": "wmom",
-        #     "weight": {"fwhm": 1.2},
-        # },
+        {
+            "model": "wmom",
+            "weight": {"fwhm": 1.2},
+        },
         {
             "model": "pgauss",
             "weight": {"fwhm": 2.0},
