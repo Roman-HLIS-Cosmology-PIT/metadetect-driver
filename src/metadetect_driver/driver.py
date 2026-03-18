@@ -389,7 +389,7 @@ class MetadetectDriver:
             _rng = np.random.default_rng(42)  # TODO
             _background = sep.Background(image.astype(image.dtype.newbyteorder("=")))
             _noise_sigma = _background.globalrms
-            noise_image = _rng.normal(scale=_noise_sigma, size=sigma_map.shape)
+            noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
 
         # Build GalSim WCS and Jacobian
         _wcs = get_imcom_wcs(outimage)
