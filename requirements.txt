@@ -1,11 +1,12 @@
 asdf
 astropy
+detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git
 galsim
 metadetect
 ngmix
 numpy
 pyarrow
-pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git@main
+pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git
 scipy
 sep
 numba
