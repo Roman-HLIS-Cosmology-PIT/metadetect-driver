@@ -123,13 +123,13 @@ def get_args():
         default=None,
         help="RNG seed [int]",
     )
-    parser.add_argument(
-        "--log_level",
-        type=int,
-        required=False,
-        default=2,
-        help="logging level [int; 2]",
-    )
+    # parser.add_argument(
+    #     "--log_level",
+    #     type=int,
+    #     required=False,
+    #     default=2,
+    #     help="logging level [int; 2]",
+    # )
     parser.add_argument(
         "--njobs",
         type=int,
@@ -158,14 +158,14 @@ def main():
     if driver_config_file is not None:
         print(f"Loading driver config from {driver_config_file}")
         with open(driver_config_file) as fp:
-            driver_config = yaml.safe_load(driver_config_file)
+            driver_config = yaml.safe_load(fp)
     else:
         driver_config = None
 
     if metadetect_config_file is not None:
         print(f"Loading metadetect config from {metadetect_config_file}")
         with open(metadetect_config_file) as fp:
-            metadetect_config = yaml.safe_load(metadetect_config_file)
+            metadetect_config = yaml.safe_load(fp)
     else:
         metadetect_config = None
 
@@ -190,6 +190,7 @@ def main():
     with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
         futures = []
         for block in blocks:
+            # TODO get new seed...
             _future = executor.submit(
                 task,
                 input_dir,
