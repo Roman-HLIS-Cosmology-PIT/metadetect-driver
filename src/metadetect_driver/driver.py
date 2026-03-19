@@ -442,6 +442,10 @@ class MetadetectDriver:
         _metadetect_config = deepcopy(self.metadetect_config)
         _rng = np.random.RandomState(seed=seed)
 
+        # Prevent SEP from raising an Exception when too many pixels are active
+        # for some object
+        sep.set_extract_pixstack(mbobs[0][0].image.size)
+
         _start = time.time()
         res = metadetect.do_metadetect(
             _metadetect_config,
