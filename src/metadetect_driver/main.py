@@ -9,6 +9,7 @@ import logging
 from pyimcom.analysis import OutImage
 from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
+import pyarrow.feather as pf
 import yaml
 
 from . import (
@@ -57,29 +58,22 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
         _output_path = output_path / shear_type
         _output_path.mkdir(parents=True, exist_ok=True)
 
-    # Ensure that all catalogs have the same schema
-    schema = None
-    for shear_type, catalog in catalogs.items():
-        if schema is None:
-            schema = catalog.schema
-        else:
-            _schema = catalog.schema
-            assert schema == _schema
+    # # Ensure that all catalogs have the same schema
+    # schema = None
+    # for shear_type, catalog in catalogs.items():
+    #     if schema is None:
+    #         schema = catalog.schema
+    #     else:
+    #         _schema = catalog.schema
+    #         assert schema == _schema
 
     # TODO update output file naming
-    parquet_writers = {}
-    for shear_type in shear_types:
-        output_file = output_path / shear_type / f"block_{block}.parquet"
-        print(f"Opening parquet writer to {output_file}")
-        parquet_writers[shear_type] = pq.ParquetWriter(output_file, schema=_schema)
-
     for shear_type in shear_types:
         print(f"Writing {shear_type} catalog")
-        parquet_writers[shear_type].write(catalogs[shear_type])
-
-    for shear_type in shear_types:
-        print(f"Closing parquet writer to {output_file}")
-        parquet_writers[shear_type].close()
+        # output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.parquet"
+        # pq.write_table(catalogs[shear_type], output_file)
+        output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.feather"
+        pf.write_feather(catalogs[shear_type], output_file, compression="uncompressed")  # TODO compression
 
     print("Writing finished")
 
