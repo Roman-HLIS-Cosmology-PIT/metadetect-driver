@@ -18,6 +18,9 @@ from . import (
 )
 
 
+LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
+
+
 def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, metadetect_config=None, seed=None):
 
     input_images = [
@@ -52,7 +55,7 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
 
     output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_catalogs"
     output_path.mkdir(parents=True, exist_ok=True)
-    print(f"Writing catalogs to {output_path}")
+    # print(f"Writing catalogs to {output_path}")
 
     for shear_type in shear_types:
         _output_path = output_path / shear_type
@@ -69,13 +72,13 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
 
     # TODO update output file naming
     for shear_type in shear_types:
-        print(f"Writing {shear_type} catalog")
+        # print(f"Writing {shear_type} catalog")
         # output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.parquet"
         # pq.write_table(catalogs[shear_type], output_file)
         output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.feather"
         pf.write_feather(catalogs[shear_type], output_file, compression="uncompressed")  # TODO compression
 
-    print("Writing finished")
+    # print("Writing finished")
 
 
 def get_args():
@@ -117,13 +120,13 @@ def get_args():
         default=None,
         help="RNG seed [int]",
     )
-    # parser.add_argument(
-    #     "--log_level",
-    #     type=int,
-    #     required=False,
-    #     default=2,
-    #     help="logging level [int; 2]",
-    # )
+    parser.add_argument(
+        "--log_level",
+        type=int,
+        required=False,
+        default=2,
+        help="logging level [int; 2]",
+    )
     parser.add_argument(
         "--njobs",
         type=int,
@@ -134,12 +137,26 @@ def get_args():
     return parser.parse_args()
 
 
+def get_level(log_level):
+    match log_level:
+        case 0 | logging.ERROR:
+            level = logging.ERROR
+        case 1 | logging.WARNING:
+            level = logging.WARNING
+        case 2 | logging.INFO:
+            level = logging.INFO
+        case 3 | logging.DEBUG:
+            level = logging.DEBUG
+        case _:
+            level = logging.INFO
+
+    return level
+
+
 def main():
     args = get_args()
 
     mp_context = multiprocessing.get_context("forkserver")
-
-    logging.basicConfig()
 
     metadetect_config_file = args.metadetect_config
     driver_config_file = args.driver_config
@@ -148,6 +165,10 @@ def main():
     mosaic = args.mosaic
     seed = args.seed
     njobs = args.njobs
+    log_level = get_level(args.log_level)
+
+    # Logging doesn't work b/c I haven't setup the handlers for each process
+    logging.basicConfig(format=LOG_FORMAT, level=log_level)
 
     if driver_config_file is not None:
         print(f"Loading driver config from {driver_config_file}")
@@ -199,7 +220,8 @@ def main():
             futures.append(_future)
 
     for future in futures:
-        print(f"future {id(future)} exited with status {future.result()}")
+        if future.result() != 0:
+            print(f"future {id(future)} exited with status {future.result()}")
 
     end_time = time.time()
 
