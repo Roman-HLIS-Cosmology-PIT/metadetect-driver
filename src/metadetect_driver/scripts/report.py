@@ -88,9 +88,14 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     RING = True
     NEST = not RING
     LONLAT = True
-    covering_healpixels = hp.ang2pix(NSIDE, mosaic_wcs_footprint[:, 0], mosaic_wcs_footprint[:, 1], nest=NEST, lonlat=LONLAT)
-    # covering_healpixels = np.unique(covering_healpixels)
-    covering_healpixels = [10179, 10306, 10307, 10430, 10431]
+    covering_healpixels = hp.query_polygon(
+        NSIDE,
+        hp.ang2vec(mosaic_wcs_footprint[:, 0], mosaic_wcs_footprint[:, 1], lonlat=LONLAT),
+        inclusive=True,
+        nest=NEST,
+        fact=max(4, 4096 // NSIDE),
+    )
+    covering_healpixels = np.unique(covering_healpixels)
     print(f"HEALPix: {covering_healpixels}")
 
     # TODO check if the file exists -- possibly not fully covered
