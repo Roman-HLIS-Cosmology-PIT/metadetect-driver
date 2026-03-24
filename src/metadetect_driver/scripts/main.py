@@ -12,10 +12,7 @@ import pyarrow.parquet as pq
 import pyarrow.feather as pf
 import yaml
 
-from . import (
-    config,
-    driver,
-)
+import metadetect_driver
 
 
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
@@ -31,7 +28,7 @@ def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, 
     start_time = time.time()
 
     outimages = [OutImage(input_image) for input_image in input_images]
-    results = driver.run_metadetect(
+    results = metadetect_driver.run_metadetect(
         outimages,
         driver_config=driver_config,
         metadetect_config=metadetect_config,

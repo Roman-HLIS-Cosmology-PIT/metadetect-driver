@@ -379,6 +379,17 @@ class MetadetectDriver:
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
         # sigma_map = outimage.get_output_map("SIGMA")
+        # neff_map = outimage.get_output_map("EFFCOVER")
+
+        # from Chun-Hao
+        # Sigma       = 10 ** (HDU_to_bels(cpr[6]) * cpr[6].data[0])
+        # Neff        = 10 ** (HDU_to_bels(cpr[8]) * cpr[8].data[0])
+        # scalefactor = np.sum(cpr[0].data[0][21] ** 2)
+        # varmap      = ((scalefactor / np.sum(Sigma)) * Sigma
+        #                + np.maximum(cpr[0].data[0][1].astype(np.float32), 0)
+        #                / 107.52398 / Neff)
+        # varmap      = varmap.astype(np.float32)
+        # wht         = np.where(varmap > 0, 1.0 / varmap, 0.).astype(np.float32)
 
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:

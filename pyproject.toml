@@ -84,4 +84,5 @@ ignore = [
 ]
 
 [project.scripts]
-run-metadetect-on-blocks = "metadetect_driver.main:main"
+run-metadetect-on-blocks = "metadetect_driver.scripts.main:main"
+run-metadetect-report = "metadetect_driver.scripts.report:main"

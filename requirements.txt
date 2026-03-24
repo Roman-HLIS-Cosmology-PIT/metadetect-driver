@@ -1,6 +1,7 @@
 asdf
 astropy
 detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git
+healpy
 galsim
 metadetect
 ngmix
