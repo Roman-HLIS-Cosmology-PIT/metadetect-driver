@@ -82,7 +82,6 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     # wcs_footprint = wcs.calc_footprint()
     mosaic_wcs_footprint = mosaic_wcs.calc_footprint()
 
-    # TODO this gets corners but not necessarily all intersecting healpixels...
     # OpenUniverse2024 catalogs in NSIDE 32 and RING ordering
     NSIDE = 32
     RING = True
