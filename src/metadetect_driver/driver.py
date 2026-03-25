@@ -248,16 +248,16 @@ class MetadetectDriver:
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
         self.bands = self.get_bands()
-        self.shear_types = self.get_shear_types()
-        self.metacal_step = self.get_metacal_step()
+        # self.shear_types = self.get_shear_types()
+        # self.metacal_step = self.get_metacal_step()
         self.det_combs = self.get_det_combs()
         self.shear_combs = self.get_shear_combs()
 
-    def get_metacal_step(self):
-        return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
+    # def get_metacal_step(self):
+    #     return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
 
-    def get_shear_types(self):
-        return self.metadetect_config["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
+    # def get_shear_types(self):
+    #     return self.metadetect_config["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
 
     def get_bands(self):
         return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
@@ -560,7 +560,7 @@ class MetadetectDriver:
             f"{metadetect_package} version": metadetect_version,
             "det_band_combs": self.det_combs or "null",
             "shear_band_combs": self.shear_combs or "null",
-            "metacal_step": str(self.get_metacal_step()),
+            # "metacal_step": str(self.get_metacal_step()),
         }
         return _packages | _meta
 
