@@ -6,7 +6,7 @@ from copy import deepcopy
 
 import galsim
 import galsim.roman as roman
-import metadetect
+# import metadetect
 import ngmix
 import numpy as np
 import pyarrow as pa
@@ -15,10 +15,11 @@ from astropy import wcs
 from pyimcom.config import Settings
 
 from .config import _parse_driver_config
-from .defaults import (
-    DRIVER_DEFAULTS,
-    METADETECT_DEFAULTS
-)
+# from .defaults import (
+#     DRIVER_DEFAULTS,
+#     METADETECT_DEFAULTS
+# )
+from .util import from_entrypoint
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,7 @@ def _get_package_metadata():
         "asdf version": importlib.metadata.version("asdf"),
         "astropy version": importlib.metadata.version("astropy"),
         "galsim version": importlib.metadata.version("galsim"),
-        "metadetect version": importlib.metadata.version("metadetect"),
+        # "metadetect version": importlib.metadata.version("metadetect"),
         "ngmix version": importlib.metadata.version("ngmix"),
         "numpy version": importlib.metadata.version("numpy"),
         "pyarrow version": importlib.metadata.version("pyarrow"),
@@ -153,7 +154,7 @@ def get_imcom_psf(cfg):
     return psf
 
 
-def run_metadetect(outimages, driver_config=None, metadetect_config=None, seed=None):
+def run_metadetect(outimages, driver_config, seed=None):
     """
     Run metadetect on multi-band coadd images.
 
@@ -174,8 +175,8 @@ def run_metadetect(outimages, driver_config=None, metadetect_config=None, seed=N
     """
     runner = MetadetectDriver(
         outimages,
-        driver_config=driver_config,
-        metadetect_config=metadetect_config,
+        driver_config,
+        # metadetect_config=metadetect_config,
     )
     return runner.run(seed=seed)
 
@@ -190,7 +191,7 @@ class MetadetectDriver:
     input_scale = _NATIVE_SCALE
     output_scale = None
 
-    def __init__(self, outimages, driver_config=None, metadetect_config=None):
+    def __init__(self, outimages, driver_config):
         """
         Initialize the MetadetectDriver.
 
@@ -206,17 +207,20 @@ class MetadetectDriver:
         """
         logger.info("Instantiating MetadetectDriver")
         logger.debug(f"Driver config: {driver_config}")
-        logger.debug(f"Metadetect config: {metadetect_config}")
+        # logger.debug(f"Metadetect config: {metadetect_config}")
 
         # self.driver_config = _parse_driver_config(driver_config)
-        self.driver_config = (
-            deepcopy(driver_config)
-            if driver_config is not None
-            else deepcopy(DRIVER_DEFAULTS)
-        )
-        self.metadetect_config = (
-            deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
-        )
+        # self.driver_config = (
+        #     deepcopy(driver_config)
+        #     if driver_config is not None
+        #     else deepcopy(DRIVER_DEFAULTS)
+        # )
+        # self.metadetect_config = (
+        #     deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
+        # )
+        self.driver_config = deepcopy(driver_config)
+        self.metadetect_entrypoint = self.driver_config["metadetect"]["entrypoint"]
+        self.metadetect_config = deepcopy(self.driver_config["metadetect"]["config"])
 
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
@@ -453,15 +457,18 @@ class MetadetectDriver:
         _metadetect_config = deepcopy(self.metadetect_config)
         _rng = np.random.RandomState(seed=seed)
 
+        metadetect_runner = from_entrypoint(self.metadetect_entrypoint)
+
         # Prevent SEP from raising an Exception when too many pixels are active
         # for some object
         sep.set_extract_pixstack(mbobs[0][0].image.size)
 
         _start = time.time()
-        res = metadetect.do_metadetect(
+        # TODO make wrapper function that calls this method...
+        res = metadetect_runner(
             _metadetect_config,
-            mbobs=mbobs,
-            rng=_rng,
+            mbobs,
+            _rng,
             det_band_combs=self.det_combs,
             shear_band_combs=self.shear_combs,
         )
@@ -545,7 +552,10 @@ class MetadetectDriver:
         # TODO it might be confusing to have `metacal_step` in the metadata
         # if we try to read in the entire catalog through one interface
         # (e.g., via a pyarrow Dataset)
+        metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
+        metadetect_version = importlib.metadata.version(metadetect_package)
         _meta = {
+            f"{metadetect_package} version": metadetect_version,
             "det_band_combs": self.det_combs or "null",
             "shear_band_combs": self.shear_combs or "null",
             "metacal_step": str(self.get_metacal_step()),

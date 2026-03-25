@@ -17,7 +17,7 @@ import metadetect_driver
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
 
 
-def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, metadetect_config=None, seed=None):
+def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, seed=None):
 
     input_images = [
         Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
@@ -29,8 +29,7 @@ def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config=None, 
     outimages = [OutImage(input_image) for input_image in input_images]
     results = metadetect_driver.run_metadetect(
         outimages,
-        driver_config=driver_config,
-        metadetect_config=metadetect_config,
+        driver_config,
         seed=seed,
     )
 
@@ -98,15 +97,15 @@ def get_args():
     parser.add_argument(
         "--driver-config",
         type=str,
-        required=False,
+        required=True,
         help="Driver configuration file [yaml]",
     )
-    parser.add_argument(
-        "--metadetect-config",
-        type=str,
-        required=False,
-        help="Metadetect configuration file [yaml]",
-    )
+    # parser.add_argument(
+    #     "--metadetect-config",
+    #     type=str,
+    #     required=False,
+    #     help="Metadetect configuration file [yaml]",
+    # )
     parser.add_argument(
         "--seed",
         type=int,
@@ -152,8 +151,8 @@ def main():
 
     mp_context = multiprocessing.get_context("forkserver")
 
-    metadetect_config_file = args.metadetect_config
     driver_config_file = args.driver_config
+    # metadetect_config_file = args.metadetect_config
     input_dir = args.input_dir
     output_dir = args.output_dir
     mosaic = args.mosaic
@@ -164,19 +163,16 @@ def main():
     # Logging doesn't work b/c I haven't setup the handlers for each process
     logging.basicConfig(format=LOG_FORMAT, level=log_level)
 
-    if driver_config_file is not None:
-        print(f"Loading driver config from {driver_config_file}")
-        with open(driver_config_file) as fp:
-            driver_config = yaml.safe_load(fp)
-    else:
-        driver_config = None
+    print(f"Loading driver config from {driver_config_file}")
+    with open(driver_config_file) as fp:
+        driver_config = yaml.safe_load(fp)
 
-    if metadetect_config_file is not None:
-        print(f"Loading metadetect config from {metadetect_config_file}")
-        with open(metadetect_config_file) as fp:
-            metadetect_config = yaml.safe_load(fp)
-    else:
-        metadetect_config = None
+    # if metadetect_config_file is not None:
+    #     print(f"Loading metadetect config from {metadetect_config_file}")
+    #     with open(metadetect_config_file) as fp:
+    #         metadetect_config = yaml.safe_load(fp)
+    # else:
+    #     metadetect_config = None
 
     _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
@@ -207,8 +203,8 @@ def main():
                 coadd_bands,
                 mosaic,
                 block,
-                driver_config=driver_config,
-                metadetect_config=metadetect_config,
+                driver_config,
+                # metadetect_config=metadetect_config,
                 seed=seed,
             )
             futures.append(_future)
