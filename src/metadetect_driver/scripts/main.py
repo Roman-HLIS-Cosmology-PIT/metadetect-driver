@@ -9,7 +9,6 @@ import logging
 from pyimcom.analysis import OutImage
 from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
-import pyarrow.feather as pf
 import yaml
 
 import metadetect_driver
@@ -70,10 +69,8 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
     # TODO update output file naming
     for shear_type in shear_types:
         # print(f"Writing {shear_type} catalog")
-        # output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.parquet"
-        # pq.write_table(catalogs[shear_type], output_file)
-        output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.feather"
-        pf.write_feather(catalogs[shear_type], output_file, compression="uncompressed")  # TODO compression
+        output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.parquet"
+        pq.write_table(catalogs[shear_type], output_file)
 
     # print("Writing finished")
 
