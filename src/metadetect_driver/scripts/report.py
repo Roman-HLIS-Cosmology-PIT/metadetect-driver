@@ -59,7 +59,7 @@ BANDS = ["Y", "J", "H"]
 
 
 
-def _main(input_dir, output_dir, truth_dir, mosaic):
+def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     report_path = Path("reports/")
     report_path.mkdir(parents=True, exist_ok=True)
@@ -67,7 +67,7 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     input_image = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     outimage = OutImage(input_image)
 
-    # wcs = metadetect_driver.get_imcom_wcs(outimage)
+    block_wcs = metadetect_driver.get_imcom_wcs(outimage)
     mosaic_nside = outimage.cfg.Nside * outimage.cfg.nblock
     mosaic_wcs = astropy.wcs.WCS(header={"NAXIS1": mosaic_nside, "NAXIS2": mosaic_nside}, naxis=2)
     mosaic_wcs.wcs.crpix = [
@@ -210,9 +210,15 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     norm = mpl.colors.AsinhNorm(1e-3, vmin=_vmin, vmax=_vmax)
     cmap = mpl.cm.twilight_shifted
 
-    detection_xs, detection_ys = mosaic_wcs.world_to_pixel(detection_coords)
-    galaxy_xs, galaxy_ys = mosaic_wcs.world_to_pixel(galaxy_coords)
-    pointsource_xs, pointsource_ys = mosaic_wcs.world_to_pixel(pointsource_coords)
+    detection_xs, detection_ys = block_wcs.world_to_pixel(detection_coords)  # FIXME why does this not match up...?
+    # _in_block = (
+    #     (pc.list_element(pc.field("block_id"), 0) == 0)
+    #     & (pc.list_element(pc.field("block_id"), 1) == 0)
+    # )
+    # detection_xs = detection_table.filter(_in_block)["sx_col"].to_numpy()
+    # detection_ys = detection_table.filter(_in_block)["sx_row"].to_numpy()
+    galaxy_xs, galaxy_ys = block_wcs.world_to_pixel(galaxy_coords)
+    pointsource_xs, pointsource_ys = block_wcs.world_to_pixel(pointsource_coords)
 
     nrow, ncol = image.shape
 
@@ -254,7 +260,10 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
 
     # fig.colorbar(mpl.cm.ScalarMappable(norm, cmap), ax=axs, label='Flux [$e^- / (0.11 arcsec)^2 / exposure$]', ticks=ticker)
 
-    fig.savefig(report_path / "report-image.pdf")
+    if save:
+        fig.savefig(report_path / "report-image.pdf")
+    if show:
+        plt.show()
     plt.close()
 
     # ---
@@ -278,7 +287,11 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     plt.xscale("log")
     plt.xlabel("$gauss\\_s2n$")
     plt.ylabel("$gauss\\_T\\_ratio$")
-    plt.savefig(report_path / "report-size_snr.pdf")
+
+    if save:
+        plt.savefig(report_path / "report-size_snr.pdf")
+    if show:
+        plt.show()
     plt.close()
 
     plt.hist2d(
@@ -303,7 +316,11 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     )
     plt.xlabel("$Y - J$")
     plt.ylabel("$J - H$")
-    plt.savefig(report_path / "report-color_color.pdf")
+
+    if save:
+        plt.savefig(report_path / "report-color_color.pdf")
+    if show:
+        plt.show()
     plt.close()
 
     # ---
@@ -333,7 +350,10 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
     fig.supxlabel("True [mag]")
     fig.supylabel("Measured [pgauss]")
 
-    plt.savefig(report_path / f"report-color.pdf")
+    if save:
+        plt.savefig(report_path / f"report-color.pdf")
+    if show:
+        plt.show()
     plt.close()
 
     # ---
@@ -364,7 +384,10 @@ def _main(input_dir, output_dir, truth_dir, mosaic):
 
     axs[-1].legend(loc='upper left')
 
-    plt.savefig(report_path / f"report-mag.pdf")
+    if save:
+        plt.savefig(report_path / f"report-mag.pdf")
+    if show:
+        plt.show()
     plt.close()
 
 
@@ -394,6 +417,16 @@ def get_args():
         required=True,
         help="IMCOM mosaic [str]",
     )
+    parser.add_argument(
+        "--save",
+        action="store_true",
+        help="Save output",
+    )
+    parser.add_argument(
+        "--show",
+        action="store_true",
+        help="Show output",
+    )
     return parser.parse_args()
 
 def main():
@@ -402,5 +435,6 @@ def main():
     output_dir = args.output_dir
     truth_dir = args.truth_dir
     mosaic = args.mosaic
-    _main(input_dir, output_dir, truth_dir, mosaic)
-
+    save = args.save
+    show = args.show
+    _main(input_dir, output_dir, truth_dir, mosaic, save=save, show=show)
