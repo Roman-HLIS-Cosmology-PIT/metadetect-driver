@@ -100,12 +100,12 @@ def get_args():
         required=True,
         help="Driver configuration file [yaml]",
     )
-    # parser.add_argument(
-    #     "--metadetect-config",
-    #     type=str,
-    #     required=False,
-    #     help="Metadetect configuration file [yaml]",
-    # )
+    parser.add_argument(
+        "--metadetect-config",
+        type=str,
+        required=True,
+        help="Metadetect configuration file [yaml]",
+    )
     parser.add_argument(
         "--seed",
         type=int,
@@ -152,7 +152,7 @@ def main():
     mp_context = multiprocessing.get_context("forkserver")
 
     driver_config_file = args.driver_config
-    # metadetect_config_file = args.metadetect_config
+    metadetect_config_file = args.metadetect_config
     input_dir = args.input_dir
     output_dir = args.output_dir
     mosaic = args.mosaic
@@ -167,12 +167,9 @@ def main():
     with open(driver_config_file) as fp:
         driver_config = yaml.safe_load(fp)
 
-    # if metadetect_config_file is not None:
-    #     print(f"Loading metadetect config from {metadetect_config_file}")
-    #     with open(metadetect_config_file) as fp:
-    #         metadetect_config = yaml.safe_load(fp)
-    # else:
-    #     metadetect_config = None
+    print(f"Loading metadetect config from {metadetect_config_file}")
+    with open(metadetect_config_file) as fp:
+        metadetect_config = yaml.safe_load(fp)
 
     _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
@@ -204,7 +201,7 @@ def main():
                 mosaic,
                 block,
                 driver_config,
-                # metadetect_config=metadetect_config,
+                metadetect_config,
                 seed=seed,
             )
             futures.append(_future)

@@ -154,7 +154,7 @@ def get_imcom_psf(cfg):
     return psf
 
 
-def run_metadetect(outimages, driver_config, seed=None):
+def run_metadetect(outimages, driver_config, metadetect_config, seed=None):
     """
     Run metadetect on multi-band coadd images.
 
@@ -163,9 +163,9 @@ def run_metadetect(outimages, driver_config, seed=None):
     outimages : list of OutImage
         PyIMCOM output objects to process. Each element corresponds to the
         coadd of the same block in different bands
-    driver_config : dict, optional
+    driver_config : dict
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
-    metadetect_config : dict, optional
+    metadetect_config : dict
         Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
 
     Returns
@@ -176,7 +176,7 @@ def run_metadetect(outimages, driver_config, seed=None):
     runner = MetadetectDriver(
         outimages,
         driver_config,
-        # metadetect_config=metadetect_config,
+        metadetect_config,
     )
     return runner.run(seed=seed)
 
@@ -191,7 +191,7 @@ class MetadetectDriver:
     input_scale = _NATIVE_SCALE
     output_scale = None
 
-    def __init__(self, outimages, driver_config):
+    def __init__(self, outimages, driver_config, metadetect_config):
         """
         Initialize the MetadetectDriver.
 
@@ -200,14 +200,14 @@ class MetadetectDriver:
         outimages : list of OutImage
             PyIMCOM output objects to process. Each element corresponds to the
             coadd of the same block in different bands
-        driver_config : dict, optional
+        driver_config : dict
             Driver configuration dictionary. If None, uses DRIVER_DEFAULTS. [default : None]
-        metadetect_config : dict, optional
+        metadetect_config : dict
             Metadetection configuration dictionary. If None, uses METADETECT_DEFAULTS. [default : None]
         """
         logger.info("Instantiating MetadetectDriver")
         logger.debug(f"Driver config: {driver_config}")
-        # logger.debug(f"Metadetect config: {metadetect_config}")
+        logger.debug(f"Metadetect config: {metadetect_config}")
 
         # self.driver_config = _parse_driver_config(driver_config)
         # self.driver_config = (
@@ -219,8 +219,8 @@ class MetadetectDriver:
         #     deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
         # )
         self.driver_config = deepcopy(driver_config)
-        self.metadetect_entrypoint = self.driver_config["metadetect"]["entrypoint"]
-        self.metadetect_config = deepcopy(self.driver_config["metadetect"]["config"])
+        self.metadetect_entrypoint = self.driver_config["metadetect"]
+        self.metadetect_config = deepcopy(metadetect_config)
 
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
