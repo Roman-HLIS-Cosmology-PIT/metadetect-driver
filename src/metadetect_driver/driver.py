@@ -222,6 +222,8 @@ class MetadetectDriver:
         self.metadetect_entrypoint = self.driver_config["metadetect"]
         self.metadetect_config = deepcopy(metadetect_config)
 
+        logger.info(f"Metadetect entrypoint: {self.metadetect_entrypoint}")
+
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
         _block_idx, _block_idy = _block_ids.pop()
