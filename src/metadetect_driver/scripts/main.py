@@ -2,7 +2,6 @@ import argparse
 import time
 import json
 import multiprocessing
-import sys
 import concurrent.futures
 from pathlib import Path
 import logging
@@ -164,7 +163,7 @@ def main():
     log_level = get_level(args.log_level)
 
     rng = np.random.default_rng(seed)
-    maxint = sys.maxsize
+    maxint = 2**32 - 1
 
     # Logging doesn't work b/c I haven't setup the handlers for each process
     logging.basicConfig(format=LOG_FORMAT, level=log_level)
