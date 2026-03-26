@@ -7,6 +7,7 @@ import concurrent.futures
 from pathlib import Path
 import logging
 
+import numpy as np
 from pyimcom.analysis import OutImage
 from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
