@@ -14,7 +14,7 @@ import sep
 from astropy import wcs
 from pyimcom.config import Settings
 
-from .config import _parse_driver_config
+# from .config import _parse_driver_config
 # from .defaults import (
 #     DRIVER_DEFAULTS,
 #     METADETECT_DEFAULTS
