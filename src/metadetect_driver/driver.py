@@ -251,8 +251,8 @@ class MetadetectDriver:
         self.bands = self.get_bands()
         # self.shear_types = self.get_shear_types()
         # self.metacal_step = self.get_metacal_step()
-        self.det_combs = self.get_det_combs()
-        self.shear_combs = self.get_shear_combs()
+        # self.det_combs = self.get_det_combs()
+        # self.shear_combs = self.get_shear_combs()
 
     # def get_metacal_step(self):
     #     return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
@@ -295,27 +295,27 @@ class MetadetectDriver:
 
         return _shear
 
-    def get_det_combs(self):
-        det_bands = self.driver_config["det_bands"]
-        if det_bands is not None:
-            # Select only detection and shear bands from bands in blocks provided.
-            det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
-            det_combs = [det_idx]
-        else:
-            det_combs = None
+    # def get_det_combs(self):
+    #     det_bands = self.driver_config["det_bands"]
+    #     if det_bands is not None:
+    #         # Select only detection and shear bands from bands in blocks provided.
+    #         det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
+    #         det_combs = [det_idx]
+    #     else:
+    #         det_combs = None
 
-        return det_combs
+    #     return det_combs
 
-    def get_shear_combs(self):
-        shear_bands = self.driver_config["shear_bands"]
+    # def get_shear_combs(self):
+    #     shear_bands = self.driver_config["shear_bands"]
 
-        if shear_bands is not None:
-            shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
-            shear_combs = [shear_idx]
-        else:
-            shear_combs = None
+    #     if shear_bands is not None:
+    #         shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
+    #         shear_combs = [shear_idx]
+    #     else:
+    #         shear_combs = None
 
-        return shear_combs
+    #     return shear_combs
 
     @staticmethod
     def get_shear_jacobian(shear_type, metacal_step):
@@ -551,19 +551,19 @@ class MetadetectDriver:
         )
 
     def _get_metadata(self):
-        _packages = _get_package_metadata()
+        _package_metadata = _get_package_metadata()
         # TODO it might be confusing to have `metacal_step` in the metadata
         # if we try to read in the entire catalog through one interface
         # (e.g., via a pyarrow Dataset)
-        metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
-        metadetect_version = importlib.metadata.version(metadetect_package)
+        _metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
+        _metadetect_version = importlib.metadata.version(_metadetect_package)
         _meta = {
-            f"{metadetect_package} version": metadetect_version,
-            "det_band_combs": self.det_combs or "null",
-            "shear_band_combs": self.shear_combs or "null",
+            f"{_metadetect_package} version": _metadetect_version,
+            # "det_band_combs": self.det_combs or "null",
+            # "shear_band_combs": self.shear_combs or "null",
             # "metacal_step": str(self.get_metacal_step()),
         }
-        return _packages | _meta
+        return _package_metadata | _meta
 
     def construct_table(self, wcs, res):
         """
