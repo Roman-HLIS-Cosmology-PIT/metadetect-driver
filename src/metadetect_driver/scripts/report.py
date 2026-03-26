@@ -59,7 +59,7 @@ BANDS = ["Y", "J", "H"]
 
 def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
-    report_path = Path("reports/")
+    report_path = Path("reports/") / f"YJH{mosaic}_reports"
     report_path.mkdir(parents=True, exist_ok=True)
 
     input_image = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
