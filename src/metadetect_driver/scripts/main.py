@@ -2,6 +2,7 @@ import argparse
 import time
 import json
 import multiprocessing
+import sys
 import concurrent.futures
 from pathlib import Path
 import logging
@@ -161,6 +162,9 @@ def main():
     njobs = args.njobs
     log_level = get_level(args.log_level)
 
+    rng = np.random.default_rng(seed)
+    maxint = sys.maxsize
+
     # Logging doesn't work b/c I haven't setup the handlers for each process
     logging.basicConfig(format=LOG_FORMAT, level=log_level)
 
@@ -193,7 +197,7 @@ def main():
     with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
         futures = []
         for block in blocks:
-            # TODO get new seed...
+            _seed = rng.integers(0, maxint)
             _future = executor.submit(
                 task,
                 input_dir,
@@ -203,7 +207,7 @@ def main():
                 block,
                 driver_config,
                 metadetect_config,
-                seed=seed,
+                seed=_seed,
             )
             futures.append(_future)
 
