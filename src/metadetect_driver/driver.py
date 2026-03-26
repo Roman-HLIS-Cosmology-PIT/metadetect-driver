@@ -219,7 +219,8 @@ class MetadetectDriver:
         #     deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
         # )
         self.driver_config = deepcopy(driver_config)
-        self.metadetect_entrypoint = self.driver_config["metadetect"]
+        self.metadetect_entrypoint = self.driver_config["metadetect"]["entrypoint"]
+        self.metadetect_kwargs = self.driver_config["metadetect"].get("kwargs", {})
         self.metadetect_config = deepcopy(metadetect_config)
 
         logger.info(f"Metadetect entrypoint: {self.metadetect_entrypoint}")
@@ -460,6 +461,7 @@ class MetadetectDriver:
         _rng = np.random.RandomState(seed=seed)
 
         metadetect_runner = from_entrypoint(self.metadetect_entrypoint)
+        metadetect_kwargs = self.metadetect_kwargs
 
         # Prevent SEP from raising an Exception when too many pixels are active
         # for some object
@@ -471,8 +473,7 @@ class MetadetectDriver:
             _metadetect_config,
             mbobs,
             _rng,
-            det_band_combs=self.det_combs,
-            shear_band_combs=self.shear_combs,
+            **metadetect_kwargs,
         )
         _stop = time.time()
         logger.info(f"metadetection took {_stop - _start} seconds")
@@ -588,7 +589,7 @@ class MetadetectDriver:
         _metadata = self._get_metadata()
         results = {}
         for shear_type, catalog in res.items():
-            _shear_jacobian = MetadetectDriver.get_shear_jacobian(shear_type, self.metacal_step)
+            # _shear_jacobian = MetadetectDriver.get_shear_jacobian(shear_type, self.metacal_step)
 
             # World coordinates
             w = galsim.AstropyWCS(wcs=wcs)
@@ -614,7 +615,7 @@ class MetadetectDriver:
             _results["projection_center_ra"] = [self.block_ra for _ in range(len(x))]
             _results["projection_center_dec"] = [self.block_dec for _ in range(len(x))]
             _results["projection_center_lonpole"] = [self.block_lonpole for _ in range(len(x))]
-            _results["shear_jacobian"] = [_shear_jacobian.tolist() for _ in range(len(x))]
+            # _results["shear_jacobian"] = [_shear_jacobian.tolist() for _ in range(len(x))]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
 
             results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
