@@ -251,8 +251,8 @@ class MetadetectDriver:
         self.bands = self.get_bands()
         # self.shear_types = self.get_shear_types()
         # self.metacal_step = self.get_metacal_step()
-        self.det_combs = self.get_det_combs()
-        self.shear_combs = self.get_shear_combs()
+        # self.det_combs = self.get_det_combs()
+        # self.shear_combs = self.get_shear_combs()
 
     # def get_metacal_step(self):
     #     return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
@@ -277,51 +277,51 @@ class MetadetectDriver:
         """
         return Settings.RomanFilters[outimage.cfg.use_filter]
 
-    @staticmethod
-    def get_shear(shear_type, metacal_step):
-        match shear_type:
-            case "noshear":
-                _shear = galsim.Shear(g1=0.0, g2=0.0)
-            case "1p":
-                _shear = galsim.Shear(g1=metacal_step, g2=0)
-            case "1m":
-                _shear = galsim.Shear(g1=-metacal_step, g2=0)
-            case "2p":
-                _shear = galsim.Shear(g1=0.0, g2=metacal_step)
-            case "2m":
-                _shear = galsim.Shear(g1=0.0, g2=-metacal_step)
-            case _:
-                raise ValueError(f"{shear_type} is an invalid shear type!")
+    # @staticmethod
+    # def get_shear(shear_type, metacal_step):
+    #     match shear_type:
+    #         case "noshear":
+    #             _shear = galsim.Shear(g1=0.0, g2=0.0)
+    #         case "1p":
+    #             _shear = galsim.Shear(g1=metacal_step, g2=0)
+    #         case "1m":
+    #             _shear = galsim.Shear(g1=-metacal_step, g2=0)
+    #         case "2p":
+    #             _shear = galsim.Shear(g1=0.0, g2=metacal_step)
+    #         case "2m":
+    #             _shear = galsim.Shear(g1=0.0, g2=-metacal_step)
+    #         case _:
+    #             raise ValueError(f"{shear_type} is an invalid shear type!")
 
-        return _shear
+    #     return _shear
 
-    def get_det_combs(self):
-        det_bands = self.driver_config["det_bands"]
-        if det_bands is not None:
-            # Select only detection and shear bands from bands in blocks provided.
-            det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
-            det_combs = [det_idx]
-        else:
-            det_combs = None
+    # def get_det_combs(self):
+    #     det_bands = self.driver_config["det_bands"]
+    #     if det_bands is not None:
+    #         # Select only detection and shear bands from bands in blocks provided.
+    #         det_idx = np.arange(len(self.bands))[np.isin(self.bands, det_bands)]
+    #         det_combs = [det_idx]
+    #     else:
+    #         det_combs = None
 
-        return det_combs
+    #     return det_combs
 
-    def get_shear_combs(self):
-        shear_bands = self.driver_config["shear_bands"]
+    # def get_shear_combs(self):
+    #     shear_bands = self.driver_config["shear_bands"]
 
-        if shear_bands is not None:
-            shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
-            shear_combs = [shear_idx]
-        else:
-            shear_combs = None
+    #     if shear_bands is not None:
+    #         shear_idx = np.arange(len(self.bands))[np.isin(self.bands, shear_bands)]
+    #         shear_combs = [shear_idx]
+    #     else:
+    #         shear_combs = None
 
-        return shear_combs
+    #     return shear_combs
 
-    @staticmethod
-    def get_shear_jacobian(shear_type, metacal_step):
-        # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
-        _shear = MetadetectDriver.get_shear(shear_type, metacal_step)
-        return _shear.getMatrix()
+    # @staticmethod
+    # def get_shear_jacobian(shear_type, metacal_step):
+    #     # cf. https://github.com/GalSim-developers/GalSim/blob/releases/2.7/galsim/gsobject.py#L909-L939
+    #     _shear = MetadetectDriver.get_shear(shear_type, metacal_step)
+    #     return _shear.getMatrix()
 
     def run(self, seed=None):
         """
@@ -551,19 +551,19 @@ class MetadetectDriver:
         )
 
     def _get_metadata(self):
-        _packages = _get_package_metadata()
+        _package_metadata = _get_package_metadata()
         # TODO it might be confusing to have `metacal_step` in the metadata
         # if we try to read in the entire catalog through one interface
         # (e.g., via a pyarrow Dataset)
-        metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
-        metadetect_version = importlib.metadata.version(metadetect_package)
+        _metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
+        _metadetect_version = importlib.metadata.version(_metadetect_package)
         _meta = {
-            f"{metadetect_package} version": metadetect_version,
-            "det_band_combs": self.det_combs or "null",
-            "shear_band_combs": self.shear_combs or "null",
+            f"{_metadetect_package} version": _metadetect_version,
+            # "det_band_combs": self.det_combs or "null",
+            # "shear_band_combs": self.shear_combs or "null",
             # "metacal_step": str(self.get_metacal_step()),
         }
-        return _packages | _meta
+        return _package_metadata | _meta
 
     def construct_table(self, wcs, res):
         """
