@@ -17,7 +17,7 @@ import metadetect_driver
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
 
 
-def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, seed=None):
+def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, metadetect_config, seed=None):
 
     input_images = [
         Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
@@ -30,6 +30,7 @@ def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, seed=
     results = metadetect_driver.run_metadetect(
         outimages,
         driver_config,
+        metadetect_config,
         seed=seed,
     )
 

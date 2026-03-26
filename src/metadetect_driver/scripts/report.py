@@ -58,7 +58,6 @@ ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 BANDS = ["Y", "J", "H"]
 
 
-
 def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     report_path = Path("reports/")
