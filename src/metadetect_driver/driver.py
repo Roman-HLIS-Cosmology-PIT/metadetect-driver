@@ -220,7 +220,10 @@ class MetadetectDriver:
         # )
         self.driver_config = deepcopy(driver_config)
         self.metadetect_entrypoint = self.driver_config["metadetect"]["entrypoint"]
-        self.metadetect_kwargs = self.driver_config["metadetect"].get("kwargs", {})
+        _metadetect_kwargs = self.driver_config["metadetect"].get("kwargs")
+        if _metadetect_kwargs is None:
+            _metadetect_kwargs = {}
+        self.metadetect_kwargs = _metadetect_kwargs
         self.metadetect_config = deepcopy(metadetect_config)
 
         logger.info(f"Metadetect entrypoint: {self.metadetect_entrypoint}")
