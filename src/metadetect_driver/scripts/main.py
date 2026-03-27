@@ -18,7 +18,7 @@ import metadetect_driver
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
 
 
-def task(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, metadetect_config, seed=None):
+def _run_metadetect_on_block(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, metadetect_config, seed=None):
 
     input_images = [
         Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
@@ -76,7 +76,123 @@ def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
     # print("Writing finished")
 
 
-def get_args():
+def get_log_level(log_level):
+    match log_level:
+        case 0 | logging.ERROR:
+            level = logging.ERROR
+        case 1 | logging.WARNING:
+            level = logging.WARNING
+        case 2 | logging.INFO:
+            level = logging.INFO
+        case 3 | logging.DEBUG:
+            level = logging.DEBUG
+        case _:
+            level = logging.INFO
+
+    return level
+
+
+def run_metadetect_on_block():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input-dir",
+        type=str,
+        required=True,
+        help="Input directory [str]",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        required=True,
+        help="Output directory [str]",
+    )
+    parser.add_argument(
+        "--mosaic",
+        type=str,
+        required=True,
+        help="IMCOM mosaic [str]",
+    )
+    parser.add_argument(
+        "--block",
+        type=str,
+        required=True,
+        help="IMCOM block [str; XX_YY]",
+    )
+    parser.add_argument(
+        "--driver-config",
+        type=str,
+        required=True,
+        help="Driver configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--metadetect-config",
+        type=str,
+        required=True,
+        help="Metadetect configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        required=False,
+        default=None,
+        help="RNG seed [int]",
+    )
+    parser.add_argument(
+        "--log_level",
+        type=int,
+        required=False,
+        default=2,
+        help="logging level [int; 2]",
+    )
+    args = parser.parse_args()
+
+    driver_config_file = args.driver_config
+    metadetect_config_file = args.metadetect_config
+    input_dir = args.input_dir
+    output_dir = args.output_dir
+    mosaic = args.mosaic
+    seed = args.seed
+    log_level = get_log_level(args.log_level)
+
+    # Logging doesn't work b/c I haven't setup the handlers for each process
+    logging.basicConfig(format=LOG_FORMAT, level=log_level)
+
+    print(f"Loading driver config from {driver_config_file}")
+    with open(driver_config_file) as fp:
+        driver_config = yaml.safe_load(fp)
+
+    print(f"Loading metadetect config from {metadetect_config_file}")
+    with open(metadetect_config_file) as fp:
+        metadetect_config = yaml.safe_load(fp)
+
+    _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_{block}.cpr.fits.gz"
+    config = ""
+    with ReadFile(_input_file) as f:
+        for g in f["CONFIG"].data["text"].tolist():
+            config += g + " "
+        configStruct = json.loads(config)
+
+    coadd_bands = ["Y", "J", "H"]
+
+    start_time = time.time()
+
+    _run_metadetect_on_block(
+        input_dir,
+        output_dir,
+        coadd_bands,
+        mosaic,
+        block,
+        driver_config,
+        metadetect_config,
+        seed=_seed,
+    )
+
+    end_time = time.time()
+
+    print(f"Finished running block {block} in {end_time - start_time} seconds")
+
+
+def run_metadetect_on_mosaic():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input-dir",
@@ -129,27 +245,7 @@ def get_args():
         default=None,
         help="Number of parallel jobs [int; None]",
     )
-    return parser.parse_args()
-
-
-def get_level(log_level):
-    match log_level:
-        case 0 | logging.ERROR:
-            level = logging.ERROR
-        case 1 | logging.WARNING:
-            level = logging.WARNING
-        case 2 | logging.INFO:
-            level = logging.INFO
-        case 3 | logging.DEBUG:
-            level = logging.DEBUG
-        case _:
-            level = logging.INFO
-
-    return level
-
-
-def main():
-    args = get_args()
+    args = parser.parse_args()
 
     mp_context = multiprocessing.get_context("forkserver")
 
@@ -160,7 +256,7 @@ def main():
     mosaic = args.mosaic
     seed = args.seed
     njobs = args.njobs
-    log_level = get_level(args.log_level)
+    log_level = get_log_level(args.log_level)
 
     rng = np.random.default_rng(seed)
     maxint = 2**32 - 1
@@ -199,7 +295,7 @@ def main():
         for block in blocks:
             _seed = rng.integers(0, maxint)
             _future = executor.submit(
-                task,
+                _run_metadetect_on_block,
                 input_dir,
                 output_dir,
                 coadd_bands,

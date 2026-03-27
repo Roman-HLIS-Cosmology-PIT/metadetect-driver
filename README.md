@@ -34,3 +34,45 @@ For a list of `OutImage`s corresponding to the same field in different bands, th
 ```python
 results = metadetect_driver.run_metadetect(outimages, driver_config, metadetect_config)
 ```
+
+```bash
+$ run-metadetect-on-block --help
+usage: run-metadetect-on-block [-h] --input-dir INPUT_DIR --output-dir OUTPUT_DIR --mosaic MOSAIC --block BLOCK --driver-config DRIVER_CONFIG --metadetect-config METADETECT_CONFIG [--seed SEED] [--log_level LOG_LEVEL]
+
+options:
+  -h, --help            show this help message and exit
+  --input-dir INPUT_DIR
+                        Input directory [str]
+  --output-dir OUTPUT_DIR
+                        Output directory [str]
+  --mosaic MOSAIC       IMCOM mosaic [str]
+  --block BLOCK         IMCOM block [str; XX_YY]
+  --driver-config DRIVER_CONFIG
+                        Driver configuration file [yaml]
+  --metadetect-config METADETECT_CONFIG
+                        Metadetect configuration file [yaml]
+  --seed SEED           RNG seed [int]
+  --log_level LOG_LEVEL
+                        logging level [int; 2]
+```
+
+```bash
+$ run-metadetect-on-mosaic --help
+usage: run-metadetect-on-mosaic [-h] --input-dir INPUT_DIR --output-dir OUTPUT_DIR --mosaic MOSAIC --driver-config DRIVER_CONFIG --metadetect-config METADETECT_CONFIG [--seed SEED] [--log_level LOG_LEVEL] [--njobs NJOBS]
+
+options:
+  -h, --help            show this help message and exit
+  --input-dir INPUT_DIR
+                        Input directory [str]
+  --output-dir OUTPUT_DIR
+                        Output directory [str]
+  --mosaic MOSAIC       IMCOM mosaic [str]
+  --driver-config DRIVER_CONFIG
+                        Driver configuration file [yaml]
+  --metadetect-config METADETECT_CONFIG
+                        Metadetect configuration file [yaml]
+  --seed SEED           RNG seed [int]
+  --log_level LOG_LEVEL
+                        logging level [int; 2]
+  --njobs NJOBS         Number of parallel jobs [int; None]
+```
