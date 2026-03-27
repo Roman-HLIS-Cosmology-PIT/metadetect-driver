@@ -356,13 +356,13 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
                 pc.list_element(detection_table.filter(flagged)["pgauss_band_flux"], 0),
                 pc.list_element(detection_table.filter(flagged)["pgauss_band_flux"], 1),
             )
-        ),
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["Y"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint,
         -2.5 * np.log10(
             pc.divide(
                 pc.list_element(detection_table.filter(flagged)["pgauss_band_flux"], 1),
                 pc.list_element(detection_table.filter(flagged)["pgauss_band_flux"], 2),
             )
-        ),
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["H"]].zeropoint,
         bins=bins,
         norm=norm,
         rasterized=True,
@@ -377,6 +377,67 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
     if save:
         fig.savefig(report_path / "report-color_color.png")
         fig.savefig(report_path / "report-color_color.pdf")
+    if show:
+        plt.show()
+    plt.close()
+
+    # ---
+
+    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
+
+    norm = mpl.colors.LogNorm()
+
+    bins=[
+        np.linspace(-0.5, 2.0, 101),
+        np.linspace(-0.5, 2.0, 101),
+    ]
+
+    axs[0].axline((0, 0), (1, 1), ls=":")
+    axs[1].axline((0, 0), (1, 1), ls=":")
+
+    axs[0].hist2d(
+        -2.5 * np.log10(
+            pc.divide(
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['Y']}"],
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['J']}"],
+            )
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["Y"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint ,
+        -2.5 * np.log10(
+            pc.divide(
+                pc.list_element(matched_detections["pgauss_band_flux"], 0),
+                pc.list_element(matched_detections["pgauss_band_flux"], 1),
+            )
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["Y"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint ,
+        bins=bins,
+        norm=norm,
+        rasterized=True,
+    )
+    axs[1].hist2d(
+        -2.5 * np.log10(
+            pc.divide(
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['J']}"],
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['H']}"],
+            )
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["H"]].zeropoint ,
+        -2.5 * np.log10(
+            pc.divide(
+                pc.list_element(matched_detections["pgauss_band_flux"], 1),
+                pc.list_element(matched_detections["pgauss_band_flux"], 2),
+            )
+        ) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["J"]].zeropoint - ROMAN_BANDPASSES[ROMAN_BAND_KEYS["H"]].zeropoint ,
+        bins=bins,
+        norm=norm,
+        rasterized=True,
+    )
+
+    axs[0].set_xlabel("$Y - J$ [true]")
+    axs[0].set_ylabel("$Y - J$ [pgauss]")
+    axs[1].set_xlabel("$J - H$ [true]")
+    axs[1].set_ylabel("$J - H$ [pgauss]")
+
+    if save:
+        fig.savefig(report_path / "report-color-match.png")
+        fig.savefig(report_path / "report-color-match.pdf")
     if show:
         plt.show()
     plt.close()
@@ -409,8 +470,70 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
     fig.supylabel("Measured [pgauss]")
 
     if save:
-        plt.savefig(report_path / f"report-color.png")
-        plt.savefig(report_path / f"report-color.pdf")
+        plt.savefig(report_path / f"report-mag_match.png")
+        plt.savefig(report_path / f"report-mag_match.pdf")
+    if show:
+        plt.show()
+    plt.close()
+
+    # ---
+
+    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
+
+    bins=[
+        np.linspace(15, 30, 101),
+        np.linspace(-1, 1, 101),
+    ]
+
+    axs[0].axhline(0, ls=":")
+    axs[1].axhline(0, ls=":")
+
+    axs[0].hist2d(
+        -2.5 * np.log10(matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['H']}"]) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["H"]].zeropoint,
+        -2.5 * np.log10(
+            pc.divide(
+                pc.list_element(matched_detections["pgauss_band_flux"], 0),
+                pc.list_element(matched_detections["pgauss_band_flux"], 1),
+            )
+        ) + 2.5 * np.log10(
+            pc.divide(
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['Y']}"],
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['J']}"],
+            )
+        ),
+        norm="log",
+        bins=bins,
+        rasterized=True,
+    )
+    axs[0].set_xlabel("$H$ [truth]")
+    axs[0].set_ylabel("$\\Delta (Y - J)$ [pgauss - truth]")
+
+    axs[1].hist2d(
+        -2.5 * np.log10(matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['H']}"]) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS["H"]].zeropoint,
+        -2.5 * np.log10(
+            pc.divide(
+                pc.list_element(matched_detections["pgauss_band_flux"], 1),
+                pc.list_element(matched_detections["pgauss_band_flux"], 2),
+            )
+        ) + 2.5 * np.log10(
+            pc.divide(
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['J']}"],
+                matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS['H']}"],
+            )
+        ),
+        norm="log",
+        bins=bins,
+        rasterized=True,
+    )
+    axs[1].set_xlabel("$H$ [truth]")
+    axs[1].set_ylabel("$\\Delta (J - H)$ [pgauss - truth]")
+
+    # fig.supxlabel("Mag [true]")
+    # fig.supylabel("Color [pgauss]")
+
+    if save:
+        plt.savefig(report_path / f"report-color_residual-match.png")
+        plt.savefig(report_path / f"report-color_residual-match.pdf")
     if show:
         plt.show()
     plt.close()
