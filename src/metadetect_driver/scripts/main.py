@@ -18,11 +18,11 @@ import metadetect_driver
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
 
 
-def _run_metadetect_on_block(input_dir, output_dir, coadd_bands, mosaic, block, driver_config, metadetect_config, seed=None):
+def _run_metadetect_on_block(input_dir, output_dir, bands, mosaic, block, driver_config, metadetect_config, seed=None):
 
     input_images = [
         Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
-        for band in coadd_bands
+        for band in bands
     ]
 
     start_time = time.time()
@@ -39,14 +39,14 @@ def _run_metadetect_on_block(input_dir, output_dir, coadd_bands, mosaic, block, 
 
     print(f"Finished block {block} in {end_time - start_time} seconds")
 
-    _write_catalogs(results, output_dir, mosaic, block, coadd_bands)
+    _write_catalogs(results, output_dir, mosaic, block, bands)
 
     return 0
 
 
-def _write_catalogs(catalogs, output_dir, mosaic, block, coadd_bands):
+def _write_catalogs(catalogs, output_dir, mosaic, block, bands):
 
-    coadd_tag = "".join(coadd_bands)
+    coadd_tag = "".join(bands)
 
     shear_types = catalogs.keys()
 
@@ -172,14 +172,14 @@ def run_metadetect_on_block():
             config += g + " "
         configStruct = json.loads(config)
 
-    coadd_bands = ["Y", "J", "H"]
+    bands = driver_config["bands"]
 
     start_time = time.time()
 
     _run_metadetect_on_block(
         input_dir,
         output_dir,
-        coadd_bands,
+        bands,
         mosaic,
         block,
         driver_config,
@@ -286,7 +286,7 @@ def run_metadetect_on_mosaic():
             _block = f"{i:02d}_{j:02d}"
             blocks.append(_block)
 
-    coadd_bands = ["Y", "J", "H"]
+    bands = driver_config["bands"]
 
     start_time = time.time()
 
@@ -298,7 +298,7 @@ def run_metadetect_on_mosaic():
                 _run_metadetect_on_block,
                 input_dir,
                 output_dir,
-                coadd_bands,
+                bands,
                 mosaic,
                 block,
                 driver_config,
