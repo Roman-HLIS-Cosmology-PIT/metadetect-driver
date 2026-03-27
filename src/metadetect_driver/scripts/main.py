@@ -185,7 +185,7 @@ def run_metadetect_on_block():
         block,
         driver_config,
         metadetect_config,
-        seed=_seed,
+        seed=seed,
     )
 
     end_time = time.time()
