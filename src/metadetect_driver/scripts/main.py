@@ -151,6 +151,7 @@ def run_metadetect_on_block():
     input_dir = args.input_dir
     output_dir = args.output_dir
     mosaic = args.mosaic
+    block = args.block
     seed = args.seed
     log_level = get_log_level(args.log_level)
 
