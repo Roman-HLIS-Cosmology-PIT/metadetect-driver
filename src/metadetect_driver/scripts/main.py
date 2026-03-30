@@ -2,11 +2,14 @@ import argparse
 import time
 import json
 import multiprocessing
+import os
+import itertools
 import concurrent.futures
 from pathlib import Path
 import logging
 
 import numpy as np
+from pyimcom.config import Settings
 from pyimcom.analysis import OutImage
 from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
@@ -18,16 +21,38 @@ import metadetect_driver
 LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
 
 
-def _run_metadetect_on_block(input_dir, output_dir, bands, mosaic, block, driver_config, metadetect_config, seed=None):
-
-    input_images = [
-        Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
-        for band in bands
-    ]
+def _run_metadetect_on_block(
+    input_files,
+    output_file,
+    driver_config,
+    metadetect_config,
+    seed=None,
+):
 
     start_time = time.time()
 
-    outimages = [OutImage(input_image) for input_image in input_images]
+    outimages = [OutImage(input_file) for input_file in input_files]
+    bands = driver_config["bands"]
+
+    _blocks = [(outimage.ibx, outimage.iby) for outimage in outimages]
+    _block_groupby = itertools.groupby(_blocks)
+    if not (
+        next(_block_groupby, True) and not next(_block_groupby, False)
+    ):
+        raise ValueError(f"IMCOM coadds from different blocks ({_blocks})!")
+
+    _mosaics = [outimage.cfg.mosaic for outimage in outimages]
+    _mosaic_groupby = itertools.groupby(_mosaics)
+    if not (
+        next(_mosaic_groupby, True) and not next(_mosaic_groupby, False)
+    ):
+        raise ValueError(f"IMCOM coadds from different mosaics ({_mosaics})!")
+
+    _bands = [Settings.RomanFilters[outimage.cfg.use_filter] for outimage in outimages]
+    for (band, outimage_band) in zip(bands, _bands):
+        if not outimage_band.startswith(band):
+            raise ValueError(f"IMCOM coadds and driver bands not aligned!")
+
     results = metadetect_driver.run_metadetect(
         outimages,
         driver_config,
@@ -37,43 +62,11 @@ def _run_metadetect_on_block(input_dir, output_dir, bands, mosaic, block, driver
 
     end_time = time.time()
 
-    print(f"Finished block {block} in {end_time - start_time} seconds")
+    print(f"Finished block in {end_time - start_time} seconds")
 
-    _write_catalogs(results, output_dir, mosaic, block, bands)
+    pq.write_table(results, output_file)
 
     return 0
-
-
-def _write_catalogs(catalogs, output_dir, mosaic, block, bands):
-
-    coadd_tag = "".join(bands)
-
-    shear_types = catalogs.keys()
-
-    output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_catalogs"
-    output_path.mkdir(parents=True, exist_ok=True)
-    # print(f"Writing catalogs to {output_path}")
-
-    for shear_type in shear_types:
-        _output_path = output_path / shear_type
-        _output_path.mkdir(parents=True, exist_ok=True)
-
-    # # Ensure that all catalogs have the same schema
-    # schema = None
-    # for shear_type, catalog in catalogs.items():
-    #     if schema is None:
-    #         schema = catalog.schema
-    #     else:
-    #         _schema = catalog.schema
-    #         assert schema == _schema
-
-    # TODO update output file naming
-    for shear_type in shear_types:
-        # print(f"Writing {shear_type} catalog")
-        output_file = output_path / shear_type / f"{coadd_tag}{mosaic}_{block}.parquet"
-        pq.write_table(catalogs[shear_type], output_file)
-
-    # print("Writing finished")
 
 
 def get_log_level(log_level):
@@ -90,6 +83,98 @@ def get_log_level(log_level):
             level = logging.INFO
 
     return level
+
+
+def run_metadetect_on_images():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input-files",
+        type=str,
+        nargs="+",
+        required=True,
+        help="Input image files [str]",
+    )
+    parser.add_argument(
+        "--output-file",
+        type=str,
+        required=True,
+        help="Output file [str]",
+    )
+    # TODO specified in config currently; don't need redundancy
+    # parser.add_argument(
+    #     "--bands",
+    #     type=str,
+    #     required=True,
+    #     nargs="+",
+    #     help="Imaging bands",
+    # )
+    parser.add_argument(
+        "--driver-config",
+        type=str,
+        required=True,
+        help="Driver configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--metadetect-config",
+        type=str,
+        required=True,
+        help="Metadetect configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        required=False,
+        default=None,
+        help="RNG seed [int]",
+    )
+    parser.add_argument(
+        "--log_level",
+        type=int,
+        required=False,
+        default=2,
+        help="logging level [int; 2]",
+    )
+    args = parser.parse_args()
+
+    driver_config_file = args.driver_config
+    metadetect_config_file = args.metadetect_config
+    input_files = args.input_files
+    output_file = args.output_file
+    seed = args.seed
+    log_level = get_log_level(args.log_level)
+
+    # Logging doesn't work b/c I haven't setup the handlers for each process
+    logging.basicConfig(format=LOG_FORMAT, level=log_level)
+
+    print(f"Loading driver config from {driver_config_file}")
+    with open(driver_config_file) as fp:
+        driver_config = yaml.safe_load(fp)
+
+    print(f"Loading metadetect config from {metadetect_config_file}")
+    with open(metadetect_config_file) as fp:
+        metadetect_config = yaml.safe_load(fp)
+
+    bands = driver_config["bands"]
+
+    if len(input_files) != len(bands):
+        raise ValueError(f"Number of input images ({len(input_files)}) is not equal to number of bands ({len(bands)})!")
+    for input_file in input_files:
+        if not os.path.isfile(input_file):
+            raise ValueError(f"Input image file ({input_file}) does not exist!")
+
+    start_time = time.time()
+
+    _run_metadetect_on_block(
+        input_files,
+        output_file,
+        driver_config,
+        metadetect_config,
+        seed=seed,
+    )
+
+    end_time = time.time()
+
+    print(f"Finished running block in {end_time - start_time} seconds")
 
 
 def run_metadetect_on_block():
@@ -177,12 +262,20 @@ def run_metadetect_on_block():
 
     start_time = time.time()
 
+    input_files = [
+        Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+        for band in bands
+    ]
+
+    coadd_tag = "".join(bands)
+
+    output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_catalogs"
+    output_path.mkdir(parents=True, exist_ok=True)
+    output_file = output_path / f"{coadd_tag}{mosaic}_{block}.parquet"
+
     _run_metadetect_on_block(
-        input_dir,
-        output_dir,
-        bands,
-        mosaic,
-        block,
+        input_files,
+        output_file,
         driver_config,
         metadetect_config,
         seed=seed,
@@ -288,6 +381,10 @@ def run_metadetect_on_mosaic():
             blocks.append(_block)
 
     bands = driver_config["bands"]
+    coadd_tag = "".join(bands)
+
+    output_path = Path(output_dir) / f"{coadd_tag}{mosaic}_catalogs"
+    output_path.mkdir(parents=True, exist_ok=True)
 
     start_time = time.time()
 
@@ -295,13 +392,15 @@ def run_metadetect_on_mosaic():
         futures = []
         for block in blocks:
             _seed = rng.integers(0, maxint)
+            _input_files = [
+                Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+                for band in bands
+            ]
+            _output_file = output_path / f"{coadd_tag}{mosaic}_{block}.parquet"
             _future = executor.submit(
                 _run_metadetect_on_block,
-                input_dir,
-                output_dir,
-                bands,
-                mosaic,
-                block,
+                _input_files,
+                _output_file,
                 driver_config,
                 metadetect_config,
                 seed=_seed,
@@ -314,6 +413,6 @@ def run_metadetect_on_mosaic():
 
     end_time = time.time()
 
-    print(f"Finished running all blocks {block} in {end_time - start_time} seconds")
+    print(f"Finished running all blocks in {end_time - start_time} seconds")
 
 

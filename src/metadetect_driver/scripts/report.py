@@ -21,12 +21,11 @@ import pyarrow.dataset as ds
 from astropy import units as u
 from astropy.coordinates import (search_around_sky, SkyCoord)
 from scipy import stats
+import yaml
 
 
 logging.basicConfig(level=logging.INFO)
 
-
-# pc.field("is_primary")
 
 flagged = ~(
     (pc.field("gauss_flags") == 0)
@@ -54,10 +53,10 @@ ROMAN_BAND_KEYS = {
 
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
-BANDS = ["Y", "J", "H"]
 
+def _report_mosaic(driver_config, input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
-def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
+    bands = driver_config["bands"]
 
     report_path = Path("reports/") / f"YJH{mosaic}_reports"
     report_path.mkdir(parents=True, exist_ok=True)
@@ -141,11 +140,12 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     # ---
 
-    outpath = Path(output_dir) / f"YJH{mosaic}_catalogs" / "noshear"
+    # outpath = Path(output_dir) / f"YJH{mosaic}_catalogs" / "noshear"
+    outpath = Path(output_dir) / f"YJH{mosaic}_catalogs"
 
     print(f"Flags: {flagged}")
     detection_dataset = ds.dataset(outpath)
-    detection_table = detection_dataset.to_table(filter=pc.field("is_primary"))
+    detection_table = detection_dataset.to_table(filter=(pc.field("is_primary")) & (pc.field("shear_type") == "noshear"))
 
     detection_coords = SkyCoord(detection_table["ra"], detection_table["dec"], unit="deg")
 
@@ -444,14 +444,14 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     # ---
 
-    fig, axs = plt.subplots(1, len(BANDS), sharex=True, sharey=True)
+    fig, axs = plt.subplots(1, len(bands), sharex=True, sharey=True)
 
     bins=[
         np.linspace(15, 30, 101),
         np.linspace(15, 30, 101),
     ]
 
-    for i, band in enumerate(BANDS):
+    for i, band in enumerate(bands):
 
         axs[i].hist2d(
             -2.5 * np.log10(matched_galaxies[f"roman_flux_{ROMAN_BAND_KEYS[band]}"]) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS[band]].zeropoint,
@@ -540,11 +540,11 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     # ---
 
-    fig, axs = plt.subplots(1, len(BANDS), sharex=True, sharey=True)
+    fig, axs = plt.subplots(1, len(bands), sharex=True, sharey=True)
 
     bins = np.linspace(12, 30, 21)
 
-    for i, band in enumerate(BANDS):
+    for i, band in enumerate(bands):
 
         axs[i].hist(
             -2.5 * np.log10(galaxy_table[f"roman_flux_{ROMAN_BAND_KEYS[band]}"]) + ROMAN_BANDPASSES[ROMAN_BAND_KEYS[band]].zeropoint,
@@ -582,8 +582,14 @@ def _main(input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
     plt.close()
 
 
-def get_args():
+def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--driver-config",
+        type=str,
+        required=True,
+        help="Driver configuration file [yaml]",
+    )
     parser.add_argument(
         "--input-dir",
         type=str,
@@ -618,14 +624,26 @@ def get_args():
         action="store_true",
         help="Show output",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
 
-def main():
-    args = get_args()
+    driver_config_file = args.driver_config
     input_dir = args.input_dir
     output_dir = args.output_dir
     truth_dir = args.truth_dir
     mosaic = args.mosaic
     save = args.save
     show = args.show
-    _main(input_dir, output_dir, truth_dir, mosaic, save=save, show=show)
+
+    print(f"Loading driver config from {driver_config_file}")
+    with open(driver_config_file) as fp:
+        driver_config = yaml.safe_load(fp)
+
+    _report_mosaic(
+        driver_config,
+        input_dir,
+        output_dir,
+        truth_dir,
+        mosaic,
+        save=save,
+        show=show,
+    )

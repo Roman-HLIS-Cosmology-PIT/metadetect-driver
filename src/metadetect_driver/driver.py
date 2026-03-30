@@ -245,7 +245,11 @@ class MetadetectDriver:
 
         self.outimages = outimages
 
-        self.block_id = (_block_idx, _block_idy)
+        self.mosaic = self.imcom_config.mosaic
+        self._block_idx = _block_idx
+        self._block_idy = _block_idy
+        # self.block_id = (_block_idx, _block_idy)
+        # self.block = f"{_block_idx:02d}_{_block_idy:02d}"
         self.block_ra = self.imcom_config.ra
         self.block_dec = self.imcom_config.dec
         self.block_lonpole = self.imcom_config.lonpole
@@ -257,6 +261,22 @@ class MetadetectDriver:
         # self.metacal_step = self.get_metacal_step()
         # self.det_combs = self.get_det_combs()
         # self.shear_combs = self.get_shear_combs()
+
+    @property
+    def block_idx(self):
+        return self._block_idx
+
+    @property
+    def block_idy(self):
+        return self._block_idy
+
+    @property
+    def block_id(self):
+        return (self._block_idx, self._block_idy)
+
+    @property
+    def block(self):
+        return f"{self._block_idx:02d}_{self._block_idy:02d}"
 
     # def get_metacal_step(self):
     #     return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
@@ -591,7 +611,8 @@ class MetadetectDriver:
 
         """
         _metadata = self._get_metadata()
-        results = {}
+        # results = {}
+        tables = []
         for shear_type, catalog in res.items():
             # _shear_jacobian = MetadetectDriver.get_shear_jacobian(shear_type, self.metacal_step)
 
@@ -615,13 +636,20 @@ class MetadetectDriver:
 
                 _results[name] = data.tolist()
 
+            _results["mosaic"] = [self.mosaic for _ in range(len(x))]
+            _results["block_idx"] = [self.block_idx for _ in range(len(x))]
+            _results["block_idx"] = [self.block_idy for _ in range(len(x))]
             _results["block_id"] = [self.block_id for _ in range(len(x))]
+            _results["block"] = [self.block for _ in range(len(x))]
             _results["projection_center_ra"] = [self.block_ra for _ in range(len(x))]
             _results["projection_center_dec"] = [self.block_dec for _ in range(len(x))]
             _results["projection_center_lonpole"] = [self.block_lonpole for _ in range(len(x))]
             # _results["shear_jacobian"] = [_shear_jacobian.tolist() for _ in range(len(x))]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
 
-            results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
+            # results[shear_type] = pa.Table.from_pydict(_results, metadata=_metadata)
+            tables.append(pa.Table.from_pydict(_results, metadata=_metadata))
+
+        results = pa.concat_tables(tables)
 
         return results

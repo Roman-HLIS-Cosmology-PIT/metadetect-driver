@@ -84,6 +84,7 @@ ignore = [
 ]
 
 [project.scripts]
+run-metadetect-on-images = "metadetect_driver.scripts.main:run_metadetect_on_images"
 run-metadetect-on-block = "metadetect_driver.scripts.main:run_metadetect_on_block"
 run-metadetect-on-mosaic = "metadetect_driver.scripts.main:run_metadetect_on_mosaic"
 run-metadetect-report = "metadetect_driver.scripts.report:main"
