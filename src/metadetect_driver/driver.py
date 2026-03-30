@@ -559,10 +559,11 @@ class MetadetectDriver:
         # 'bound_size' sets the maximum distance (in pixels) a detection can be
         # from the edge of the image. If 'bound_size' is None, the boundsize is
         # set to be the padded region from the coadded image.
-        if self.driver_config["bound_size"] is None:
-            bound_size = MetadetectDriver.det_bound_from_padding(self.imcom_config)
-        else:
-            bound_size = self.driver_config["bound_size"]
+        # if self.driver_config["bound_size"] is None:
+        #     bound_size = MetadetectDriver.det_bound_from_padding(self.imcom_config)
+        # else:
+        #     bound_size = self.driver_config["bound_size"]
+        bound_size = MetadetectDriver.det_bound_from_padding(self.imcom_config)
 
         image_size = self.imcom_config.NsideP  # (ny, nx)
         x = res[shear_type]["sx_col"]
