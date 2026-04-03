@@ -4,13 +4,18 @@ channels:
 dependencies:
   - asdf
   - astropy
+  - dustmaps
+  - healpy
+  - healsparse
   - galsim
   - metadetect
   - ngmix
   - numpy
   - pyarrow
   - scipy
+  - scikit-learn
   - setuptools < 82  # metadetect uses pkg_resources which was deprecated in 82 (https://setuptools.pypa.io/en/latest/history.html#v82-0-0)
   - sep
   - pip:
-      - pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git@main
+      - detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git
+      - pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git
