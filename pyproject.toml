@@ -89,3 +89,4 @@ run-metadetect-on-block = "metadetect_driver.scripts.main:run_metadetect_on_bloc
 run-metadetect-on-mosaic = "metadetect_driver.scripts.main:run_metadetect_on_mosaic"
 run-metadetect-report-on-block = "metadetect_driver.scripts.report:run_report_on_block"
 run-metadetect-report-on-mosaic = "metadetect_driver.scripts.report:run_report_on_mosaic"
+run-metadetect-postprocess = "metadetect_driver.scripts.postprocess:postprocess"
