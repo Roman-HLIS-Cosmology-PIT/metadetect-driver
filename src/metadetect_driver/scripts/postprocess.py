@@ -12,7 +12,6 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 import yaml
-# from pyarrow import acero
 
 
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +42,8 @@ ROMAN_BAND_KEYS = {
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
 def _process_batch(batch, bands, mask, masked_field):
-    masked = mask.get_values_pos(batch["ra"].to_numpy(), batch["dec"].to_numpy(), lonlat=True, valid_mask=True)
+    _masked = mask.get_values_pos(batch["ra"].to_numpy(), batch["dec"].to_numpy(), lonlat=True, valid_mask=True)
+    masked = pa.array(_masked)
     batch.append_column(masked_field, masked)
 
     return batch
@@ -58,7 +58,7 @@ def _process_dataset(dataset, bands, mask):
 
     def _batch_iterator(dataset, bands, mask, masked_field):
         for batch in dataset.to_batches():
-            processed = _process_batch(batch, bands, mask, masked_field)
+            _processed = _process_batch(batch, bands, mask, masked_field)
             yield _processed
 
     batch_iterator = _batch_iterator(dataset, bands, mask, masked_field)
@@ -79,12 +79,6 @@ def postprocess():
         type=str,
         required=True,
         help="Input directory [str]",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=str,
-        required=True,
-        help="Output directory [str]",
     )
     parser.add_argument(
         "--output-dir",
@@ -125,13 +119,16 @@ def postprocess():
 
     batch_iterator, schema = _process_dataset(dataset, bands, mask)
 
-    processed_dataset = ds.dataset(
-        batch_iterator,
-        schema=schema,
-    )
+    # processed_dataset = ds.dataset(
+    #     batch_iterator,
+    #     schema=schema,
+    # )
 
     ds.write_dataset(
-        processed_dataset
+        batch_iterator,
         output_dir,
+        format="parquet",
         partitioning=["shear_type", "mosaic"],
+        schema=schema,
+        existing_data_behavior="delete_matching",
     )
