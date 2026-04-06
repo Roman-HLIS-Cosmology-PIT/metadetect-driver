@@ -1,5 +1,7 @@
 import argparse
+import functools
 import logging
+import time
 from pathlib import Path
 
 import healpy as hp
@@ -50,37 +52,39 @@ def _process_batch(batch, bands, mask, dustmap):
 
     _masked = mask.get_values_pos(ra, dec, lonlat=True, valid_mask=True)
     masked = pa.array(_masked)
+    masked_field = pa.field('masked', pa.bool_())
     batch = batch.append_column(masked_field, masked)
 
     # could be a few fields dependong on which algos run...
-    for name in batch.column_names
+    for name in batch.column_names:
         if ("flux" in name) and ("flags" not in name):
             field = batch.field(name)
-            subarrays = []
-            for i in range(num_fields):
+            _subarrays = []
+            for i in range(field.type.num_fields):
                 band = bands[i]
                 band_key = ROMAN_BAND_KEYS[band]
                 bandpass = ROMAN_BANDPASSES[band_key]
                 _data = -2.5 * np.log10(pc.list_element(batch[name], i)) + bandpass.zeropoint
-                data = pa.array(_data)
-                subarrays.append(data)
+                _subarrays.append(_data)
+            subarrays = pa.array(zip(*_subarrays))
             mag_name = name.replace("flux", "mag")
             mag_field = pa.field(mag_name, field.type)
             batch = batch.append_column(mag_field, subarrays)
 
     _coords = SkyCoord(ra, dec, unit="deg")
-    _ebv = dustmap.query(_coords)
+    _ebv = dustmap.query(_coords).astype(np.float64)
     ebv = pa.array(_ebv)
+    ebv_field = pa.field('ebv', pa.float64())
     batch = batch.append_column(ebv_field, ebv)
 
-    for name in batch.column_names
+    for name in batch.column_names:
         if ("mag" in name) and ("flags" not in name):
             field = batch.field(name)
-            subarrays = []
-            for i in range(num_fields):
-                _data = pc.list_element(batch[name], i) + ebv
-                data = pa.array(_data)
-                subarrays.append(data)
+            _subarrays = []
+            for i in range(field.type.num_fields):
+                _data = pc.add(pc.list_element(batch[name], i), ebv)
+                _subarrays.append(_data)
+            subarrays = pa.array(zip(*_subarrays))
             dered_name = name + "_dered"
             dered_field = pa.field(dered_name, field.type)
             batch = batch.append_column(dered_field, subarrays)
@@ -92,13 +96,13 @@ def _process_batch(batch, bands, mask, dustmap):
     _b = pc.less(batch["ra"], 10.3)
     _is_primary_mosaic_ra = pc.or_(
         pc.and_(_a, _b),
-        pc.and_(~_a, ~_b),
+        pc.and_(pc.invert(_a), pc.invert(_b)),
     )
-    _c = pc.equal(pc.bit_wise_and(batch("mosaic"), 1), 1)
+    _c = pc.equal(pc.bit_wise_and(batch["mosaic"], 1), 1)
     _d = pc.less(batch["dec"], -43.54188481886891)
     _is_primary_mosaic_dec = pc.or_(
         pc.and_(_c, _d),
-        pc.and_(~_c, ~_d),
+        pc.and_(pc.invert(_c), pc.invert(_d)),
     )
     is_primary_mosaic = pc.and_(
         _is_primary_mosaic_ra,
@@ -118,6 +122,22 @@ def _process_batch(batch, bands, mask, dustmap):
     batch = batch.append_column(is_primary_block_field, is_primary_block)
     batch = batch.append_column(is_primary_mosaic_field, is_primary_mosaic)
     batch = batch.append_column(is_primary_field, is_primary)
+
+    flag_field = pa.field('flagged', pa.bool_())
+    _flagged = functools.reduce(
+        pc.bit_wise_or,
+        [
+            batch["gauss_flags"],
+            batch["pgauss_flags"],
+            batch["psfrec_flags"],
+            batch["gauss_T_flags"],
+            pc.list_element(batch["pgauss_band_flux_flags"], 0),
+            pc.list_element(batch["pgauss_band_flux_flags"], 1),
+            pc.list_element(batch["pgauss_band_flux_flags"], 2),
+        ],
+    )
+    flagged = pc.equal(_flagged, 0)
+    batch = batch.append_column(flag_field, flagged)
 
     batch = batch.drop_columns(
         [
@@ -140,18 +160,18 @@ def _process_dataset(dataset, bands, mask, dustmap):
     schema = schema.append(masked_field)
 
     # could be a few fields dependong on which algos run...
-    for name in schema.names
+    for name in schema.names:
         if ("flux" in name) and ("flags" not in name):
             field = schema.field(name)
             mag_name = name.replace("flux", "mag")
             mag_field = pa.field(mag_name, field.type)
             schema = schema.append(mag_field)
 
-    ebv_field = pa.field('ebv', pa.float32())
-    schema.append(ebv_field)
+    ebv_field = pa.field('ebv', pa.float64())
+    schema = schema.append(ebv_field)
 
-    for name in schema.names
-        if ("flux" in name) and ("flags" not in name):
+    for name in schema.names:
+        if ("mag" in name) and ("flags" not in name):
             field = schema.field(name)
             dered_name = name + "_dered"
             dered_field = pa.field(dered_name, field.type)
@@ -167,6 +187,9 @@ def _process_dataset(dataset, bands, mask, dustmap):
         field = pa.field(name, pa.bool_())
         schema = schema.append(field)
 
+    flag_field = pa.field('flagged', pa.bool_())
+    schema = schema.append(flag_field)
+
     for name in [
         "gauss_flags",
         "pgauss_flags",
@@ -181,7 +204,7 @@ def _process_dataset(dataset, bands, mask, dustmap):
         for batch in dataset.to_batches():
             _processed = _process_batch(batch, bands, mask, dustmap)
             if _processed.schema != schema:
-                raise ValueError(f"Projected schema not equal to realized schema!")
+                raise ValueError(f"Realized schema {_processed.schema} not equal to projected schema {schema}!")
             yield _processed
 
     batch_iterator = _batch_iterator(dataset, schema, bands, mask, dustmap)
@@ -243,12 +266,9 @@ def postprocess():
     sfd.fetch()
     dustmap = sfd.SFDQuery()
 
-    batch_iterator, schema = _process_dataset(dataset, bands, mask, dustmap)
+    start_time = time.time()
 
-    # processed_dataset = ds.dataset(
-    #     batch_iterator,
-    #     schema=schema,
-    # )
+    batch_iterator, schema = _process_dataset(dataset, bands, mask, dustmap)
 
     ds.write_dataset(
         batch_iterator,
@@ -258,3 +278,7 @@ def postprocess():
         schema=schema,
         existing_data_behavior="delete_matching",
     )
+
+    end_time = time.time()
+
+    print(f"Finished postprocessing in {end_time - start_time} seconds")
