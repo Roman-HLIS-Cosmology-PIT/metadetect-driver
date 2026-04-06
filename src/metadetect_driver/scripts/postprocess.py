@@ -43,14 +43,14 @@ ROMAN_BAND_KEYS = {
 
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
-def _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap):
+def _process_batch(batch, bands, mask, dustmap):
 
     ra = batch["ra"].to_numpy()
     dec = batch["dec"].to_numpy()
 
     _masked = mask.get_values_pos(ra, dec, lonlat=True, valid_mask=True)
     masked = pa.array(_masked)
-    batch.append_column(masked_field, masked)
+    batch = batch.append_column(masked_field, masked)
 
     # could be a few fields dependong on which algos run...
     for name in batch.column_names
@@ -66,12 +66,12 @@ def _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap):
                 subarrays.append(data)
             mag_name = name.replace("flux", "mag")
             mag_field = pa.field(mag_name, field.type)
-            batch.append_column(mag_field, subarrays)
+            batch = batch.append_column(mag_field, subarrays)
 
     _coords = SkyCoord(ra, dec, unit="deg")
     _ebv = dustmap.query(_coords)
     ebv = pa.array(_ebv)
-    batch.append_column(ebv_field, ebv)
+    batch = batch.append_column(ebv_field, ebv)
 
     for name in batch.column_names
         if ("mag" in name) and ("flags" not in name):
@@ -83,12 +83,44 @@ def _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap):
                 subarrays.append(data)
             dered_name = name + "_dered"
             dered_field = pa.field(dered_name, field.type)
-            batch.append_column(ered_field, subarrays)
+            batch = batch.append_column(dered_field, subarrays)
 
+    is_primary_block = batch["is_primary"]
 
-    batch.drop_columns(
+    # TODO hardcoded for Dec25-sims...
+    _a = pc.less(batch["mosaic"], 2)
+    _b = pc.less(batch["ra"], 10.3)
+    _is_primary_mosaic_ra = pc.or_(
+        pc.and_(_a, _b),
+        pc.and_(~_a, ~_b),
+    )
+    _c = pc.equal(pc.bit_wise_and(batch("mosaic"), 1), 1)
+    _d = pc.less(batch["dec"], -43.54188481886891)
+    _is_primary_mosaic_dec = pc.or_(
+        pc.and_(_c, _d),
+        pc.and_(~_c, ~_d),
+    )
+    is_primary_mosaic = pc.and_(
+        _is_primary_mosaic_ra,
+        _is_primary_mosaic_dec,
+    )
+
+    is_primary = pc.and_(
+        is_primary_block,
+        is_primary_mosaic,
+    )
+
+    is_primary_block_field = pa.field('is_primary_block', pa.bool_())
+    is_primary_mosaic_field = pa.field('is_primary_mosaic', pa.bool_())
+    is_primary_field = pa.field('is_primary', pa.bool_())
+
+    batch = batch.drop_columns(["is_primary"])
+    batch = batch.append_column(is_primary_block_field, is_primary_block)
+    batch = batch.append_column(is_primary_mosaic_field, is_primary_mosaic)
+    batch = batch.append_column(is_primary_field, is_primary)
+
+    batch = batch.drop_columns(
         [
-            "is_primary",
             "gauss_flags",
             "pgauss_flags",
             "psfrec_flags",
@@ -108,44 +140,51 @@ def _process_dataset(dataset, bands, mask, dustmap):
     schema = schema.append(masked_field)
 
     # could be a few fields dependong on which algos run...
-    mag_fields = []
     for name in schema.names
         if ("flux" in name) and ("flags" not in name):
             field = schema.field(name)
             mag_name = name.replace("flux", "mag")
             mag_field = pa.field(mag_name, field.type)
-            mag_fields.append(mag_field)
             schema = schema.append(mag_field)
 
     ebv_field = pa.field('ebv', pa.float32())
     schema.append(ebv_field)
 
-    dered_fields = []
     for name in schema.names
         if ("flux" in name) and ("flags" not in name):
             field = schema.field(name)
             dered_name = name + "_dered"
             dered_field = pa.field(dered_name, field.type)
-            dered_fields.append(dered_field)
             schema = schema.append(dered_field)
 
-    for field in [
+    index = schema.get_field_index("is_primary")
+    schema = schema.remove(index)
+    for name in [
+        "is_primary_block",
+        "is_primary_mosaic",
         "is_primary",
+    ]:
+        field = pa.field(name, pa.bool_())
+        schema = schema.append(field)
+
+    for name in [
         "gauss_flags",
         "pgauss_flags",
         "psfrec_flags",
         "gauss_T_flags",
         "pgauss_band_flux_flags",
     ]:
-        index = schema.get_field_index(field)
+        index = schema.get_field_index(name)
         schema = schema.remove(index)
 
-    def _batch_iterator(dataset, bands, mask, masked_field, ebv_field, dustmap):
+    def _batch_iterator(dataset, schema, bands, mask, dustmap):
         for batch in dataset.to_batches():
-            _processed = _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap)
+            _processed = _process_batch(batch, bands, mask, dustmap)
+            if _processed.schema != schema:
+                raise ValueError(f"Projected schema not equal to realized schema!")
             yield _processed
 
-    batch_iterator = _batch_iterator(dataset, bands, mask, masked_field, ebv_field)
+    batch_iterator = _batch_iterator(dataset, schema, bands, mask, dustmap)
 
     return batch_iterator, schema
 
