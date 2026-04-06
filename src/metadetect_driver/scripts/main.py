@@ -240,6 +240,8 @@ def run_metadetect_on_block():
     seed = args.seed
     log_level = get_log_level(args.log_level)
 
+    print(f"Running on mosaic {mosaic}, block {block}")
+
     # Logging doesn't work b/c I haven't setup the handlers for each process
     logging.basicConfig(format=LOG_FORMAT, level=log_level)
 
@@ -357,6 +359,8 @@ def run_metadetect_on_mosaic():
 
     # Logging doesn't work b/c I haven't setup the handlers for each process
     logging.basicConfig(format=LOG_FORMAT, level=log_level)
+
+    print(f"Running on mosaic {mosaic}")
 
     print(f"Loading driver config from {driver_config_file}")
     with open(driver_config_file) as fp:

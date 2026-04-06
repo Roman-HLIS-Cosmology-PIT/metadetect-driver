@@ -3,6 +3,8 @@ import logging
 from pathlib import Path
 
 import healpy as hp
+from dustmaps import sfd
+from astropy.coordinates import SkyCoord
 import healsparse
 import galsim.roman
 import metadetect_driver
@@ -41,14 +43,63 @@ ROMAN_BAND_KEYS = {
 
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
-def _process_batch(batch, bands, mask, masked_field):
-    _masked = mask.get_values_pos(batch["ra"].to_numpy(), batch["dec"].to_numpy(), lonlat=True, valid_mask=True)
+def _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap):
+
+    ra = batch["ra"].to_numpy()
+    dec = batch["dec"].to_numpy()
+
+    _masked = mask.get_values_pos(ra, dec, lonlat=True, valid_mask=True)
     masked = pa.array(_masked)
     batch.append_column(masked_field, masked)
 
+    # could be a few fields dependong on which algos run...
+    for name in batch.column_names
+        if ("flux" in name) and ("flags" not in name):
+            field = batch.field(name)
+            subarrays = []
+            for i in range(num_fields):
+                band = bands[i]
+                band_key = ROMAN_BAND_KEYS[band]
+                bandpass = ROMAN_BANDPASSES[band_key]
+                _data = -2.5 * np.log10(pc.list_element(batch[name], i)) + bandpass.zeropoint
+                data = pa.array(_data)
+                subarrays.append(data)
+            mag_name = name.replace("flux", "mag")
+            mag_field = pa.field(mag_name, field.type)
+            batch.append_column(mag_field, subarrays)
+
+    _coords = SkyCoord(ra, dec, unit="deg")
+    _ebv = dustmap.query(_coords)
+    ebv = pa.array(_ebv)
+    batch.append_column(ebv_field, ebv)
+
+    for name in batch.column_names
+        if ("mag" in name) and ("flags" not in name):
+            field = batch.field(name)
+            subarrays = []
+            for i in range(num_fields):
+                _data = pc.list_element(batch[name], i) + ebv
+                data = pa.array(_data)
+                subarrays.append(data)
+            dered_name = name + "_dered"
+            dered_field = pa.field(dered_name, field.type)
+            batch.append_column(ered_field, subarrays)
+
+
+    batch.drop_columns(
+        [
+            "is_primary",
+            "gauss_flags",
+            "pgauss_flags",
+            "psfrec_flags",
+            "gauss_T_flags",
+            "pgauss_band_flux_flags",
+        ]
+    )
+
     return batch
 
-def _process_dataset(dataset, bands, mask):
+def _process_dataset(dataset, bands, mask, dustmap):
 
     schema = dataset.schema
 
@@ -56,12 +107,45 @@ def _process_dataset(dataset, bands, mask):
     masked_field = pa.field('masked', pa.bool_())
     schema = schema.append(masked_field)
 
-    def _batch_iterator(dataset, bands, mask, masked_field):
+    # could be a few fields dependong on which algos run...
+    mag_fields = []
+    for name in schema.names
+        if ("flux" in name) and ("flags" not in name):
+            field = schema.field(name)
+            mag_name = name.replace("flux", "mag")
+            mag_field = pa.field(mag_name, field.type)
+            mag_fields.append(mag_field)
+            schema = schema.append(mag_field)
+
+    ebv_field = pa.field('ebv', pa.float32())
+    schema.append(ebv_field)
+
+    dered_fields = []
+    for name in schema.names
+        if ("flux" in name) and ("flags" not in name):
+            field = schema.field(name)
+            dered_name = name + "_dered"
+            dered_field = pa.field(dered_name, field.type)
+            dered_fields.append(dered_field)
+            schema = schema.append(dered_field)
+
+    for field in [
+        "is_primary",
+        "gauss_flags",
+        "pgauss_flags",
+        "psfrec_flags",
+        "gauss_T_flags",
+        "pgauss_band_flux_flags",
+    ]:
+        index = schema.get_field_index(field)
+        schema = schema.remove(index)
+
+    def _batch_iterator(dataset, bands, mask, masked_field, ebv_field, dustmap):
         for batch in dataset.to_batches():
-            _processed = _process_batch(batch, bands, mask, masked_field)
+            _processed = _process_batch(batch, bands, mask, masked_field, ebv_field, dustmap)
             yield _processed
 
-    batch_iterator = _batch_iterator(dataset, bands, mask, masked_field)
+    batch_iterator = _batch_iterator(dataset, bands, mask, masked_field, ebv_field)
 
     return batch_iterator, schema
 
@@ -117,7 +201,10 @@ def postprocess():
     # 3. compute flags & masks
     # 4. partition by shear_type, mosaic, block
 
-    batch_iterator, schema = _process_dataset(dataset, bands, mask)
+    sfd.fetch()
+    dustmap = sfd.SFDQuery()
+
+    batch_iterator, schema = _process_dataset(dataset, bands, mask, dustmap)
 
     # processed_dataset = ds.dataset(
     #     batch_iterator,
