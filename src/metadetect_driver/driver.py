@@ -245,7 +245,8 @@ class MetadetectDriver:
 
         self.outimages = outimages
 
-        self.mosaic = self.imcom_config.mosaic
+        # self.mosaic = self.imcom_config.mosaic
+        self.mosaic = int(self.imcom_config.outstem[-1])  # FIXME hack for Dec25-sims
         self._block_idx = _block_idx
         self._block_idy = _block_idy
         # self.block_id = (_block_idx, _block_idy)

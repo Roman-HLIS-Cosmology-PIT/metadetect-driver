@@ -54,11 +54,11 @@ ROMAN_BAND_KEYS = {
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
 
-def _report_block(driver_config, input_file, output_file, truth_dir, block, mosaic, save=False, show=False):
+def _report_block(driver_config, report_dir, input_file, output_file, truth_dir, block, mosaic, save=False, show=False):
 
     bands = driver_config["bands"]
 
-    report_path = Path("reports/") / f"YJH{mosaic}_reports" / f"YJH{mosaic}_{block}"
+    report_path = Path(report_dir) / f"YJH{mosaic}_reports" / f"YJH{mosaic}_{block}"
     report_path.mkdir(parents=True, exist_ok=True)
 
     outimage = OutImage(input_file)
@@ -523,11 +523,11 @@ def _report_block(driver_config, input_file, output_file, truth_dir, block, mosa
     plt.close()
 
 
-def _report_mosaic(driver_config, input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
+def _report_mosaic(driver_config, report_dir, input_dir, output_dir, truth_dir, mosaic, save=False, show=False):
 
     bands = driver_config["bands"]
 
-    report_path = Path("reports/") / f"YJH{mosaic}_reports"
+    report_path = Path(report_dir) / f"YJH{mosaic}_reports"
     report_path.mkdir(parents=True, exist_ok=True)
 
     input_image = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
@@ -1059,6 +1059,12 @@ def run_report_on_block():
         help="Driver configuration file [yaml]",
     )
     parser.add_argument(
+        "--report-dir",
+        type=str,
+        required=True,
+        help="Report directory [str]",
+    )
+    parser.add_argument(
         "--input-file",
         type=str,
         required=True,
@@ -1101,6 +1107,7 @@ def run_report_on_block():
     args = parser.parse_args()
 
     driver_config_file = args.driver_config
+    report_dir = args.report_dir
     input_file = args.input_file
     output_file = args.output_file
     truth_dir = args.truth_dir
@@ -1115,6 +1122,7 @@ def run_report_on_block():
 
     _report_block(
         driver_config,
+        report_dir,
         input_file,
         output_file,
         truth_dir,
@@ -1132,6 +1140,12 @@ def run_report_on_mosaic():
         type=str,
         required=True,
         help="Driver configuration file [yaml]",
+    )
+    parser.add_argument(
+        "--report-dir",
+        type=str,
+        required=True,
+        help="Report directory [str]",
     )
     parser.add_argument(
         "--input-dir",
@@ -1170,6 +1184,7 @@ def run_report_on_mosaic():
     args = parser.parse_args()
 
     driver_config_file = args.driver_config
+    report_dir = args.report_dir
     input_dir = args.input_dir
     output_dir = args.output_dir
     truth_dir = args.truth_dir
@@ -1183,6 +1198,7 @@ def run_report_on_mosaic():
 
     _report_mosaic(
         driver_config,
+        report_dir,
         input_dir,
         output_dir,
         truth_dir,

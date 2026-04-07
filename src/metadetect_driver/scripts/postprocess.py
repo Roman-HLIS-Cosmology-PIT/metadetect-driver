@@ -21,17 +21,6 @@ import yaml
 logging.basicConfig(level=logging.INFO)
 
 
-flagged = ~(
-    pc.field("is_primary")
-    & (pc.field("gauss_flags") == 0)
-    & (pc.field("pgauss_flags") == 0)
-    & (pc.field("psfrec_flags") == 0)
-    & (pc.field("gauss_T_flags") == 0)
-    & (pc.list_element(pc.field("pgauss_band_flux_flags"), 0) == 0)
-    & (pc.list_element(pc.field("pgauss_band_flux_flags"), 1) == 0)
-    & (pc.list_element(pc.field("pgauss_band_flux_flags"), 2) == 0)
-)
-
 ROMAN_BAND_KEYS = {
     "W": "W146",
     "R": "R062",
@@ -275,6 +264,7 @@ def postprocess():
         output_dir,
         format="parquet",
         partitioning=["shear_type", "mosaic"],
+        partitioning_flavor="hive",
         schema=schema,
         existing_data_behavior="delete_matching",
     )
