@@ -17,8 +17,7 @@ import yaml
 
 import metadetect_driver
 
-
-LOG_FORMAT = '%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s'
+LOG_FORMAT = "%(asctime)s - %(process)d - %(name)s - %(levelname)s - %(message)s"
 
 
 def _run_metadetect_on_block(
@@ -36,20 +35,16 @@ def _run_metadetect_on_block(
 
     _blocks = [(outimage.ibx, outimage.iby) for outimage in outimages]
     _block_groupby = itertools.groupby(_blocks)
-    if not (
-        next(_block_groupby, True) and not next(_block_groupby, False)
-    ):
+    if not (next(_block_groupby, True) and not next(_block_groupby, False)):
         raise ValueError(f"IMCOM coadds from different blocks ({_blocks})!")
 
     _mosaics = [outimage.cfg.mosaic for outimage in outimages]
     _mosaic_groupby = itertools.groupby(_mosaics)
-    if not (
-        next(_mosaic_groupby, True) and not next(_mosaic_groupby, False)
-    ):
+    if not (next(_mosaic_groupby, True) and not next(_mosaic_groupby, False)):
         raise ValueError(f"IMCOM coadds from different mosaics ({_mosaics})!")
 
     _bands = [Settings.RomanFilters[outimage.cfg.use_filter] for outimage in outimages]
-    for (band, outimage_band) in zip(bands, _bands):
+    for band, outimage_band in zip(bands, _bands):
         if not outimage_band.startswith(band):
             raise ValueError(f"IMCOM coadds and driver bands not aligned!")
 
@@ -157,7 +152,9 @@ def run_metadetect_on_images():
     bands = driver_config["bands"]
 
     if len(input_files) != len(bands):
-        raise ValueError(f"Number of input images ({len(input_files)}) is not equal to number of bands ({len(bands)})!")
+        raise ValueError(
+            f"Number of input images ({len(input_files)}) is not equal to number of bands ({len(bands)})!"
+        )
     for input_file in input_files:
         if not os.path.isfile(input_file):
             raise ValueError(f"Input image file ({input_file}) does not exist!")
@@ -253,7 +250,9 @@ def run_metadetect_on_block():
     with open(metadetect_config_file) as fp:
         metadetect_config = yaml.safe_load(fp)
 
-    _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_{block}.cpr.fits.gz"
+    _input_file = (
+        Path(input_dir) / f"H{mosaic}_coadds" / f"im3x2-H{mosaic}_{block}.cpr.fits.gz"
+    )
     config = ""
     with ReadFile(_input_file) as f:
         for g in f["CONFIG"].data["text"].tolist():
@@ -265,7 +264,9 @@ def run_metadetect_on_block():
     start_time = time.time()
 
     input_files = [
-        Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+        Path(input_dir)
+        / f"{band}{mosaic}_coadds"
+        / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
         for band in bands
     ]
 
@@ -370,7 +371,9 @@ def run_metadetect_on_mosaic():
     with open(metadetect_config_file) as fp:
         metadetect_config = yaml.safe_load(fp)
 
-    _input_file = Path(input_dir) / f"H{mosaic}_coadds"/ f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
+    _input_file = (
+        Path(input_dir) / f"H{mosaic}_coadds" / f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
+    )
     config = ""
     with ReadFile(_input_file) as f:
         for g in f["CONFIG"].data["text"].tolist():
@@ -392,12 +395,16 @@ def run_metadetect_on_mosaic():
 
     start_time = time.time()
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=njobs, mp_context=mp_context
+    ) as executor:
         futures = []
         for block in blocks:
             _seed = rng.integers(0, maxint)
             _input_files = [
-                Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+                Path(input_dir)
+                / f"{band}{mosaic}_coadds"
+                / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
                 for band in bands
             ]
             _output_file = output_path / f"{coadd_tag}{mosaic}_{block}.parquet"
@@ -418,5 +425,3 @@ def run_metadetect_on_mosaic():
     end_time = time.time()
 
     print(f"Finished running all blocks in {end_time - start_time} seconds")
-
-

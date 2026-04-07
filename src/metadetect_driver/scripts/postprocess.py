@@ -17,7 +17,6 @@ import pyarrow.compute as pc
 import pyarrow.dataset as ds
 import yaml
 
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -34,6 +33,7 @@ ROMAN_BAND_KEYS = {
 
 ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
+
 def _process_batch(batch, bands, mask, dustmap):
 
     ra = batch["ra"].to_numpy()
@@ -41,7 +41,7 @@ def _process_batch(batch, bands, mask, dustmap):
 
     _masked = mask.get_values_pos(ra, dec, lonlat=True, valid_mask=True)
     masked = pa.array(_masked)
-    masked_field = pa.field('masked', pa.bool_())
+    masked_field = pa.field("masked", pa.bool_())
     batch = batch.append_column(masked_field, masked)
 
     # could be a few fields dependong on which algos run...
@@ -53,7 +53,10 @@ def _process_batch(batch, bands, mask, dustmap):
                 band = bands[i]
                 band_key = ROMAN_BAND_KEYS[band]
                 bandpass = ROMAN_BANDPASSES[band_key]
-                _data = -2.5 * np.log10(pc.list_element(batch[name], i)) + bandpass.zeropoint
+                _data = (
+                    -2.5 * np.log10(pc.list_element(batch[name], i))
+                    + bandpass.zeropoint
+                )
                 _subarrays.append(_data)
             subarrays = pa.array(zip(*_subarrays))
             mag_name = name.replace("flux", "mag")
@@ -63,7 +66,7 @@ def _process_batch(batch, bands, mask, dustmap):
     _coords = SkyCoord(ra, dec, unit="deg")
     _ebv = dustmap.query(_coords).astype(np.float64)
     ebv = pa.array(_ebv)
-    ebv_field = pa.field('ebv', pa.float64())
+    ebv_field = pa.field("ebv", pa.float64())
     batch = batch.append_column(ebv_field, ebv)
 
     for name in batch.column_names:
@@ -103,16 +106,16 @@ def _process_batch(batch, bands, mask, dustmap):
         is_primary_mosaic,
     )
 
-    is_primary_block_field = pa.field('is_primary_block', pa.bool_())
-    is_primary_mosaic_field = pa.field('is_primary_mosaic', pa.bool_())
-    is_primary_field = pa.field('is_primary', pa.bool_())
+    is_primary_block_field = pa.field("is_primary_block", pa.bool_())
+    is_primary_mosaic_field = pa.field("is_primary_mosaic", pa.bool_())
+    is_primary_field = pa.field("is_primary", pa.bool_())
 
     batch = batch.drop_columns(["is_primary"])
     batch = batch.append_column(is_primary_block_field, is_primary_block)
     batch = batch.append_column(is_primary_mosaic_field, is_primary_mosaic)
     batch = batch.append_column(is_primary_field, is_primary)
 
-    flag_field = pa.field('flagged', pa.bool_())
+    flag_field = pa.field("flagged", pa.bool_())
     _flagged = functools.reduce(
         pc.bit_wise_or,
         [
@@ -140,12 +143,13 @@ def _process_batch(batch, bands, mask, dustmap):
 
     return batch
 
+
 def _process_dataset(dataset, bands, mask, dustmap):
 
     schema = dataset.schema
 
     # also do flags, reddening, flux to mag, etc.
-    masked_field = pa.field('masked', pa.bool_())
+    masked_field = pa.field("masked", pa.bool_())
     schema = schema.append(masked_field)
 
     # could be a few fields dependong on which algos run...
@@ -156,7 +160,7 @@ def _process_dataset(dataset, bands, mask, dustmap):
             mag_field = pa.field(mag_name, field.type)
             schema = schema.append(mag_field)
 
-    ebv_field = pa.field('ebv', pa.float64())
+    ebv_field = pa.field("ebv", pa.float64())
     schema = schema.append(ebv_field)
 
     for name in schema.names:
@@ -176,7 +180,7 @@ def _process_dataset(dataset, bands, mask, dustmap):
         field = pa.field(name, pa.bool_())
         schema = schema.append(field)
 
-    flag_field = pa.field('flagged', pa.bool_())
+    flag_field = pa.field("flagged", pa.bool_())
     schema = schema.append(flag_field)
 
     for name in [
@@ -193,12 +197,15 @@ def _process_dataset(dataset, bands, mask, dustmap):
         for batch in dataset.to_batches():
             _processed = _process_batch(batch, bands, mask, dustmap)
             if _processed.schema != schema:
-                raise ValueError(f"Realized schema {_processed.schema} not equal to projected schema {schema}!")
+                raise ValueError(
+                    f"Realized schema {_processed.schema} not equal to projected schema {schema}!"
+                )
             yield _processed
 
     batch_iterator = _batch_iterator(dataset, schema, bands, mask, dustmap)
 
     return batch_iterator, schema
+
 
 # https://github.com/des-science/des-y6utils/blob/main/des_y6utils/mdet.py
 def postprocess():
