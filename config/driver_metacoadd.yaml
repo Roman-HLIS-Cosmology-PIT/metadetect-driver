@@ -1,0 +1,10 @@
+bands: [Y, J, H]
+layer: SCI
+noise_layer: "noise,Rz4PbrS2C1"
+psf_image_size: 65
+
+metadetect:
+    entrypoint: "metacoadd:do_metadetect"
+    kwargs: null
+      # det_band_combs: [[0, 1, 2]]
+      # shear_band_combs: [[0, 1, 2]]
