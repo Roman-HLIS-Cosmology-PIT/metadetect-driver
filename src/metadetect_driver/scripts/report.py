@@ -1,7 +1,6 @@
 import argparse
 import itertools
 import functools
-import logging
 from copy import deepcopy
 from pathlib import Path
 
@@ -22,9 +21,6 @@ from astropy import units as u
 from astropy.coordinates import search_around_sky, SkyCoord
 from scipy import stats
 import yaml
-
-logging.basicConfig(level=logging.INFO)
-
 
 flagged = ~(
     (pc.field("gauss_flags") == 0)

@@ -1,6 +1,5 @@
 import argparse
 import functools
-import logging
 import time
 from pathlib import Path
 
@@ -16,9 +15,6 @@ import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 import yaml
-
-logging.basicConfig(level=logging.INFO)
-
 
 ROMAN_BAND_KEYS = {
     "W": "W146",
