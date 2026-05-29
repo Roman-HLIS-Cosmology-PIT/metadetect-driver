@@ -246,7 +246,7 @@ class MetadetectDriver:
 
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
-        self.bands = self.get_bands()
+        # self.bands = self.get_bands()
         # self.shear_types = self.get_shear_types()
         # self.metacal_step = self.get_metacal_step()
         # self.det_combs = self.get_det_combs()
@@ -274,8 +274,23 @@ class MetadetectDriver:
     # def get_shear_types(self):
     #     return self.metadetect_config["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
 
-    def get_bands(self):
+    @property
+    def bands(self):
         return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
+
+    @property
+    def wcs(self):
+        wcs = None
+        # Ensure that all blocks have the same WCS
+        for outimage in self.outimages:
+            if wcs is None:
+                wcs = get_imcom_wcs(outimage)
+            else:
+                _wcs = get_imcom_wcs(outimage)
+                # TODO is there a better way to check for WCS consistency?
+                assert wcs.wcs == _wcs.wcs, "WCSs are not consistent."
+        logger.debug("WCS is %s", wcs)
+        return wcs
 
     @staticmethod
     def get_band(outimage):
@@ -353,16 +368,7 @@ class MetadetectDriver:
         mbobs = self.make_mbobs()
         res = self._run_metadetect(mbobs, seed)
 
-        wcs = None
-        # Ensure that all blocks have the same WCS
-        for outimage in self.outimages:
-            if wcs is None:
-                wcs = get_imcom_wcs(outimage)
-            else:
-                _wcs = get_imcom_wcs(outimage)
-                # TODO is there a better way to check for WCS consistency?
-                assert wcs.wcs == _wcs.wcs, "WCSs are not consistent."
-        logger.debug("WCS is %s", wcs)
+        wcs = self.wcs
 
         return self.construct_table(wcs, res)
 
@@ -424,7 +430,7 @@ class MetadetectDriver:
             noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
 
         # Build GalSim WCS and Jacobian
-        _wcs = get_imcom_wcs(outimage)
+        _wcs = self.wcs
         wcs = galsim.AstropyWCS(wcs=_wcs)
         jacobian = wcs.jacobian(
             image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
