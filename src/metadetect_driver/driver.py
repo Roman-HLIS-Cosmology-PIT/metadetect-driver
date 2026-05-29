@@ -7,7 +7,6 @@ from copy import deepcopy
 import galsim
 import galsim.roman as roman
 
-# import metadetect
 import ngmix
 import numpy as np
 import pyarrow as pa
@@ -15,11 +14,6 @@ import sep
 from astropy import wcs
 from pyimcom.config import Settings
 
-# from .config import _parse_driver_config
-# from .defaults import (
-#     DRIVER_DEFAULTS,
-#     METADETECT_DEFAULTS
-# )
 from .util import from_entrypoint
 
 logger = logging.getLogger(__name__)
@@ -213,15 +207,6 @@ class MetadetectDriver:
         logger.debug(f"Driver config: {driver_config}")
         logger.debug(f"Metadetect config: {metadetect_config}")
 
-        # self.driver_config = _parse_driver_config(driver_config)
-        # self.driver_config = (
-        #     deepcopy(driver_config)
-        #     if driver_config is not None
-        #     else deepcopy(DRIVER_DEFAULTS)
-        # )
-        # self.metadetect_config = (
-        #     deepcopy(metadetect_config) if metadetect_config is not None else deepcopy(METADETECT_DEFAULTS)
-        # )
         self.driver_config = deepcopy(driver_config)
         self.metadetect_entrypoint = self.driver_config["metadetect"]["entrypoint"]
         _metadetect_kwargs = self.driver_config["metadetect"].get("kwargs")
