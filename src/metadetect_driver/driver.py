@@ -377,7 +377,7 @@ class MetadetectDriver:
                 _wcs = get_imcom_wcs(outimage)
                 # TODO is there a better way to check for WCS consistency?
                 assert wcs.wcs == _wcs.wcs, "WCSs are not consistent."
-        logger.debug(f"WCS is {wcs}")
+        logger.debug("WCS is %s", wcs)
 
         return self.construct_table(wcs, res)
 
