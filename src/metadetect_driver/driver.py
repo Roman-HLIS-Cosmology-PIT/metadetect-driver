@@ -628,16 +628,16 @@ class MetadetectDriver:
 
             _results = {}
 
-            _results["is_primary"] = is_primary.tolist()
-            _results["ra"] = ra_pos.tolist()
-            _results["dec"] = dec_pos.tolist()
-
             for name in res[shear_type].dtype.names:
                 data = catalog[name]
                 if ("flux" in name) and ("flags" not in name):
                     data = from_imcom_flux(data, self.imcom_config.dtheta)
 
                 _results[name] = data.tolist()
+
+            _results["is_primary"] = is_primary.tolist()
+            _results["ra"] = ra_pos.tolist()
+            _results["dec"] = dec_pos.tolist()
 
             _results["mosaic"] = [self.mosaic for _ in range(len(x))]
             _results["block_idx"] = [self.block_idx for _ in range(len(x))]
