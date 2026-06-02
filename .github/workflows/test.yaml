@@ -34,7 +34,7 @@ jobs:
         run: |
           conda config --set always_yes yes
           conda create --quiet --yes --file conda.yaml
-          python -m pip install .[dev]
+          pip install .[dev]
 
       # - name: Install
       #   run: |

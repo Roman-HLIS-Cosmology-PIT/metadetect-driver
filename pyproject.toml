@@ -23,7 +23,7 @@ requires-python = ">=3.11"
 dependencies = [
     "asdf",
     "astropy",
-    # "detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git",
+    "detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git",
     "dustmaps",
     "healpy",
     "healsparse",
