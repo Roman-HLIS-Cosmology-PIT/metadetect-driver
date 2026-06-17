@@ -1,10 +1,11 @@
 from pathlib import Path
 
-import metadetect_driver
 import pyarrow.parquet as pq
 import pytest
 from pandas.testing import assert_frame_equal
 from pyimcom.analysis import OutImage
+
+import metadetect_driver
 
 
 def test_reproducability():

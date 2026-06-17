@@ -1,5 +1,6 @@
-import metadetect_driver
 import pytest
+
+import metadetect_driver
 
 
 def test_validate():

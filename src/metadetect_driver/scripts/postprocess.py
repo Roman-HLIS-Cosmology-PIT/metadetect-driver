@@ -2,21 +2,16 @@ import argparse
 import functools
 import re
 import time
-from pathlib import Path
 
-import healpy as hp
-from dustmaps import sfd
-from astropy.coordinates import SkyCoord
-import healsparse
 import galsim.roman
-import metadetect_driver
+import healsparse
 import numpy as np
-
 import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.dataset as ds
 import yaml
-
+from astropy.coordinates import SkyCoord
+from dustmaps import sfd
 
 # SourceExtractor names to skip for mag/dered processing
 SKIP_NAMES = {"flux", "flux_err", "flux_radius"}
@@ -36,7 +31,6 @@ ROMAN_BANDPASSES = galsim.roman.getBandpasses()
 
 
 def _process_batch(batch, bands, mask, dustmap):
-
     ra = batch["ra"].to_numpy()
     dec = batch["dec"].to_numpy()
 
@@ -57,14 +51,11 @@ def _process_batch(batch, bands, mask, dustmap):
                     band = bands[i]
                     band_key = ROMAN_BAND_KEYS[band]
                     bandpass = ROMAN_BANDPASSES[band_key]
-                    _data = (
-                        -2.5 * np.log10(pc.list_element(batch[name], i))
-                        + bandpass.zeropoint
-                    )
+                    _data = -2.5 * np.log10(pc.list_element(batch[name], i)) + bandpass.zeropoint
                     _subarrays.append(_data)
                 array = pa.array(zip(*_subarrays))
             else:
-                i = int(re.search(r'_(\d+)$', name).group(1))
+                i = int(re.search(r"_(\d+)$", name).group(1))
                 band = bands[i]
                 band_key = ROMAN_BAND_KEYS[band]
                 bandpass = ROMAN_BANDPASSES[band_key]
@@ -146,10 +137,7 @@ def _process_batch(batch, bands, mask, dustmap):
             flag_names.append(name)
 
     flag_field = pa.field("flagged", pa.bool_())
-    _flagged = functools.reduce(
-        pc.bit_wise_or,
-        _flagged_columns
-    )
+    _flagged = functools.reduce(pc.bit_wise_or, _flagged_columns)
     flagged = pc.equal(_flagged, 0)
     batch = batch.append_column(flag_field, flagged)
 
@@ -165,7 +153,6 @@ def _process_batch(batch, bands, mask, dustmap):
 
 
 def _process_dataset(dataset, bands, mask, dustmap):
-
     schema = dataset.schema
 
     # also do flags, reddening, flux to mag, etc.

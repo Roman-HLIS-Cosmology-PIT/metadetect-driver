@@ -2,9 +2,10 @@ import logging
 from copy import deepcopy
 from pathlib import Path
 
-import metadetect_driver
 import pyarrow.parquet as pq
 from pyimcom.analysis import OutImage
+
+import metadetect_driver
 
 
 def _write_catalogs(catalogs, base_dir):
