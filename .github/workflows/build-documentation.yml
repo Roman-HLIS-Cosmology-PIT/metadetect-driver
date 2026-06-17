@@ -20,7 +20,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
-    - uses: mamba-org/setup-micromamba@v2
+    - uses: mamba-org/setup-micromamba@v3
       with:
         environment-name: docs
         environment-file: environment.yml
