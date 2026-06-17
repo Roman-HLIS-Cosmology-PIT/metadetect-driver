@@ -20,8 +20,6 @@ jobs:
         with:
           environment-name: test
           environment-file: environment.yml
-          create-args: >-
-            python=${{ matrix.python-version }}
           cache-environment: true
       - name: Install package
         shell: bash -el {0}
