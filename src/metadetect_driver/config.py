@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Iterable
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Union
 
 from .defaults import DRIVER_DEFAULTS
 
@@ -48,7 +48,7 @@ def _coerce_list(val, elem_type, key_name):
     return out
 
 
-def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> Optional[list[str]]:
+def _validate_bands(val: Union[str, Iterable[str]] | None, key_name: str) -> list[str] | None:
     """
     Coerce to list[str] (if provided) and validate against ALLOWED_BANDS.
     """
@@ -61,7 +61,7 @@ def _validate_bands(val: Optional[Union[str, Iterable[str]]], key_name: str) -> 
     return bands
 
 
-def _parse_driver_config(config: Optional[dict]) -> dict:
+def _parse_driver_config(config: dict | None) -> dict:
     """
     Parse/validate a config dict:
       - Fill defaults for missing keys from _DEFAULT_DRIVER_CONFIG.
