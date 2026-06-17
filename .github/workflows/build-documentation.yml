@@ -3,7 +3,6 @@
 
 name: Build documentation
 
-
 on:
   push:
     branches: [ main ]
@@ -21,16 +20,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v6
+
+    - uses: mamba-org/setup-micromamba@v2
       with:
-        python-version: '3.11'
-    - name: Install dependencies
+        environment-name: docs
+        environment-file: environment.yml
+        cache-environment: true
+
+    - name: Install package and docs dependencies
+      shell: bash -el {0}
       run: |
-        sudo apt-get update
-        python -m pip install --upgrade pip
-        if [ -f docs/requirements.txt ]; then pip install -r docs/requirements.txt; fi
-        pip install .
+        pip install -e ".[docs]"
+
     - name: Build docs
+      shell: bash -el {0}
       run: |
-        sphinx-build -T -E -b html -d docs/build/doctrees ./docs docs/build/html
+        sphinx-build -T -E -b html \
+          -d docs/build/doctrees \
+          docs \
+          docs/build/html

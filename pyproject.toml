@@ -20,37 +20,19 @@ classifiers = [
 dynamic = ["version"]
 requires-python = ">=3.11"
 
-dependencies = [
-    "asdf",
-    "astropy",
-    "detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git",
-    "dustmaps",
-    "healpy",
-    "healsparse",
-    "galsim",
-    "metadetect",
-    "ngmix",
-    "numpy",
-    "pyarrow",
-    "pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git",
-    "scipy",
-    "scikit-learn",
-    "sep",
-    "numba",
-    "scipy",
-    "gwcs",
-    "filelock",
-    "fitsio",
-    "asdf",
-    "healpy",
-]
-
 [project.optional-dependencies]
 dev = [
     "pandas",
     "pytest",
     "pytest-cov",
     "ruff",
+    "pre-commit",
+]
+docs = [
+    "sphinx",
+    "sphinx-autoapi",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
 ]
 
 [project.urls]
