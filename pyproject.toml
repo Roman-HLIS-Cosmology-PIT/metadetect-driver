@@ -52,7 +52,7 @@ addopts = "--doctest-modules --doctest-glob=*.rst"
 
 [tool.ruff]
 line-length = 110
-target-version = "py39"
+target-version = "py311"
 [tool.ruff.lint]
 select = [
     # pycodestyle
@@ -61,7 +61,7 @@ select = [
     # Pyflakes
     "F",
     # pep8-naming
-    "N",
+    # "N",
     # pyupgrade
     "UP",
     # flake8-bugbear

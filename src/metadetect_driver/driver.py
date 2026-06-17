@@ -50,6 +50,8 @@ def from_imcom_flux(flux, dtheta):
     ----------
     flux : np.array
         Array of fluxes
+    dtheta : float
+        Output pixel scale in degrees
 
     Returns
     -------
@@ -118,7 +120,8 @@ def get_imcom_psf(cfg):
 
     Parameters
     ----------
-    cfg : PyIMCOM Config
+    cfg
+        PyIMCOM Config
 
     Returns
     -------
@@ -161,6 +164,8 @@ def run_metadetect(outimages, driver_config, metadetect_config, seed=None):
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
     metadetect_config : dict
         Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+    seed : int, optional
+        Random seed. [default : None]
 
     Returns
     -------
@@ -250,18 +255,22 @@ class MetadetectDriver:
 
     @property
     def block_idx(self):
+        """Get the block idx"""
         return self._block_idx
 
     @property
     def block_idy(self):
+        """Get the block idy"""
         return self._block_idy
 
     @property
     def block_id(self):
+        """Get the block id as a tuple (block_idx, block_idy)"""
         return (self._block_idx, self._block_idy)
 
     @property
     def block(self):
+        """Get the block id as a string 'block_idx_block_idy'"""
         return f"{self._block_idx:02d}_{self._block_idy:02d}"
 
     # def get_metacal_step(self):
@@ -272,10 +281,12 @@ class MetadetectDriver:
 
     @property
     def bands(self):
+        """Get the band names"""
         return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
 
     @property
     def wcs(self):
+        """Get the WCS for the IMCOM block"""
         wcs = None
         # Ensure that all blocks have the same WCS
         for outimage in self.outimages:
@@ -354,6 +365,8 @@ class MetadetectDriver:
 
         Parameters
         ----------
+        seed : int, optional
+            Random seed. [default : None]
 
         Returns
         -------
@@ -467,6 +480,8 @@ class MetadetectDriver:
         ----------
         mbobs : ngmix.MultiBandObsList
             Observations across one or more bands.
+        seed: int
+            Random seed.
 
         Returns
         -------
@@ -542,6 +557,8 @@ class MetadetectDriver:
         ----------
         res : dict
             Metadetect result dict.
+        shear_type : str
+            Metacal shear_type to check for bounded region.
 
         Returns
         -------

@@ -134,8 +134,10 @@ def _report_block(
 
     match_distance = Settings.pixscale_native / Settings.arcsec * 5  # 5 pixels (pixscale is 0.11 asec)
 
-    # galaxy_detection_index, galaxy_detection_distance, _ = galaxy_coords.match_to_catalog_sky(detection_coords)
-    # pointsource_detection_index, pointsource_detection_distance, _ = pointsource_coords.match_to_catalog_sky(detection_coords)
+    # galaxy_detection_index, galaxy_detection_distance, _ = \
+    #     galaxy_coords.match_to_catalog_sky(detection_coords)
+    # pointsource_detection_index, pointsource_detection_distance, _ = \
+    #     pointsource_coords.match_to_catalog_sky(detection_coords)
     detection_galaxy_match = search_around_sky(detection_coords, galaxy_coords, match_distance * u.arcsec)
     detection_pointsource_match = search_around_sky(
         detection_coords, pointsource_coords, match_distance * u.arcsec
@@ -167,9 +169,6 @@ def _report_block(
     )
 
     # star or galaxy
-    # (Pdb) np.intersect1d(detection_galaxy_match.indices_to_first_set, detection_pointsource_match.indices_to_first_set)
-    # star or galaxy but unique in each -- this is the tricky case that we need to handle extra
-    # (Pdb) np.intersect1d(detection_galaxy_unique_indices, detection_pointsource_unique_indices)
     detection_ambiguous_indices = np.intersect1d(
         detection_galaxy_unique_indices, detection_pointsource_unique_indices
     )
@@ -233,7 +232,8 @@ def _report_block(
     norm = mpl.colors.AsinhNorm(1e-3, vmin=_vmin, vmax=_vmax)
     cmap = mpl.cm.twilight_shifted
 
-    # detection_xs, detection_ys = block_wcs.world_to_pixel(detection_coords)  # FIXME why does this not match up...?
+    # FIXME why does this not match up...?
+    # detection_xs, detection_ys = block_wcs.world_to_pixel(detection_coords)
     _in_block = (pc.list_element(pc.field("block_id"), 0) == outimage.ibx) & (
         pc.list_element(pc.field("block_id"), 1) == outimage.iby
     )
@@ -314,7 +314,12 @@ def _report_block(
 
     axs.legend(loc="upper right")
 
-    # fig.colorbar(mpl.cm.ScalarMappable(norm, cmap), ax=axs, label='Flux [$e^- / (0.11 arcsec)^2 / exposure$]', ticks=ticker)
+    # fig.colorbar(
+    #     mpl.cm.ScalarMappable(norm, cmap),
+    #     ax=axs,
+    #     label="Flux [$e^- / (0.11 arcsec)^2 / exposure$]",
+    #     ticks=ticker,
+    # )
 
     if save:
         fig.savefig(report_path / "report-image.png")
@@ -715,8 +720,10 @@ def _report_mosaic(
 
     match_distance = Settings.pixscale_native / Settings.arcsec * 5  # 5 pixels (pixscale is 0.11 asec)
 
-    # galaxy_detection_index, galaxy_detection_distance, _ = galaxy_coords.match_to_catalog_sky(detection_coords)
-    # pointsource_detection_index, pointsource_detection_distance, _ = pointsource_coords.match_to_catalog_sky(detection_coords)
+    # galaxy_detection_index, galaxy_detection_distance, _ = \
+    #     galaxy_coords.match_to_catalog_sky(detection_coords)
+    # pointsource_detection_index, pointsource_detection_distance, _ = \
+    #     pointsource_coords.match_to_catalog_sky(detection_coords)
     detection_galaxy_match = search_around_sky(detection_coords, galaxy_coords, match_distance * u.arcsec)
     detection_pointsource_match = search_around_sky(
         detection_coords, pointsource_coords, match_distance * u.arcsec
@@ -748,7 +755,9 @@ def _report_mosaic(
     )
 
     # star or galaxy
-    # (Pdb) np.intersect1d(detection_galaxy_match.indices_to_first_set, detection_pointsource_match.indices_to_first_set)
+    # (Pdb) np.intersect1d(
+    #     detection_galaxy_match.indices_to_first_set, detection_pointsource_match.indices_to_first_set
+    # )
     # star or galaxy but unique in each -- this is the tricky case that we need to handle extra
     # (Pdb) np.intersect1d(detection_galaxy_unique_indices, detection_pointsource_unique_indices)
     detection_ambiguous_indices = np.intersect1d(
@@ -814,7 +823,8 @@ def _report_mosaic(
     norm = mpl.colors.AsinhNorm(1e-3, vmin=_vmin, vmax=_vmax)
     cmap = mpl.cm.twilight_shifted
 
-    # detection_xs, detection_ys = block_wcs.world_to_pixel(detection_coords)  # FIXME why does this not match up...?
+    # FIXME why does this not match up...?
+    # detection_xs, detection_ys = block_wcs.world_to_pixel(detection_coords)
     _in_block = (pc.list_element(pc.field("block_id"), 0) == outimage.ibx) & (
         pc.list_element(pc.field("block_id"), 1) == outimage.iby
     )
@@ -895,7 +905,12 @@ def _report_mosaic(
 
     axs.legend(loc="upper right")
 
-    # fig.colorbar(mpl.cm.ScalarMappable(norm, cmap), ax=axs, label='Flux [$e^- / (0.11 arcsec)^2 / exposure$]', ticks=ticker)
+    # fig.colorbar(
+    #     mpl.cm.ScalarMappable(norm, cmap),
+    #     ax=axs,
+    #     label="Flux [$e^- / (0.11 arcsec)^2 / exposure$]",
+    #     ticks=ticker,
+    # )
 
     if save:
         fig.savefig(report_path / "report-image.png")
@@ -1238,6 +1253,9 @@ def _report_mosaic(
 
 
 def run_report_on_block():
+    """
+    Run the report on a single block.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--driver-config",
@@ -1321,6 +1339,9 @@ def run_report_on_block():
 
 
 def run_report_on_mosaic():
+    """
+    Run the report on a full mosaic.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--driver-config",
