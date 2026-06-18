@@ -13,7 +13,7 @@ jobs:
 
       - uses: mamba-org/setup-micromamba@v3
         with:
-          environment-name: docs
+          environment-name: metadetect-driver
           environment-file: environment.yml
           cache-environment: true
           generate-run-shell: true
