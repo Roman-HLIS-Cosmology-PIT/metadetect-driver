@@ -31,7 +31,8 @@ jobs:
           environment-file: environment.yml
           cache-environment: true
           generate-run-shell: true
-          python-version: ${{ matrix.python-version }}
+          create-args: >-
+            python=${{ matrix.python-version }}
 
       - name: Install package
         shell: micromamba-shell {0}
