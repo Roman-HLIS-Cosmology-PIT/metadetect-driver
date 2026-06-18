@@ -13,15 +13,11 @@ jobs:
 
       - uses: mamba-org/setup-micromamba@v3
         with:
-          environment-name: metadetect-driver
-          environment-file: environment.yml
-          cache-environment: true
+          environment-name: metadetect-driver-lint
+          create-args: >-
+            python
+            ruff
           generate-run-shell: true
-
-      - name: Install package and docs dependencies
-        shell: micromamba-shell {0}
-        run: |
-          pip install -e ".[docs]"
 
       - name: Run linter
         shell: micromamba-shell {0}
