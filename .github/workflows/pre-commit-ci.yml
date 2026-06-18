@@ -13,18 +13,20 @@ jobs:
   pre-commit-ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+
+      - uses: mamba-org/setup-micromamba@v3
         with:
-          fetch-depth: 0 
-      - uses: mamba-org/setup-micromamba@v2
-        with:
-          environment-name: test
+          environment-name: docs
           environment-file: environment.yml
           cache-environment: true
-      - name: Install package
-        shell: bash -el {0}
+          generate-run-shell: true
+
+      - name: Install package and docs dependencies
+        shell: micromamba-shell {0}
         run: |
           pip install -e ".[dev]"
+
       - uses: pre-commit/action@v3.0.1
         with:
           extra_args: --all-files --verbose

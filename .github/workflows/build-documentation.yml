@@ -18,23 +18,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-    - uses: mamba-org/setup-micromamba@v3
-      with:
-        environment-name: docs
-        environment-file: environment.yml
-        cache-environment: true
+      - uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-name: docs
+          environment-file: environment.yml
+          cache-environment: true
+          generate-run-shell: true
 
-    - name: Install package and docs dependencies
-      shell: bash -el {0}
-      run: |
-        pip install -e ".[docs]"
+      - name: Install package and docs dependencies
+        shell: micromamba-shell {0}
+        run: |
+          pip install -e ".[docs]"
 
-    - name: Build docs
-      shell: bash -el {0}
-      run: |
-        sphinx-build -T -E -b html \
-          -d docs/build/doctrees \
-          docs \
-          docs/build/html
+      - name: Build docs
+        shell: micromamba-shell {0}
+        run: |
+          sphinx-build -T -E -b html \
+            -d docs/build/doctrees \
+            docs \
+            docs/build/html

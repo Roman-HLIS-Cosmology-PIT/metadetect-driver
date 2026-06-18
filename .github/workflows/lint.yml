@@ -9,17 +9,20 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: mamba-org/setup-micromamba@v3
         with:
-          python-version: "3.13"
+          environment-name: docs
+          environment-file: environment.yml
+          cache-environment: true
+          generate-run-shell: true
 
-      - name: Install
+      - name: Install package and docs dependencies
+        shell: micromamba-shell {0}
         run: |
-          pip install flake8==7.3.0 flake8-github-annotations
-          pip install ruff
+          pip install -e ".[docs]"
 
       - name: Run linter
+        shell: micromamba-shell {0}
         run: ruff check src
