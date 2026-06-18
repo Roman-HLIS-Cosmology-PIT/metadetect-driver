@@ -73,7 +73,9 @@ instance/
 docs/_build/
 _readthedocs/
 
+
 # PyBuilder
+.pybuilder/
 target/
 
 # Jupyter Notebook
@@ -100,11 +102,25 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 
+# Redis
+*.rdb
+*.aof
+*.pid
+
+# RabbitMQ
+mnesia/
+rabbitmq/
+rabbitmq-data/
+
+# ActiveMQ
+activemq-data/
+
 # SageMath parsed files
 *.sage.py
 
 # Environments
 .env
+.envrc
 .venv
 env/
 venv/
@@ -148,3 +164,14 @@ _html/
 
 # Project initialization script
 .initialize_new_project.sh
+
+# PyPI configuration file
+.pypirc
+
+# Marimo
+marimo/_static/
+marimo/_lsp/
+__marimo__/
+
+# Streamlit
+.streamlit/secrets.toml

@@ -18,32 +18,41 @@ classifiers = [
     "Programming Language :: Python",
 ]
 dynamic = ["version"]
-requires-python = ">=3.11"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+    "pandas",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "pre-commit",
+]
+docs = [
+    "sphinx",
+    "sphinx-autoapi",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
+]
 
 [project.urls]
 Homepage = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver"
 Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
 
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
-optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
 
 [build-system]
 requires = [
-    "setuptools>=62", # Used to build and package the Python project
-    "setuptools_scm>=6.2", # Gets release version from git. Makes it available programmatically
+    "setuptools>=80",
+    "setuptools_scm[simple]>=8",
 ]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools_scm]
-write_to = "src/metadetect_driver/_version.py"
 
 [tool.pytest.ini_options]
 addopts = "--doctest-modules --doctest-glob=*.rst"
 
 [tool.ruff]
 line-length = 110
-target-version = "py39"
+target-version = "py312"
 [tool.ruff.lint]
 select = [
     # pycodestyle
@@ -52,7 +61,7 @@ select = [
     # Pyflakes
     "F",
     # pep8-naming
-    "N",
+    # "N",
     # pyupgrade
     "UP",
     # flake8-bugbear
@@ -86,6 +95,10 @@ ignore = [
     "F403", # Allow * imports
 ]
 
-
-[tool.coverage.run]
-omit=["src/metadetect_driver/_version.py"]
+[project.scripts]
+run-metadetect-on-images = "metadetect_driver.scripts.main:run_metadetect_on_images"
+run-metadetect-on-block = "metadetect_driver.scripts.main:run_metadetect_on_block"
+run-metadetect-on-mosaic = "metadetect_driver.scripts.main:run_metadetect_on_mosaic"
+run-metadetect-report-on-block = "metadetect_driver.scripts.report:run_report_on_block"
+run-metadetect-report-on-mosaic = "metadetect_driver.scripts.report:run_report_on_mosaic"
+run-metadetect-postprocess = "metadetect_driver.scripts.postprocess:postprocess"

@@ -3,12 +3,10 @@
 
 name: Build documentation
 
-
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,17 +18,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Set up Python 3.11
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.11'
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        python -m pip install --upgrade pip
-        if [ -f docs/requirements.txt ]; then pip install -r docs/requirements.txt; fi
-        pip install .
-    - name: Build docs
-      run: |
-        sphinx-build -T -E -b html -d docs/build/doctrees ./docs docs/build/html
+      - uses: actions/checkout@v6
+
+      - uses: mamba-org/setup-micromamba@v3
+        with:
+          environment-name: metadetect-driver
+          environment-file: environment.yml
+          cache-environment: true
+          generate-run-shell: true
+
+      - name: Install package and docs dependencies
+        shell: micromamba-shell {0}
+        run: |
+          pip install -e ".[docs]"
+
+      - name: Build docs
+        shell: micromamba-shell {0}
+        run: |
+          sphinx-build -T -E -b html \
+            -d docs/build/doctrees \
+            docs \
+            docs/build/html

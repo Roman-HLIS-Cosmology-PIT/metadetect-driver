@@ -9,15 +9,16 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - uses: mamba-org/setup-micromamba@v3
         with:
-          python-version: "3.12"
-
-      - name: Install
-        run: pip install flake8==7.3.0 flake8-github-annotations
+          environment-name: metadetect-driver-lint
+          create-args: >-
+            python
+            ruff
+          generate-run-shell: true
 
       - name: Run linter
-        run: flake8 --format github
+        shell: micromamba-shell {0}
+        run: ruff check src
