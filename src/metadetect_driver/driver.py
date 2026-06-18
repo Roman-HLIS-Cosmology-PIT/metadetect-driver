@@ -6,7 +6,6 @@ from copy import deepcopy
 
 import galsim
 import galsim.roman as roman
-
 import ngmix
 import numpy as np
 import pyarrow as pa
@@ -51,6 +50,8 @@ def from_imcom_flux(flux, dtheta):
     ----------
     flux : np.array
         Array of fluxes
+    dtheta : float
+        Output pixel scale in degrees
 
     Returns
     -------
@@ -74,10 +75,7 @@ def from_imcom_flux(flux, dtheta):
     output_scale = _get_output_scale(dtheta)
     # norm = roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2)
     norm = (
-        roman.exptime
-        * roman.collecting_area
-        * (_NATIVE_SCALE**2 / output_scale**2)
-        * 0.004906087669824225
+        roman.exptime * roman.collecting_area * (_NATIVE_SCALE**2 / output_scale**2) * 0.004906087669824225
     )  # from C. H.
 
     return flux / norm
@@ -122,7 +120,8 @@ def get_imcom_psf(cfg):
 
     Parameters
     ----------
-    cfg : PyIMCOM Config
+    cfg
+        PyIMCOM Config
 
     Returns
     -------
@@ -165,6 +164,8 @@ def run_metadetect(outimages, driver_config, metadetect_config, seed=None):
         Driver configuration dictionary. If None, uses parsed DEFAULT_EXTRA_CFG. [default : None]
     metadetect_config : dict
         Metadetection configuration dictionary. If None, uses default METADETECT_CONFIG. [default : None]
+    seed : int, optional
+        Random seed. [default : None]
 
     Returns
     -------
@@ -254,18 +255,22 @@ class MetadetectDriver:
 
     @property
     def block_idx(self):
+        """Get the block idx"""
         return self._block_idx
 
     @property
     def block_idy(self):
+        """Get the block idy"""
         return self._block_idy
 
     @property
     def block_id(self):
+        """Get the block id as a tuple (block_idx, block_idy)"""
         return (self._block_idx, self._block_idy)
 
     @property
     def block(self):
+        """Get the block id as a string 'block_idx_block_idy'"""
         return f"{self._block_idx:02d}_{self._block_idy:02d}"
 
     # def get_metacal_step(self):
@@ -276,10 +281,12 @@ class MetadetectDriver:
 
     @property
     def bands(self):
+        """Get the band names"""
         return [MetadetectDriver.get_band(outimage) for outimage in self.outimages]
 
     @property
     def wcs(self):
+        """Get the WCS for the IMCOM block"""
         wcs = None
         # Ensure that all blocks have the same WCS
         for outimage in self.outimages:
@@ -358,6 +365,8 @@ class MetadetectDriver:
 
         Parameters
         ----------
+        seed : int, optional
+            Random seed. [default : None]
 
         Returns
         -------
@@ -432,9 +441,7 @@ class MetadetectDriver:
         # Build GalSim WCS and Jacobian
         _wcs = self.wcs
         wcs = galsim.AstropyWCS(wcs=_wcs)
-        jacobian = wcs.jacobian(
-            image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1])
-        )
+        jacobian = wcs.jacobian(image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1]))
 
         # Draw PSF image
         psf_image = self.get_psf(outimage, wcs)
@@ -444,12 +451,8 @@ class MetadetectDriver:
         image_center = (np.array([image.shape[0], image.shape[1]]) - 1) / 2.0
 
         # ngmix Jacobians
-        psf_image_jacobian = ngmix.Jacobian(
-            row=psf_image_center, col=psf_image_center, wcs=jacobian
-        )
-        image_jacobian = ngmix.Jacobian(
-            row=image_center[0], col=image_center[1], wcs=jacobian
-        )
+        psf_image_jacobian = ngmix.Jacobian(row=psf_image_center, col=psf_image_center, wcs=jacobian)
+        image_jacobian = ngmix.Jacobian(row=image_center[0], col=image_center[1], wcs=jacobian)
 
         # Observations
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
@@ -477,6 +480,8 @@ class MetadetectDriver:
         ----------
         mbobs : ngmix.MultiBandObsList
             Observations across one or more bands.
+        seed: int
+            Random seed.
 
         Returns
         -------
@@ -552,6 +557,8 @@ class MetadetectDriver:
         ----------
         res : dict
             Metadetect result dict.
+        shear_type : str
+            Metacal shear_type to check for bounded region.
 
         Returns
         -------
@@ -646,9 +653,7 @@ class MetadetectDriver:
             _results["block"] = [self.block for _ in range(len(x))]
             _results["projection_center_ra"] = [self.block_ra for _ in range(len(x))]
             _results["projection_center_dec"] = [self.block_dec for _ in range(len(x))]
-            _results["projection_center_lonpole"] = [
-                self.block_lonpole for _ in range(len(x))
-            ]
+            _results["projection_center_lonpole"] = [self.block_lonpole for _ in range(len(x))]
             # _results["shear_jacobian"] = [_shear_jacobian.tolist() for _ in range(len(x))]
             _results["shear_type"] = [shear_type for _ in range(len(x))]
 

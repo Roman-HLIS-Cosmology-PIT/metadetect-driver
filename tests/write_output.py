@@ -2,9 +2,10 @@ import logging
 from copy import deepcopy
 from pathlib import Path
 
-import metadetect_driver
 import pyarrow.parquet as pq
 from pyimcom.analysis import OutImage
+
+import metadetect_driver
 
 
 def _write_catalogs(catalogs, base_dir):
@@ -14,7 +15,7 @@ def _write_catalogs(catalogs, base_dir):
 
     # Ensure that all catalogs have the same schema
     schema = None
-    for shear_type, catalog in catalogs.items():
+    for _, catalog in catalogs.items():
         if schema is None:
             schema = catalog.schema
         else:
@@ -42,6 +43,10 @@ def _write_catalogs(catalogs, base_dir):
 
 
 def main():
+    """
+    Run the metadetect driver on the test data and write the output catalogs to disk.
+    This is not a test, but rather a utility to generate the output catalogs for the test.
+    """
     logging.basicConfig(level=logging.INFO)
 
     image_paths = [

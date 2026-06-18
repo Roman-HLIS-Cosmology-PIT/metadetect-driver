@@ -18,32 +18,7 @@ classifiers = [
     "Programming Language :: Python",
 ]
 dynamic = ["version"]
-requires-python = ">=3.11"
-
-dependencies = [
-    "asdf",
-    "astropy",
-    "detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git",
-    "dustmaps",
-    "healpy",
-    "healsparse",
-    "galsim",
-    "metadetect",
-    "ngmix",
-    "numpy",
-    "pyarrow",
-    "pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git",
-    "scipy",
-    "scikit-learn",
-    "sep",
-    "numba",
-    "scipy",
-    "gwcs",
-    "filelock",
-    "fitsio",
-    "asdf",
-    "healpy",
-]
+requires-python = ">=3.12"
 
 [project.optional-dependencies]
 dev = [
@@ -51,6 +26,13 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
+    "pre-commit",
+]
+docs = [
+    "sphinx",
+    "sphinx-autoapi",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
 ]
 
 [project.urls]
@@ -70,7 +52,7 @@ addopts = "--doctest-modules --doctest-glob=*.rst"
 
 [tool.ruff]
 line-length = 110
-target-version = "py39"
+target-version = "py312"
 [tool.ruff.lint]
 select = [
     # pycodestyle
@@ -79,7 +61,7 @@ select = [
     # Pyflakes
     "F",
     # pep8-naming
-    "N",
+    # "N",
     # pyupgrade
     "UP",
     # flake8-bugbear

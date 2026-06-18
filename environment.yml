@@ -1,4 +1,3 @@
-name: metadetect-driver
 channels:
   - conda-forge
 dependencies:
@@ -11,7 +10,9 @@ dependencies:
   - metadetect
   - ngmix
   - numpy
+  - pip
   - pyarrow
+  - python >= 3.12
   - scipy
   - scikit-learn
   - setuptools < 82  # metadetect uses pkg_resources which was deprecated in 82 (https://setuptools.pypa.io/en/latest/history.html#v82-0-0)

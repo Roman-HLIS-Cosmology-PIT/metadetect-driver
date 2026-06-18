@@ -1,19 +1,19 @@
 import argparse
-import time
+import concurrent.futures
+import itertools
 import json
+import logging
 import multiprocessing
 import os
-import itertools
-import concurrent.futures
+import time
 from pathlib import Path
-import logging
 
 import numpy as np
-from pyimcom.config import Settings
-from pyimcom.analysis import OutImage
-from pyimcom.compress.compressutils import ReadFile
 import pyarrow.parquet as pq
 import yaml
+from pyimcom.analysis import OutImage
+from pyimcom.compress.compressutils import ReadFile
+from pyimcom.config import Settings
 
 import metadetect_driver
 
@@ -27,7 +27,6 @@ def _run_metadetect_on_block(
     metadetect_config,
     seed=None,
 ):
-
     start_time = time.time()
 
     outimages = [OutImage(input_file) for input_file in input_files]
@@ -44,9 +43,9 @@ def _run_metadetect_on_block(
         raise ValueError(f"IMCOM coadds from different mosaics ({_mosaics})!")
 
     _bands = [Settings.RomanFilters[outimage.cfg.use_filter] for outimage in outimages]
-    for band, outimage_band in zip(bands, _bands):
+    for band, outimage_band in zip(bands, _bands, strict=True):
         if not outimage_band.startswith(band):
-            raise ValueError(f"IMCOM coadds and driver bands not aligned!")
+            raise ValueError("IMCOM coadds and driver bands not aligned!")
 
     results = metadetect_driver.run_metadetect(
         outimages,
@@ -65,6 +64,19 @@ def _run_metadetect_on_block(
 
 
 def get_log_level(log_level):
+    """
+    Get the logging level from an integer.
+
+    Parameters
+    ----------
+    log_level : int
+        The logging level as an integer. 0=ERROR, 1=WARNING, 2=INFO, 3=DEBUG.
+
+    Returns
+    -------
+    int
+        The logging level as an integer.
+    """
     match log_level:
         case 0 | logging.ERROR:
             level = logging.ERROR
@@ -81,6 +93,9 @@ def get_log_level(log_level):
 
 
 def run_metadetect_on_images():
+    """
+    Run metadetect on a set of input images and save the results to an output file.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input-files",
@@ -175,6 +190,9 @@ def run_metadetect_on_images():
 
 
 def run_metadetect_on_block():
+    """
+    Run metadetect on a single block of an imcom mosaic and save the results to an output file.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input-dir",
@@ -250,23 +268,12 @@ def run_metadetect_on_block():
     with open(metadetect_config_file) as fp:
         metadetect_config = yaml.safe_load(fp)
 
-    _input_file = (
-        Path(input_dir) / f"H{mosaic}_coadds" / f"im3x2-H{mosaic}_{block}.cpr.fits.gz"
-    )
-    config = ""
-    with ReadFile(_input_file) as f:
-        for g in f["CONFIG"].data["text"].tolist():
-            config += g + " "
-        configStruct = json.loads(config)
-
     bands = driver_config["bands"]
 
     start_time = time.time()
 
     input_files = [
-        Path(input_dir)
-        / f"{band}{mosaic}_coadds"
-        / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+        Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
         for band in bands
     ]
 
@@ -290,6 +297,9 @@ def run_metadetect_on_block():
 
 
 def run_metadetect_on_mosaic():
+    """
+    Run metadetect on all blocks of an imcom mosaic and save the results to output files.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input-dir",
@@ -371,9 +381,7 @@ def run_metadetect_on_mosaic():
     with open(metadetect_config_file) as fp:
         metadetect_config = yaml.safe_load(fp)
 
-    _input_file = (
-        Path(input_dir) / f"H{mosaic}_coadds" / f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
-    )
+    _input_file = Path(input_dir) / f"H{mosaic}_coadds" / f"im3x2-H{mosaic}_00_00.cpr.fits.gz"
     config = ""
     with ReadFile(_input_file) as f:
         for g in f["CONFIG"].data["text"].tolist():
@@ -395,16 +403,12 @@ def run_metadetect_on_mosaic():
 
     start_time = time.time()
 
-    with concurrent.futures.ProcessPoolExecutor(
-        max_workers=njobs, mp_context=mp_context
-    ) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=njobs, mp_context=mp_context) as executor:
         futures = []
         for block in blocks:
             _seed = rng.integers(0, maxint)
             _input_files = [
-                Path(input_dir)
-                / f"{band}{mosaic}_coadds"
-                / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
+                Path(input_dir) / f"{band}{mosaic}_coadds" / f"im3x2-{band}{mosaic}_{block}.cpr.fits.gz"
                 for band in bands
             ]
             _output_file = output_path / f"{coadd_tag}{mosaic}_{block}.parquet"

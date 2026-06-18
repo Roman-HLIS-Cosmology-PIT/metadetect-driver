@@ -7,24 +7,26 @@ The code can process single PyIMCOM Blocks (which hold single coadded images).
 
 ## Installation
 
+### Dependencies
+
+The primary dependencies of the code are the `metadetect` "stack" (i.e., `metadetect`, `ngmix`, `meds`, etc.) and `pyimcom`.
+The former is best-installed via conda, and the latter can be installed from GitHub via pip.
+An example file for conda requirements is provided to facilitate building an environment:
 ```bash
-pip install git+https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
+conda create -n <env-name> -f environment.yml
+```
+
+```bash
+git clone https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
+cd metadetect-driver
+pip install .
 ```
 
 For development, you might want to run this instead:
 ```bash
 git clone https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git
 cd metadetect-driver
-pip install -e .
-```
-
-## Dependencies
-
-The primary dependencies of the code are the `metadetect` "stack" (i.e., `metadetect`, `ngmix`, `meds`, etc.) and `pyimcom`.
-The former is best-installed via conda, and the latter can be installed from GitHub via pip.
-An example file for conda requirements is provided to facilitate building an environment:
-```bash
-conda create -f conda.yaml
+pip install -e ".[dev]"
 ```
 
 ## Use
