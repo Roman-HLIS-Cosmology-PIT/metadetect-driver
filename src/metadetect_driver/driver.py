@@ -273,6 +273,7 @@ class MetadetectDriver:
 
     @property
     def metacal_step(self):
+        """Get the value of the shear step applied during metacalibration as a float"""
         return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
 
     # @property
