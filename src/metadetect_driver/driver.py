@@ -586,9 +586,6 @@ class MetadetectDriver:
 
     def _get_metadata(self):
         _package_metadata = _get_package_metadata()
-        # TODO it might be confusing to have `metacal_step` in the metadata
-        # if we try to read in the entire catalog through one interface
-        # (e.g., via a pyarrow Dataset)
         _metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
         _metadetect_version = importlib.metadata.version(_metadetect_package)
         _meta = {
