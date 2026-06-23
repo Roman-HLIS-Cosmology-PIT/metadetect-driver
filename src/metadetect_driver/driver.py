@@ -418,26 +418,26 @@ class MetadetectDriver:
         # sigma_map = outimage.get_output_map("SIGMA")
         # neff_map = outimage.get_output_map("EFFCOVER")
 
-        # from Chun-Hao
-        # Sigma       = 10 ** (HDU_to_bels(cpr[6]) * cpr[6].data[0])
-        # Neff        = 10 ** (HDU_to_bels(cpr[8]) * cpr[8].data[0])
-        # scalefactor = np.sum(cpr[0].data[0][21] ** 2)
-        # varmap      = ((scalefactor / np.sum(Sigma)) * Sigma
-        #                + np.maximum(cpr[0].data[0][1].astype(np.float32), 0)
-        #                / 107.52398 / Neff)
-        # varmap      = varmap.astype(np.float32)
-        # wht         = np.where(varmap > 0, 1.0 / varmap, 0.).astype(np.float32)
-
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:
             logger.info(f"Using {_noise_layer} as noise image")
             noise_image = outimage.get_coadded_layer(_noise_layer)
+
+            # from Chun-Hao
+            # Those 2 calls are SUPER SLOW because the fits file is decompress each time.....
+            Sigma = outimage.get_output_map("SIGMA")
+            # Neff = outimage.get_output_map("EFFCOVER")
+            scalefactor = np.sum(noise_image**2)
+            var_map = (scalefactor / np.sum(Sigma)) * Sigma
+
         else:
             logger.info("No noise image found; estimating via sep")
             _rng = np.random.default_rng(42)  # TODO
             _background = sep.Background(image.astype(image.dtype.newbyteorder("=")))
             _noise_sigma = _background.globalrms
             noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
+            var_map = _background.rms() ** 2
+        weight = np.where(var_map > 0, 1.0 / var_map, 0.0)
 
         # Build GalSim WCS and Jacobian
         _wcs = self.wcs
@@ -459,8 +459,7 @@ class MetadetectDriver:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
-            # weight=1 / sigma_map,
-            weight=None,
+            weight=weight,
             bmask=np.zeros(image.shape, dtype=np.int32),
             ormask=np.zeros(image.shape, dtype=np.int32),
             noise=noise_image,
