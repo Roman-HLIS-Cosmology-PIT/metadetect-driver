@@ -11,6 +11,7 @@ import numpy as np
 import pyarrow as pa
 import sep
 from astropy import wcs
+from pyimcom.compress.compressutils import ReadFile
 from pyimcom.config import Settings
 
 from .util import from_entrypoint
@@ -219,11 +220,6 @@ class MetadetectDriver:
         logger.info(f"Metadetect entrypoint: {self.metadetect_entrypoint}")
         logger.info(f"Metadetect kwargs: {self.metadetect_kwargs}")
 
-        # Decompress and register data so that redundant reads are not necessary using other IMCOM
-        # utility methods (e.g., `get_coadded_layer`, `get_output_map`, etc.)
-        for outimage in outimages:
-            outimage._load_or_save_hdu_list(load_mode=True, save_file=False, auto_to_all=False)
-
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
         (_block_idx, _block_idy) = _block_ids.pop()
@@ -418,6 +414,11 @@ class MetadetectDriver:
         -------
         obslist : ngmix Observation
         """
+
+        # Decompress and register data so that redundant reads are not necessary using other IMCOM
+        # utility methods (e.g., `get_coadded_layer`, `get_output_map`, etc.)
+        outimage.hdu_list = ReadFile(outimage.fpath)
+
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
         _noise_layer = self.driver_config.get("noise_layer")
@@ -428,7 +429,6 @@ class MetadetectDriver:
             sigma_map = outimage.get_output_map("SIGMA")
             scale_factor = np.sum(np.square(noise_image))
             variance_map = (scale_factor / np.sum(sigma_map)) * sigma_map
-
         else:
             logger.info("No noise image found; estimating via sep")
             _rng = np.random.default_rng(42)  # TODO
@@ -436,6 +436,9 @@ class MetadetectDriver:
             _noise_sigma = _background.globalrms
             noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
             variance_map = np.square(_background.rms())
+
+        # Mark the data for the garbage collector
+        del outimage.hdu_list
 
         weight = np.where(variance_map > 0.0, 1.0 / variance_map, 0.0)
 
