@@ -219,9 +219,14 @@ class MetadetectDriver:
         logger.info(f"Metadetect entrypoint: {self.metadetect_entrypoint}")
         logger.info(f"Metadetect kwargs: {self.metadetect_kwargs}")
 
+        # Decompress and register data so that redundant reads are not necessary using other IMCOM
+        # utility methods (e.g., `get_coadded_layer`, `get_output_map`, etc.)
+        for outimage in outimages:
+            outimage._load_or_save_hdu_list(load_mode=True, save_file=False, auto_to_all=False)
+
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
-        _block_idx, _block_idy = _block_ids.pop()
+        (_block_idx, _block_idy) = _block_ids.pop()
         assert len(_block_ids) == 0
 
         # Ensure that each outimage corresponds to a different filter
@@ -396,11 +401,11 @@ class MetadetectDriver:
         """
         mbobs = ngmix.MultiBandObsList()
         for outimage in self.outimages:
-            obslist = self.make_ngmix_obs(outimage)
+            obslist = self._make_ngmix_obs(outimage)
             mbobs.append(obslist)
         return mbobs
 
-    def make_ngmix_obs(self, outimage):
+    def _make_ngmix_obs(self, outimage):
         """
         Create an ngmix ObsList for a single outimage.
 
@@ -415,20 +420,14 @@ class MetadetectDriver:
         """
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
 
-        # sigma_map = outimage.get_output_map("SIGMA")
-        # neff_map = outimage.get_output_map("EFFCOVER")
-
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:
             logger.info(f"Using {_noise_layer} as noise image")
             noise_image = outimage.get_coadded_layer(_noise_layer)
 
-            # from Chun-Hao
-            # Those 2 calls are SUPER SLOW because the fits file is decompress each time.....
-            Sigma = outimage.get_output_map("SIGMA")
-            # Neff = outimage.get_output_map("EFFCOVER")
-            scalefactor = np.sum(noise_image**2)
-            var_map = (scalefactor / np.sum(Sigma)) * Sigma
+            sigma_map = outimage.get_output_map("SIGMA")
+            scale_factor = np.sum(np.square(noise_image))
+            variance_map = (scale_factor / np.sum(sigma_map)) * sigma_map
 
         else:
             logger.info("No noise image found; estimating via sep")
@@ -436,8 +435,9 @@ class MetadetectDriver:
             _background = sep.Background(image.astype(image.dtype.newbyteorder("=")))
             _noise_sigma = _background.globalrms
             noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
-            var_map = _background.rms() ** 2
-        weight = np.where(var_map > 0, 1.0 / var_map, 0.0)
+            variance_map = np.square(_background.rms())
+
+        weight = np.where(variance_map > 0.0, 1.0 / variance_map, 0.0)
 
         # Build GalSim WCS and Jacobian
         _wcs = self.wcs
