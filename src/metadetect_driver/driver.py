@@ -248,8 +248,6 @@ class MetadetectDriver:
         # parameters (e.g.location center, number of blocks) will be the same.
         # TODO it would be nice to have some way to validate consistency...
         # self.bands = self.get_bands()
-        # self.shear_types = self.get_shear_types()
-        # self.metacal_step = self.get_metacal_step()
         # self.det_combs = self.get_det_combs()
         # self.shear_combs = self.get_shear_combs()
 
@@ -273,10 +271,13 @@ class MetadetectDriver:
         """Get the block id as a string 'block_idx_block_idy'"""
         return f"{self._block_idx:02d}_{self._block_idy:02d}"
 
-    # def get_metacal_step(self):
-    #     return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
+    @property
+    def metacal_step(self):
+        """Get the value of the shear step applied during metacalibration as a float"""
+        return self.metadetect_config["metacal"].get("step", ngmix.metacal.DEFAULT_STEP)
 
-    # def get_shear_types(self):
+    # @property
+    # def shear_types(self):
     #     return self.metadetect_config["metacal"].get("types", ngmix.metacal.METACAL_MINIMAL_TYPES)
 
     @property
@@ -586,16 +587,13 @@ class MetadetectDriver:
 
     def _get_metadata(self):
         _package_metadata = _get_package_metadata()
-        # TODO it might be confusing to have `metacal_step` in the metadata
-        # if we try to read in the entire catalog through one interface
-        # (e.g., via a pyarrow Dataset)
         _metadetect_package = self.metadetect_entrypoint.split(":")[0].split(".")[0]
         _metadetect_version = importlib.metadata.version(_metadetect_package)
         _meta = {
             f"{_metadetect_package} version": _metadetect_version,
             # "det_band_combs": self.det_combs or "null",
             # "shear_band_combs": self.shear_combs or "null",
-            # "metacal_step": str(self.get_metacal_step()),
+            "metacal_step": str(self.metacal_step),
         }
         return _package_metadata | _meta
 
