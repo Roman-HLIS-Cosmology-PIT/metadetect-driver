@@ -11,6 +11,7 @@ import numpy as np
 import pyarrow as pa
 import sep
 from astropy import wcs
+from pyimcom.compress.compressutils import ReadFile
 from pyimcom.config import Settings
 
 from .util import from_entrypoint
@@ -221,7 +222,7 @@ class MetadetectDriver:
 
         # Ensure each outimage corresponds to the same block
         _block_ids = set((outimage.ibx, outimage.iby) for outimage in outimages)
-        _block_idx, _block_idy = _block_ids.pop()
+        (_block_idx, _block_idy) = _block_ids.pop()
         assert len(_block_ids) == 0
 
         # Ensure that each outimage corresponds to a different filter
@@ -396,11 +397,11 @@ class MetadetectDriver:
         """
         mbobs = ngmix.MultiBandObsList()
         for outimage in self.outimages:
-            obslist = self.make_ngmix_obs(outimage)
+            obslist = self._make_ngmix_obs(outimage)
             mbobs.append(obslist)
         return mbobs
 
-    def make_ngmix_obs(self, outimage):
+    def _make_ngmix_obs(self, outimage):
         """
         Create an ngmix ObsList for a single outimage.
 
@@ -413,31 +414,33 @@ class MetadetectDriver:
         -------
         obslist : ngmix Observation
         """
+
+        # Decompress and register data so that redundant reads are not necessary using other IMCOM
+        # utility methods (e.g., `get_coadded_layer`, `get_output_map`, etc.)
+        outimage.hdu_list = ReadFile(outimage.fpath)
+
         image = outimage.get_coadded_layer(self.driver_config.get("layer", "SCI"))
-
-        # sigma_map = outimage.get_output_map("SIGMA")
-        # neff_map = outimage.get_output_map("EFFCOVER")
-
-        # from Chun-Hao
-        # Sigma       = 10 ** (HDU_to_bels(cpr[6]) * cpr[6].data[0])
-        # Neff        = 10 ** (HDU_to_bels(cpr[8]) * cpr[8].data[0])
-        # scalefactor = np.sum(cpr[0].data[0][21] ** 2)
-        # varmap      = ((scalefactor / np.sum(Sigma)) * Sigma
-        #                + np.maximum(cpr[0].data[0][1].astype(np.float32), 0)
-        #                / 107.52398 / Neff)
-        # varmap      = varmap.astype(np.float32)
-        # wht         = np.where(varmap > 0, 1.0 / varmap, 0.).astype(np.float32)
 
         _noise_layer = self.driver_config.get("noise_layer")
         if _noise_layer is not None:
             logger.info(f"Using {_noise_layer} as noise image")
             noise_image = outimage.get_coadded_layer(_noise_layer)
+
+            sigma_map = outimage.get_output_map("SIGMA")
+            scale_factor = np.sum(np.square(noise_image))
+            variance_map = (scale_factor / np.sum(sigma_map)) * sigma_map
         else:
             logger.info("No noise image found; estimating via sep")
             _rng = np.random.default_rng(42)  # TODO
             _background = sep.Background(image.astype(image.dtype.newbyteorder("=")))
             _noise_sigma = _background.globalrms
             noise_image = _rng.normal(scale=_noise_sigma, size=image.shape)
+            variance_map = np.square(_background.rms())
+
+        # Mark the data for the garbage collector
+        del outimage.hdu_list
+
+        weight = np.where(variance_map > 0.0, 1.0 / variance_map, 0.0)
 
         # Build GalSim WCS and Jacobian
         _wcs = self.wcs
@@ -459,8 +462,7 @@ class MetadetectDriver:
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
             image=image,
-            # weight=1 / sigma_map,
-            weight=None,
+            weight=weight,
             bmask=np.zeros(image.shape, dtype=np.int32),
             ormask=np.zeros(image.shape, dtype=np.int32),
             noise=noise_image,
