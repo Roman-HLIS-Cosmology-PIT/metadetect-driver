@@ -42,7 +42,7 @@ Repository = "https://github.com/Roman-HLIS-Cosmology-PIT/metadetect-driver.git"
 
 [build-system]
 requires = [
-    "setuptools>=80",
+    "setuptools>=82.0.1",
     "setuptools_scm[simple]>=8",
 ]
 build-backend = "setuptools.build_meta"
