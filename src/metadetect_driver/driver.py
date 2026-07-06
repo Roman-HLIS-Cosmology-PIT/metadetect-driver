@@ -490,7 +490,7 @@ class MetadetectDriver:
             weight=weight,
             bmask=star_bmask,
             ormask=np.zeros(image.shape, dtype=np.int32),
-            noise=noise_image,
+            noise=noise_image * ap_mask,
             jacobian=image_jacobian,
             psf=psf_obs,
             # mfrac=fidelity_map,
