@@ -8,13 +8,13 @@ import galsim
 import galsim.roman as roman
 import ngmix
 import numpy as np
+import pandas as pd
 import pyarrow as pa
 import sep
 from astropy import wcs
+from metacoadd.masking import get_mask_and_bmask
 from pyimcom.compress.compressutils import ReadFile
 from pyimcom.config import Settings
-from metacoadd.masking import get_mask_and_bmask
-import pandas as pd
 
 from .util import from_entrypoint
 
