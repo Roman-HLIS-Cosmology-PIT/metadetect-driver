@@ -50,3 +50,19 @@ original_image:
   mcal_type_ref: "noshear"
   wmom_fwhm: 0.5
   psf_fitter: gauss  # Same as metadetect psf
+
+IMCOM_maps:
+  mcal_type_ref: "noshear"  # I am not sure it would make sense to use a different type here
+  layers:
+    FIDELITY:
+      combine: mean
+      stat: std
+    SIGMA:
+      combine: mean
+      stat: std
+    INWTSUM:
+      combine: mean
+      stat: std
+    EFFCOVER:
+      combine: mean
+      stat: std

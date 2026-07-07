@@ -14,6 +14,8 @@ star_masks:
   mask_expand_rad: 20  # pixels
   bmask_bit_val: 1
 
+IMCOM_maps: [FIDELITY, SIGMA, INWTSUM, EFFCOVER]
+
 metadetect:
     entrypoint: "metacoadd:do_metadetect"
     kwargs: null

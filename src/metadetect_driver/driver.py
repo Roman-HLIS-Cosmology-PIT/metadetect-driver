@@ -496,6 +496,17 @@ class MetadetectDriver:
             # mfrac=fidelity_map,
             mfrac=np.zeros(image.shape, dtype=np.int32),
         )
+
+        # Add IMCOM layers to observation
+        imcom_maps = self.driver_config.get("IMCOM_maps", None)
+        if isinstance(imcom_maps, list):
+            for layer in imcom_maps:
+                map = outimage.get_output_map(layer)
+                setattr(obs, layer.lower(), map)
+                logger.info(f"Adding IMCOM layer {layer} to ngmix.Observation")
+        elif imcom_maps is not None:
+            raise ValueError(f"IMCOM_maps must be a list of layer names, got {imcom_maps}")
+
         obslist = ngmix.ObsList()
         obslist.append(obs)
         return obslist
