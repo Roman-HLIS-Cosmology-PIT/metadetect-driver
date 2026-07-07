@@ -449,7 +449,7 @@ class MetadetectDriver:
         wcs = galsim.AstropyWCS(wcs=_wcs)
         jacobian = wcs.jacobian(image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1]))
 
-        # Build bright object masks
+        # Build bright star masks
         config_mask = self.driver_config.get("star_masks", None)
         if isinstance(config_mask, dict):
             try:

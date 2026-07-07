@@ -8,6 +8,10 @@ fitters:
     fwhm: 0.5
 # - model: fourier_gauss
 #   symmetrize: false
+- model: pgauss
+  symmetrize: false
+  weight:
+    fwhm: 0.5
 meds:
   box_padding: 2
   box_type: iso_radius
@@ -15,10 +19,10 @@ meds:
   min_box_size: 129
   rad_fac: 2
   rad_min: 4
+  weight_type: uberseg
 metacal:
   psf: fitgauss
-  types: [noshear]
-# , 1p, 1m, 2p, 2m]
+  types: [noshear, 1p, 1m, 2p, 2m]
   use_noise_image: true
 nodet_flags: 1
 coadd:
@@ -30,7 +34,6 @@ sx:
   detect_type: absolute
   detect_thresh: 0.02
   minarea: 5
-  # filter_type: conv
   filter_type: matched
   # filter_kernel:
   # - [0.006319, 0.040599, 0.075183, 0.040599, 0.006319]
@@ -43,3 +46,7 @@ sx:
     fwhm: 0.24
   deblend_cont: 0.001
   deblend_nthresh: 32
+original_image:
+  mcal_type_ref: "noshear"
+  wmom_fwhm: 0.5
+  psf_fitter: gauss  # Same as metadetect psf
