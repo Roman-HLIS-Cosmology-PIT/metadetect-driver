@@ -8,9 +8,11 @@ import galsim
 import galsim.roman as roman
 import ngmix
 import numpy as np
+import pandas as pd
 import pyarrow as pa
 import sep
 from astropy import wcs
+from metacoadd.masking import get_mask_and_bmask
 from pyimcom.compress.compressutils import ReadFile
 from pyimcom.config import Settings
 
@@ -447,6 +449,29 @@ class MetadetectDriver:
         wcs = galsim.AstropyWCS(wcs=_wcs)
         jacobian = wcs.jacobian(image_pos=galsim.PositionD(wcs.wcs.wcs.crpix[0], wcs.wcs.wcs.crpix[1]))
 
+        # Build bright star masks
+        config_mask = self.driver_config.get("star_masks", None)
+        if isinstance(config_mask, dict):
+            try:
+                # Probably not the best way to do this...
+                star_cat = pd.read_parquet(config_mask["star_cat_path"])
+            except Exception as e:
+                raise RuntimeError(f"Failed to read star catalog from {config_mask['star_cat_path']}") from e
+            logger.info(f"Loading star catalog from {config_mask['star_cat_path']} to build masks")
+            ap_mask, star_bmask = get_mask_and_bmask(
+                wcs=_wcs,
+                star_cat=star_cat,
+                poly_coeffs=config_mask.get("poly_coeffs"),
+                mag_max=config_mask.get("max_mag_AB"),
+                min_radius=config_mask.get("apodize").get("min_radius"),
+                ap_radius=config_mask.get("apodize").get("ap_rad"),
+                bmask_expand=config_mask.get("mask_expand_rad"),
+                bmask_bit_val=config_mask.get("bmask_bit_val"),
+            )
+            weight[ap_mask < 1] = 0.0
+        else:
+            ap_mask = np.ones_like(image)
+
         # Draw PSF image
         psf_image = self.get_psf(outimage, wcs)
 
@@ -461,16 +486,27 @@ class MetadetectDriver:
         # Observations
         psf_obs = ngmix.Observation(image=psf_image, jacobian=psf_image_jacobian)
         obs = ngmix.Observation(
-            image=image,
+            image=image * ap_mask,
             weight=weight,
-            bmask=np.zeros(image.shape, dtype=np.int32),
+            bmask=star_bmask,
             ormask=np.zeros(image.shape, dtype=np.int32),
-            noise=noise_image,
+            noise=noise_image * ap_mask,
             jacobian=image_jacobian,
             psf=psf_obs,
             # mfrac=fidelity_map,
             mfrac=np.zeros(image.shape, dtype=np.int32),
         )
+
+        # Add IMCOM layers to observation
+        imcom_maps = self.driver_config.get("IMCOM_maps", None)
+        if isinstance(imcom_maps, list):
+            for layer in imcom_maps:
+                map = outimage.get_output_map(layer)
+                setattr(obs, layer.lower(), map)
+                logger.info(f"Adding IMCOM layer {layer} to ngmix.Observation")
+        elif imcom_maps is not None:
+            raise ValueError(f"IMCOM_maps must be a list of layer names, got {imcom_maps}")
+
         obslist = ngmix.ObsList()
         obslist.append(obs)
         return obslist

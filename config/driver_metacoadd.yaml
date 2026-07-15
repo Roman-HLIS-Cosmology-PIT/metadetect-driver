@@ -1,0 +1,23 @@
+bands: [Y, J, H]
+layer: SCI
+noise_layer: "noise,Rz4PbrS2C1"
+psf_image_size: 65
+
+star_masks:
+  star_cat_path: "/Users/aguinot/Documents/roman/true_star_cat_5deg2.parquet"
+  poly_coeffs: [1.36055007e-03, -1.55098040e-01, 3.46641671e+00]  # From DES Y6, need to update for Roman
+  max_mag_AB: 25.0
+  # symmetrize: False  # Not supported at the moment
+  apodize:
+    min_radius: 3  # arcsec
+    ap_rad: 7  # pixels
+  mask_expand_rad: 20  # pixels
+  bmask_bit_val: 1
+
+IMCOM_maps: [FIDELITY, SIGMA, INWTSUM, EFFCOVER]
+
+metadetect:
+    entrypoint: "metacoadd:do_metadetect"
+    kwargs: null
+      # det_band_combs: [[0, 1, 2]]
+      # shear_band_combs: [[0, 1, 2]]

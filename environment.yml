@@ -19,4 +19,5 @@ dependencies:
   - sep
   - pip:
       - detection @ git+https://github.com/Roman-HLIS-Cosmology-PIT/detection.git
+      - metacoadd @ git+https://github.com/aguinot/metacoadd.git
       - pyimcom @ git+https://github.com/Roman-HLIS-Cosmology-PIT/pyimcom.git
